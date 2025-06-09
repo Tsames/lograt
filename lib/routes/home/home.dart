@@ -10,25 +10,23 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sortedWorkouts = workouts..sort((a, b) => b.createdOn.compareTo(a.createdOn));
+
     return Scaffold(
-      // appBar: AppBar(title: AppBar(), backgroundColor: AppColors.purple),
       backgroundColor: AppColors.manilla,
       body: Center(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           child: ListView.builder(
+            shrinkWrap: true,
             padding: const EdgeInsets.all(16),
             itemCount: workouts.length,
             itemBuilder: (context, index) {
-              // Sort workouts by date (most recent first)
-              final sortedWorkouts = workouts..sort((a, b) => b.createdOn.compareTo(a.createdOn));
-              final workout = sortedWorkouts[index];
-
               return Card(
                 margin: const EdgeInsets.only(bottom: 16),
                 child: ListTile(
-                  title: Text(workout.name),
-                  subtitle: Text(workout.createdOn.toString()),
+                  title: Text(sortedWorkouts[index].name),
+                  subtitle: Text(sortedWorkouts[index].createdOn.toString()),
                   onTap: () {
                     // Handle workout selection
                   },
