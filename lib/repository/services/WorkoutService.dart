@@ -3,7 +3,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class WorkoutService {
-  // Singleton pattern (optional but recommended)
   static final _databaseName = "workouts";
   static final WorkoutService instance = WorkoutService._init();
   static Database? _database;
@@ -24,7 +23,15 @@ class WorkoutService {
   }
 
   Future<void> _createDB(Database db, int version) async {
-    await db.execute('CREATE TABLE workouts(id INTEGER PRIMARY KEY, name TEXT, createdOn INTEGER)');
+    await db.execute(
+      'CREATE TABLE workouts(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, createdOn INTEGER NOT NULL)',
+    );
+  }
+
+  Future<List<Workout>> getWorkouts() async {
+    final db = await instance.database;
+    final List<Map<String, Object?>> workoutMaps = await db.query(_databaseName);
+    return workoutMaps.map((map) => Workout.fromMap(map)).toList();
   }
 
   Future<void> insertWorkout(Workout workout) async {
