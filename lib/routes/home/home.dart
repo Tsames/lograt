@@ -10,6 +10,13 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (workouts.isEmpty) {
+      return Scaffold(
+        backgroundColor: AppColors.manilla,
+        body: const Center(child: Text("No Data available.", style: TextStyle(fontSize: 18))),
+      );
+    }
+
     final sortedWorkouts = workouts..sort((a, b) => b.createdOn.compareTo(a.createdOn));
 
     return Scaffold(

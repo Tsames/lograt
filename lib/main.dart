@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lograt/repository/services/WorkoutService.dart';
 import 'package:lograt/repository/workout_seed.dart';
 import 'package:lograt/routes/home/home.dart';
 
-void main() {
+void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -12,6 +13,9 @@ void main() {
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await WorkoutService.instance.database;
 
   runApp(const LogRatApp());
 }
