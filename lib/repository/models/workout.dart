@@ -10,7 +10,7 @@ class Workout {
   }
 
   factory Workout.fromMap(Map<String, dynamic> map) {
-    return Workout(id: map['id'], name: map['name'], createdOn: map['createdOn']);
+    return Workout(id: map['id'], name: map['name'], createdOn: DateTime.fromMillisecondsSinceEpoch(map['createdOn']));
   }
 
   @override
