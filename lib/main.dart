@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lograt/repository/services/WorkoutService.dart';
-import 'package:lograt/repository/workout_seed.dart';
+import 'package:lograt/database/app_database.dart';
+import 'package:lograt/repository/services/app_database.dart';
 import 'package:lograt/routes/home/home.dart';
 
 void main() async {
@@ -15,7 +15,6 @@ void main() async {
   );
 
   WidgetsFlutterBinding.ensureInitialized();
-  await WorkoutService.instance.database;
 
   runApp(const LogRatApp());
 }
@@ -25,9 +24,6 @@ class LogRatApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Lograt',
-      home: Home(workouts: WorkoutSeed.sampleWorkouts),
-    );
+    return MaterialApp(title: 'Lograt', home: Home());
   }
 }

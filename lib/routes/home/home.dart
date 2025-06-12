@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lograt/repository/services/WorkoutService.dart';
-import 'package:lograt/repository/workout_seed.dart';
-
+import 'package:lograt/database/daos/workout_dao.dart';
 import '../../common/design/app_colors.dart';
-import '../../repository/models/workout.dart';
+import '../../database/models/workout.dart';
 
 class Home extends StatefulWidget {
-  final List<Workout> workouts;
-
-  const Home({super.key, required this.workouts});
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -16,6 +12,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<Workout> _workoutData = [];
+  final WorkoutDao dao =
 
   @override
   void initState() {
