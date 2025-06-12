@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lograt/database/app_database.dart';
-import 'package:lograt/repository/services/app_database.dart';
-import 'package:lograt/routes/home/home.dart';
+import 'package:lograt/pages/home/home.dart';
 
 void main() async {
   SystemChrome.setSystemUIOverlayStyle(
