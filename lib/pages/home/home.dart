@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lograt/repository/services/WorkoutService.dart';
-import 'package:lograt/repository/workout_seed.dart';
-
+import 'package:lograt/database/repositories/workout_repository.dart';
+import 'package:lograt/database/workout_seed.dart';
 import '../../common/design/app_colors.dart';
-import '../../repository/models/workout.dart';
+import '../../database/models/workout.dart';
 
 class Home extends StatefulWidget {
-  final List<Workout> workouts;
-
-  const Home({super.key, required this.workouts});
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -16,6 +13,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<Workout> _workoutData = [];
+  final WorkoutRepository _repository = WorkoutRepository();
 
   @override
   void initState() {
@@ -24,9 +22,9 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _loadWorkouts() async {
-    final workouts = await WorkoutService.instance.getWorkouts();
+    final workouts = await _repository.getMostRecentWorkouts();
     setState(() {
-      _workoutData = workouts..sort((a, b) => b.createdOn.compareTo(a.createdOn));
+      _workoutData = workouts;
     });
   }
 
@@ -39,13 +37,10 @@ class _HomeState extends State<Home> {
         backgroundColor: AppColors.purple,
         child: const Icon(Icons.refresh, color: AppColors.white),
         onPressed: () async {
-          if (_workoutData.length > 0) {
-            await WorkoutService.instance.clearTable();
+          if (_workoutData.isNotEmpty) {
+            await _repository.clearWorkouts();
           } else {
-            await WorkoutService.instance.insertWorkout(WorkoutSeed.sampleWorkouts[0]);
-            await WorkoutService.instance.insertWorkout(WorkoutSeed.sampleWorkouts[1]);
-            await WorkoutService.instance.insertWorkout(WorkoutSeed.sampleWorkouts[2]);
-            await WorkoutService.instance.insertWorkout(WorkoutSeed.sampleWorkouts[3]);
+            await _repository.addWorkouts(WorkoutSeed.sampleWorkouts);
           }
           _loadWorkouts();
         },
