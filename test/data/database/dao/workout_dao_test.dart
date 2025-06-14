@@ -15,8 +15,7 @@ void main() {
     late WorkoutDao dao;
 
     setUp(() async {
-      database = AppDatabase(':memory:');
-      await database.initialize();
+      database = AppDatabase.inMemory();
 
       dao = WorkoutDao(database);
     });

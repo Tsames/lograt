@@ -3,10 +3,17 @@ import 'package:path/path.dart';
 
 class AppDatabase {
   final String connectionString;
-
-  AppDatabase(this.connectionString);
-
   Database? _database;
+
+  AppDatabase._(this.connectionString);
+
+  factory AppDatabase.create(String connectionString) {
+    return AppDatabase._(connectionString);
+  }
+
+  factory AppDatabase.inMemory() {
+    return AppDatabase._(':memory:');
+  }
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -15,9 +22,15 @@ class AppDatabase {
   }
 
   Future<Database> initialize() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, connectionString);
-    return await openDatabase(path, version: 1, onCreate: _createTables);
+    if (connectionString == ':memory:') {
+      // For in-memory databases, we don't need file paths at all
+      return await openDatabase(':memory:', version: 1, onCreate: _createTables);
+    } else {
+      // For real databases, we use the file path logic
+      final dbPath = await getDatabasesPath();
+      final path = join(dbPath, connectionString);
+      return await openDatabase(path, version: 1, onCreate: _createTables);
+    }
   }
 
   Future<void> _createTables(Database db, int version) async {
