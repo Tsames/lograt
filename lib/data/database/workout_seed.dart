@@ -1,4 +1,4 @@
-import 'models/workout.dart';
+import '../models/workout.dart';
 
 class WorkoutSeed {
   static List<Workout> sampleWorkouts = [

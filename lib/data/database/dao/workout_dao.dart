@@ -1,14 +1,12 @@
-import 'package:lograt/database/app_database.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../models/workout.dart';
+import '../../models/workout.dart';
+import '../app_database.dart';
 
 class WorkoutDao {
   final AppDatabase _db;
-  static const _tableName = AppDatabase.workoutsTable;
+  static const _tableName = 'workouts';
 
-  WorkoutDao._(this._db);
-  static final WorkoutDao instance = WorkoutDao._(AppDatabase());
+  WorkoutDao(this._db);
 
   Future<List<Workout>> getWorkouts() async {
     final db = await _db.database;
