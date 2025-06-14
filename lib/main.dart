@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lograt/di/service_locator.dart';
 import 'package:lograt/pages/home/home.dart';
 
 void main() async {
@@ -13,6 +14,7 @@ void main() async {
   );
 
   WidgetsFlutterBinding.ensureInitialized();
+  await setupServiceLocator();
 
   runApp(const LogRatApp());
 }

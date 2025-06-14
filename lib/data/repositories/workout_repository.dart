@@ -1,10 +1,12 @@
-import '../daos/workout_dao.dart';
+import 'package:lograt/data/database/workout_seed.dart';
+
+import '../database/dao/workout_dao.dart';
 import '../models/workout.dart';
 
 class WorkoutRepository {
-  final WorkoutDao _workoutDao = WorkoutDao.instance;
+  final WorkoutDao _workoutDao;
 
-  WorkoutRepository();
+  WorkoutRepository(this._workoutDao);
 
   Future<void> addWorkout(Workout workout) async {
     _workoutDao.insertWorkout(workout);
@@ -23,5 +25,9 @@ class WorkoutRepository {
 
   Future<void> clearWorkouts() async {
     _workoutDao.clearTable();
+  }
+
+  Future<void> seedWorkouts() async {
+    addWorkouts(WorkoutSeed.sampleWorkouts);
   }
 }
