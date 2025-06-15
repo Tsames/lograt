@@ -15,8 +15,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
-          cache: true
+          channel: stable
 
       - name: Verify Flutter installation
         run: flutter doctor -v
