@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite_migration/sqflite_migration.dart';
 
 class AppDatabase {
   final String connectionString;
@@ -7,8 +8,8 @@ class AppDatabase {
 
   AppDatabase._(this.connectionString);
 
-  factory AppDatabase.create(String connectionString) {
-    return AppDatabase._(connectionString);
+  factory AppDatabase.create() {
+    return AppDatabase._('lograt.db');
   }
 
   factory AppDatabase.inMemory() {
@@ -22,20 +23,33 @@ class AppDatabase {
   }
 
   Future<Database> initialize() async {
-    if (connectionString == ':memory:') {
-      // For in-memory databases, we don't need file paths at all
-      return await openDatabase(':memory:', version: 1, onCreate: _createTables);
-    } else {
-      // For real databases, we use the file path logic
-      final dbPath = await getDatabasesPath();
-      final path = join(dbPath, connectionString);
-      return await openDatabase(path, version: 1, onCreate: _createTables);
-    }
+    final path = connectionString == ':memory:' ? ':memory:' : join(await getDatabasesPath(), connectionString);
+
+    final config = MigrationConfig(
+      initializationScript: _buildInitializationScript(),
+      migrationScripts: _buildMigrationScripts(),
+    );
+
+    return await openDatabaseWithMigration(path, config);
   }
 
-  Future<void> _createTables(Database db, int version) async {
-    await db.execute(
-      'CREATE TABLE workouts(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, createdOn INTEGER NOT NULL)',
-    );
+  // Build the complete schema for new installations
+  List<String> _buildInitializationScript() {
+    return [_createWorkoutsTableSQL()];
+  }
+
+  // Build the incremental migration steps for existing databases
+  List<String> _buildMigrationScripts() {
+    return [];
+  }
+
+  String _createWorkoutsTableSQL() {
+    return '''
+      CREATE TABLE workouts(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        createdOn INTEGER NOT NULL
+      )
+    ''';
   }
 }
