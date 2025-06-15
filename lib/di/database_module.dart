@@ -4,7 +4,7 @@ import 'service_locator.dart';
 
 Future<void> setupDatabaseModule() async {
   // Register AppDatabase as a singleton
-  serviceLocator.registerSingleton<AppDatabase>(AppDatabase('lograt.db'));
+  serviceLocator.registerSingleton<AppDatabase>(AppDatabase.create());
 
   // Initialize the database
   await serviceLocator<AppDatabase>().initialize();
