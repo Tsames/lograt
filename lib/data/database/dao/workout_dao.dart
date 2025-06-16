@@ -8,18 +8,18 @@ class WorkoutDao {
 
   WorkoutDao(this._db);
 
-  Future<List<Workout>> getWorkouts() async {
+  Future<List<WorkoutModel>> getWorkouts() async {
     final db = await _db.database;
     final List<Map<String, Object?>> workoutMaps = await db.query(_tableName);
-    return workoutMaps.map((map) => Workout.fromMap(map)).toList();
+    return workoutMaps.map((map) => WorkoutModel.fromMap(map)).toList();
   }
 
-  Future<void> insertWorkout(Workout workout) async {
+  Future<void> insertWorkout(WorkoutModel workout) async {
     final db = await _db.database;
     await db.insert(_tableName, workout.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<void> updateWorkout(Workout workout) async {
+  Future<void> updateWorkout(WorkoutModel workout) async {
     final db = await _db.database;
     db.update(_tableName, workout.toMap(), where: 'id = ?', whereArgs: [workout.id]);
   }

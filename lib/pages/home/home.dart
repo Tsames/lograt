@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lograt/data/repositories/workout_repository.dart';
+import 'package:lograt/data/repositories/workout_repository_impl.dart';
 import 'package:lograt/di/service_locator.dart';
 import '../../common/design/app_colors.dart';
 import '../../data/models/workout_model.dart';
