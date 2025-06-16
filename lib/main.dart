@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/di/service_locator.dart';
 import 'package:lograt/pages/home/home.dart';
 
@@ -16,7 +17,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupServiceLocator();
 
-  runApp(const LogRatApp());
+  runApp(ProviderScope(child: const LogRatApp()));
 }
 
 class LogRatApp extends StatelessWidget {
