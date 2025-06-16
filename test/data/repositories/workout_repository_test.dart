@@ -3,7 +3,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:lograt/data/database/dao/workout_dao.dart';
 import 'package:lograt/data/models/workout_model.dart';
-import 'package:lograt/data/repositories/workout_repository.dart';
+import 'package:lograt/data/repositories/workout_repository_impl.dart';
 
 @GenerateMocks([WorkoutDao])
 import 'workout_repository_test.mocks.dart';
