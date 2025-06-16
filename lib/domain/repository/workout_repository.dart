@@ -1,4 +1,4 @@
-import '../../data/models/workout.dart';
+import '../../domain/entities/workout.dart';
 
 abstract class WorkoutRepository {
   Future<void> addWorkout(Workout workout);
