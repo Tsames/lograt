@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/database/dao/workout_dao.dart';
-import 'package:lograt/data/models/workout.dart';
+import 'package:lograt/data/models/workout_model.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {

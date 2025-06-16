@@ -6,7 +6,7 @@
 import 'dart:async' as _i3;
 
 import 'package:lograt/data/database/dao/workout_dao.dart' as _i2;
-import 'package:lograt/data/models/workout.dart' as _i4;
+import 'package:lograt/data/models/workout_model.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
