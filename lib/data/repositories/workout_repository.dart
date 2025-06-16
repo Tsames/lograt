@@ -1,7 +1,7 @@
 import 'package:lograt/data/database/workout_seed.dart';
 
 import '../database/dao/workout_dao.dart';
-import '../models/workout.dart';
+import '../models/workout_model.dart';
 
 class WorkoutRepository {
   final WorkoutDao _workoutDao;
