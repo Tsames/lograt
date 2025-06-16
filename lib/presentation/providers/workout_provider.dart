@@ -46,6 +46,7 @@ class WorkoutListNotifier extends StateNotifier<WorkoutListState> {
       state = state.copyWith(isLoading: false, error: error.toString());
     }
   }
+}
 
 // Provider for your ViewModel
 // This is what your UI will watch for state changes
