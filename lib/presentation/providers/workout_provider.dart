@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/domain/usecases/clear_workouts.dart';
 
 import '../../core/di/providers.dart';
 import '../../domain/entities/workout.dart';
 import '../../domain/usecases/get_most_recent_workouts.dart';
+import '../../domain/usecases/seed_workouts.dart';
 
 // This represents the state of your workout list screen
 class WorkoutListState {
@@ -23,10 +25,13 @@ class WorkoutListState {
 
 // This is your ViewModel using StateNotifier
 // It handles all business logic coordination for the workout list screen
-class WorkoutListNotifier extends StateNotifier<WorkoutListState> {
+class WorkoutHistoryNotifier extends StateNotifier<WorkoutListState> {
   final GetMostRecentWorkouts _getMostRecentWorkouts;
+  final ClearWorkout _clearWorkouts;
+  final SeedWorkouts _seedWorkouts;
 
-  WorkoutListNotifier(this._getMostRecentWorkouts) : super(const WorkoutListState()) {
+  WorkoutHistoryNotifier(this._getMostRecentWorkouts, this._clearWorkouts, this._seedWorkouts)
+    : super(const WorkoutListState()) {
     loadWorkouts();
   }
 
@@ -46,12 +51,24 @@ class WorkoutListNotifier extends StateNotifier<WorkoutListState> {
       state = state.copyWith(isLoading: false, error: error.toString());
     }
   }
+
+  Future<void> clearWorkouts() async {
+    await _clearWorkouts();
+    state = state.copyWith(workouts: const []);
+  }
+
+  Future<void> seedWorkouts() async {
+    await _seedWorkouts();
+    loadWorkouts();
+  }
 }
 
 // Provider for your ViewModel
 // This is what your UI will watch for state changes
-final workoutListProvider = StateNotifierProvider<WorkoutListNotifier, WorkoutListState>((ref) {
+final workoutListProvider = StateNotifierProvider<WorkoutHistoryNotifier, WorkoutListState>((ref) {
   final getMostRecentWorkouts = ref.read(getMostRecentWorkoutsProvider);
+  final clearWorkoutList = ref.read(clearWorkoutProvider);
+  final seedWorkoutsList = ref.read(seedWorkoutsProvider);
 
-  return WorkoutListNotifier(getMostRecentWorkouts);
+  return WorkoutHistoryNotifier(getMostRecentWorkouts, clearWorkoutList, seedWorkoutsList);
 });

@@ -18,7 +18,7 @@ class WorkoutModel {
 
   // Convert model to database map
   Map<String, dynamic> toMap() {
-    return {'id': id, 'name': name, 'created_on': createdOn.millisecondsSinceEpoch};
+    return {'id': id, 'name': name, 'createdOn': createdOn.millisecondsSinceEpoch};
   }
 
   // Convert data model to domain entity
