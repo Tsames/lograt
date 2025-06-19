@@ -1,5 +1,5 @@
 /// Represents a single set within an exercise
-class Set {
+class ExerciseSet {
   final String id;
   final int setNumber; // 1st set, 2nd set, etc. within this exercise
   final int reps; // Number of repetitions performed
@@ -12,7 +12,7 @@ class Set {
     return reps * (weight ?? 1);
   }
 
-  const Set({
+  const ExerciseSet({
     required this.id,
     required this.setNumber,
     required this.reps,
@@ -21,7 +21,7 @@ class Set {
     this.setType = SetType.working,
   });
 
-  Set copyWith({
+  ExerciseSet copyWith({
     String? id,
     String? workoutExerciseId,
     int? setNumber,
@@ -34,7 +34,7 @@ class Set {
     String? notes,
     SetType? setType,
   }) {
-    return Set(
+    return ExerciseSet(
       id: id ?? this.id,
       setNumber: setNumber ?? this.setNumber,
       reps: reps ?? this.reps,
@@ -46,7 +46,7 @@ class Set {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Set && runtimeType == other.runtimeType && id == other.id;
+      identical(this, other) || other is ExerciseSet && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;

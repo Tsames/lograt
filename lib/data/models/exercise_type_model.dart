@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../../domain/entities/workout_type.dart';
+import '../../domain/entities/exercise_type.dart';
 
 class ExerciseTypeModel {
   final int? id; // Nullable because SQLite auto-generates this
