@@ -13,5 +13,5 @@ class ExerciseType {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => 'ExerciseType(id: $id, name: $name)';
+  String toString() => name;
 }
