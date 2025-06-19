@@ -26,7 +26,7 @@ void main() {
     });
 
     test('should insert and retrieve workout', () async {
-      final workout = Workout(name: 'Test Workout', createdOn: DateTime.now());
+      final workout = WorkoutModel(name: 'Test Workout', createdOn: DateTime.now());
 
       await dao.insertWorkout(workout);
       final workouts = await dao.getWorkouts();
@@ -36,8 +36,8 @@ void main() {
     });
 
     test('should handle multiple workouts', () async {
-      final workout1 = Workout(name: 'Workout 1', createdOn: DateTime.now());
-      final workout2 = Workout(name: 'Workout 2', createdOn: DateTime.now());
+      final workout1 = WorkoutModel(name: 'Workout 1', createdOn: DateTime.now());
+      final workout2 = WorkoutModel(name: 'Workout 2', createdOn: DateTime.now());
 
       await dao.insertWorkout(workout1);
       await dao.insertWorkout(workout2);
@@ -48,7 +48,7 @@ void main() {
     });
 
     test('should delete a workout after inserting it', () async {
-      final workout = Workout(name: 'Delete Test', createdOn: DateTime.now());
+      final workout = WorkoutModel(name: 'Delete Test', createdOn: DateTime.now());
 
       await dao.insertWorkout(workout);
 
@@ -65,13 +65,13 @@ void main() {
     });
 
     test('should update a workout', () async {
-      final workout = Workout(name: 'Update Test', createdOn: DateTime.now());
+      final workout = WorkoutModel(name: 'Update Test', createdOn: DateTime.now());
       await dao.insertWorkout(workout);
 
       var workouts = await dao.getWorkouts();
       expect(workouts.length, equals(1));
 
-      final updatedWorkout = Workout(
+      final updatedWorkout = WorkoutModel(
         id: workouts.first.id,
         name: 'Updated Workout',
         createdOn: workouts.first.createdOn,
@@ -86,9 +86,9 @@ void main() {
     });
 
     test('should clear all workouts from table', () async {
-      final workout1 = Workout(name: 'Workout 1', createdOn: DateTime.now());
-      final workout2 = Workout(name: 'Workout 2', createdOn: DateTime.now());
-      final workout3 = Workout(name: 'Workout 3', createdOn: DateTime.now());
+      final workout1 = WorkoutModel(name: 'Workout 1', createdOn: DateTime.now());
+      final workout2 = WorkoutModel(name: 'Workout 2', createdOn: DateTime.now());
+      final workout3 = WorkoutModel(name: 'Workout 3', createdOn: DateTime.now());
 
       await dao.insertWorkout(workout1);
       await dao.insertWorkout(workout2);

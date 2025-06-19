@@ -1,21 +1,21 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lograt/data/models/workout_model.dart';
+import 'package:lograt/domain/entities/workout.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:lograt/data/database/dao/workout_dao.dart';
-import 'package:lograt/data/models/workout_model.dart';
 import 'package:lograt/data/repositories/workout_repository_impl.dart';
-
-@GenerateMocks([WorkoutDao])
 import 'workout_repository_test.mocks.dart';
 
+@GenerateMocks([WorkoutDao])
 void main() {
   group('WorkoutRepository Tests', () {
-    late WorkoutRepository repository;
+    late WorkoutRepositoryImpl repository;
     late MockWorkoutDao mockDao;
 
     setUp(() {
       mockDao = MockWorkoutDao();
-      repository = WorkoutRepository(mockDao);
+      repository = WorkoutRepositoryImpl(mockDao);
     });
 
     group('addWorkout', () {
@@ -24,7 +24,13 @@ void main() {
 
         await repository.addWorkout(workout);
 
-        verify(mockDao.insertWorkout(workout)).called(1);
+        // Capture what was actually passed to the DAO
+        final captured = verify(mockDao.insertWorkout(captureAny)).captured.single as WorkoutModel;
+
+        // Verify the properties match the original entity
+        expect(captured.id, equals(workout.id));
+        expect(captured.name, equals(workout.name));
+        expect(captured.createdOn, equals(workout.createdOn));
       });
     });
 
@@ -38,9 +44,18 @@ void main() {
 
         await repository.addWorkouts(workouts);
 
-        // Verify insertWorkout was called once for each workout
-        for (final workout in workouts) {
-          verify(mockDao.insertWorkout(workout)).called(1);
+        final capturedCalls = verify(mockDao.insertWorkout(captureAny)).captured;
+
+        expect(capturedCalls.length, equals(workouts.length));
+
+        for (int i = 0; i < workouts.length; i++) {
+          final capturedModel = capturedCalls[i] as WorkoutModel;
+          final originalWorkout = workouts[i];
+
+          // Verify the conversion was done correctly
+          expect(capturedModel.id, equals(originalWorkout.id));
+          expect(capturedModel.name, equals(originalWorkout.name));
+          expect(capturedModel.createdOn, equals(originalWorkout.createdOn));
         }
       });
 
@@ -57,9 +72,9 @@ void main() {
 
     group('getMostRecentWorkouts', () {
       test('should return workouts sorted by creation date (newest first)', () async {
-        final oldWorkout = Workout(id: 1, name: 'Old Workout', createdOn: DateTime(2023, 1, 1));
-        final newerWorkout = Workout(id: 2, name: 'Newer Workout', createdOn: DateTime(2023, 6, 1));
-        final newestWorkout = Workout(id: 3, name: 'Newest Workout', createdOn: DateTime(2023, 12, 1));
+        final oldWorkout = WorkoutModel(id: 1, name: 'Old Workout', createdOn: DateTime(2023, 1, 1));
+        final newerWorkout = WorkoutModel(id: 2, name: 'Newer Workout', createdOn: DateTime(2023, 6, 1));
+        final newestWorkout = WorkoutModel(id: 3, name: 'Newest Workout', createdOn: DateTime(2023, 12, 1));
 
         // Set up the mock to return workouts in unsorted order
         final unsortedWorkouts = [oldWorkout, newestWorkout, newerWorkout];
@@ -76,7 +91,7 @@ void main() {
       });
 
       test('should return empty list when DAO returns empty list', () async {
-        when(mockDao.getWorkouts()).thenAnswer((_) async => <Workout>[]);
+        when(mockDao.getWorkouts()).thenAnswer((_) async => <WorkoutModel>[]);
 
         final result = await repository.getMostRecentWorkouts();
 
