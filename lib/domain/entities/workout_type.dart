@@ -1,5 +1,5 @@
 class ExerciseType {
-  final String id;
+  final int? id;
   final String name;
   final String? description;
 
