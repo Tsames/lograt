@@ -1,13 +1,13 @@
-import 'package:lograt/domain/entities/workout_type.dart';
+import 'package:lograt/domain/entities/exercise_type.dart';
 
-import 'set.dart';
+import 'exercise_set.dart';
 
 /// Represents a specific exercise performed within a workout
 class Exercise {
   final String id;
   final ExerciseType exerciseType; // What exercise this is
   final int order; // 1st exercise, 2nd exercise, etc.
-  final List<Set> sets; // The actual performance data
+  final List<ExerciseSet> sets; // The actual performance data
   final String? notes; // Optional notes for this specific exercise instance
 
   const Exercise({required this.id, required this.exerciseType, required this.order, required this.sets, this.notes});
@@ -22,7 +22,13 @@ class Exercise {
     return sets.fold(0, (sum, set) => sum + set.reps);
   }
 
-  Exercise copyWith({String? id, ExerciseType? exerciseType, int? orderInWorkout, List<Set>? sets, String? notes}) {
+  Exercise copyWith({
+    String? id,
+    ExerciseType? exerciseType,
+    int? orderInWorkout,
+    List<ExerciseSet>? sets,
+    String? notes,
+  }) {
     return Exercise(
       id: id ?? this.id,
       exerciseType: exerciseType ?? this.exerciseType,
