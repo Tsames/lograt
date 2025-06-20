@@ -36,6 +36,7 @@ class ExerciseModel {
       workoutId: map['workout_id'] as int,
       exerciseTypeId: map['exercise_type_id'] as int,
       order: map['order'] as int,
+      notes: map['notes'] as String,
     );
   }
 
@@ -44,7 +45,13 @@ class ExerciseModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {if (id != null) 'id': id, 'workout_id': workoutId, 'exercise_type_id': exerciseTypeId, 'order': order};
+    return {
+      if (id != null) 'id': id,
+      'workout_id': workoutId,
+      'exercise_type_id': exerciseTypeId,
+      'order': order,
+      'notes': notes,
+    };
   }
 
   @override

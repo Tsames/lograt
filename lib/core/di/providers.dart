@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/domain/usecases/clear_workouts.dart';
 import 'package:lograt/domain/usecases/seed_workouts.dart';
 import '../../data/database/app_database.dart';
+import '../../data/database/dao/exercise-dao.dart';
+import '../../data/database/dao/exercise_type_dao.dart';
 import '../../data/database/dao/workout_dao.dart';
 import '../../data/repositories/workout_repository_impl.dart';
 import '../../domain/repository/workout_repository.dart';
@@ -19,7 +21,17 @@ final workoutDaoProvider = Provider<WorkoutDao>((ref) {
   return WorkoutDao(database);
 });
 
-// Repository provider - this connects your data layer to domain layer
+final exerciseTypeDaoProvider = Provider<ExerciseTypeDao>((ref) {
+  final database = ref.read(appDatabaseProvider);
+  return ExerciseTypeDao(database);
+});
+
+final exerciseDaoProvider = Provider<ExerciseDao>((ref) {
+  final database = ref.read(appDatabaseProvider);
+  return ExerciseDao(database);
+});
+
+// Repository provider
 final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
   final dao = ref.read(workoutDaoProvider);
   return WorkoutRepositoryImpl(dao);

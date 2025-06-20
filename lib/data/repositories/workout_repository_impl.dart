@@ -13,14 +13,14 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   @override
   Future<void> addWorkout(Workout workout) async {
     // Convert domain entity to data model before storing
-    final workoutModel = WorkoutModel.fromDomain(workout);
+    final workoutModel = WorkoutModel.fromEntity(workout);
     await _workoutDao.insertWorkout(workoutModel);
   }
 
   @override
   Future<void> addWorkouts(List<Workout> workouts) async {
     // Convert all domain entities to data models
-    final workoutModels = workouts.map(WorkoutModel.fromDomain).toList();
+    final workoutModels = workouts.map(WorkoutModel.fromEntity).toList();
     for (final workoutModel in workoutModels) {
       await _workoutDao.insertWorkout(workoutModel);
     }
@@ -30,10 +30,8 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   Future<List<Workout>> getMostRecentWorkouts() async {
     // Get data models from DAO and convert to domain entities
     final workoutModels = await _workoutDao.getWorkouts();
-    final domainWorkouts = workoutModels.map((workoutModel) => workoutModel.toDomain()).toList();
+    final domainWorkouts = workoutModels.map((workoutModel) => workoutModel.toEntity()).toList();
 
-    // Sort by creation date (most recent first)
-    domainWorkouts.sort((a, b) => b.createdOn.compareTo(a.createdOn));
     return domainWorkouts;
   }
 
@@ -45,7 +43,7 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   @override
   Future<void> seedWorkouts() async {
     // Convert seed data to domain entities before adding
-    final seedWorkouts = WorkoutSeed.sampleWorkouts.map((model) => model.toDomain()).toList();
+    final seedWorkouts = WorkoutSeed.sampleWorkouts.map((model) => model.toEntity()).toList();
     await addWorkouts(seedWorkouts);
   }
 }
