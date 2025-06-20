@@ -36,7 +36,7 @@ class ExerciseSetModel {
   factory ExerciseSetModel.fromMap(Map<String, dynamic> map) {
     return ExerciseSetModel(
       id: map['id'] as int?,
-      exerciseId: map['workout_exercise_id'] as int,
+      exerciseId: map['exercise_id'] as int,
       order: map['order'] as int,
       reps: map['reps'] as int,
       weight: map['weight'] as int?,
@@ -59,7 +59,7 @@ class ExerciseSetModel {
   Map<String, dynamic> toMap() {
     return {
       if (id != null) 'id': id,
-      'workout_exercise_id': exerciseId,
+      'exercise_id': exerciseId,
       'order': order,
       'reps': reps,
       'weight': weight,
