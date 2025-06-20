@@ -4,35 +4,27 @@ import 'exercise_set.dart';
 
 /// Represents a specific exercise performed within a workout
 class Exercise {
-  final String id;
+  final int? id; // SQLite generated primary key
   final ExerciseType exerciseType; // What exercise this is
   final int order; // 1st exercise, 2nd exercise, etc.
-  final List<ExerciseSet> sets; // The actual performance data
-  final String? notes; // Optional notes for this specific exercise instance
+  final List<ExerciseSet> sets;
+  final String? notes;
 
-  const Exercise({required this.id, required this.exerciseType, required this.order, required this.sets, this.notes});
+  const Exercise({this.id, required this.exerciseType, required this.order, required this.sets, this.notes});
 
-  /// Total volume for this exercise (sum of all sets' volume)
   double get totalVolume {
     return sets.fold(0.0, (sum, set) => sum + set.volume);
   }
 
-  /// Total reps across all sets
   int get totalReps {
     return sets.fold(0, (sum, set) => sum + set.reps);
   }
 
-  Exercise copyWith({
-    String? id,
-    ExerciseType? exerciseType,
-    int? orderInWorkout,
-    List<ExerciseSet>? sets,
-    String? notes,
-  }) {
+  Exercise copyWith({int? id, ExerciseType? exerciseType, int? order, List<ExerciseSet>? sets, String? notes}) {
     return Exercise(
       id: id ?? this.id,
       exerciseType: exerciseType ?? this.exerciseType,
-      order: orderInWorkout ?? this.order,
+      order: order ?? this.order,
       sets: sets ?? this.sets,
       notes: notes ?? this.notes,
     );
@@ -46,5 +38,5 @@ class Exercise {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => 'Exercise(name: ${exerciseType.name}, sets: ${sets.length})';
+  String toString() => 'Exercise{ id: ${id ?? 'null'}, name: ${exerciseType.name}, sets: ${sets.length} }';
 }

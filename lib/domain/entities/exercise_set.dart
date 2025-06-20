@@ -1,20 +1,19 @@
 /// Represents a single set within an exercise
 class ExerciseSet {
-  final String id;
-  final int setNumber; // 1st set, 2nd set, etc. within this exercise
-  final int reps; // Number of repetitions performed
-  final int? weight; // Weight used (null for bodyweight exercises)
+  final int? id; // SQLite generated primary key
+  final int order; // 1st set, 2nd set, etc. within this exercise
+  final int reps;
+  final int? weight; // Weight used (null for body weight exercises)
   final Duration? restTime; // Rest time before this set, for the first set this will be null
   final SetType setType; // Regular, warm-up, drop set, etc.
 
-  /// Volume is the weight * reps, or just the reps if using body weight
   int get volume {
     return reps * (weight ?? 1);
   }
 
   const ExerciseSet({
     required this.id,
-    required this.setNumber,
+    required this.order,
     required this.reps,
     this.weight,
     this.restTime,
@@ -22,9 +21,9 @@ class ExerciseSet {
   });
 
   ExerciseSet copyWith({
-    String? id,
+    int? id,
     String? workoutExerciseId,
-    int? setNumber,
+    int? order,
     int? reps,
     int? weight,
     Duration? duration,
@@ -36,7 +35,7 @@ class ExerciseSet {
   }) {
     return ExerciseSet(
       id: id ?? this.id,
-      setNumber: setNumber ?? this.setNumber,
+      order: order ?? this.order,
       reps: reps ?? this.reps,
       weight: weight ?? this.weight,
       restTime: restTime ?? this.restTime,
@@ -52,7 +51,7 @@ class ExerciseSet {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => 'Set(weight: ${weight ?? 'BW'}, reps: $reps)';
+  String toString() => 'ExerciseSet{ id: ${id ?? 'null'}, order: $order, weight: ${weight ?? 'BW'}, reps: $reps }';
 }
 
 enum SetType {
