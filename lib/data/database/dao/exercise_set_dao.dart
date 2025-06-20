@@ -3,13 +3,15 @@ import 'package:sqflite/sqflite.dart';
 
 import '../app_database.dart';
 
+/// Data Access Object for ExerciseSet operations
+/// This class handles all database operations related to exercise sets
 class ExerciseSetDao {
   final AppDatabase _db;
-  static const String _tableName = 'exercise_sets';
+  static const String _tableName = AppDatabase.exerciseSetsTableName;
 
   ExerciseSetDao(this._db);
 
-  /// Get a exercise set by its ID
+  /// Get an exercise set by its ID
   /// Returns null if no exercise set with the given ID exists
   Future<ExerciseSetModel?> getById(int setId) async {
     final database = await _db.database;
