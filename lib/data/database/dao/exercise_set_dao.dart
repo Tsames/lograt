@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../app_database.dart';
 
-/// Data Access Object for ExerciseSet operations
+/// Data Access Object operations for an ExerciseSet
 /// This class handles all database operations related to exercise sets
 class ExerciseSetDao {
   final AppDatabase _db;
