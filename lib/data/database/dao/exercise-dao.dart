@@ -1,3 +1,4 @@
+import 'package:lograt/data/database/app_database.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../domain/entities/exercise.dart';
@@ -6,14 +7,15 @@ import '../../models/exercise_model.dart';
 
 /// Data Access Object operations for an Exercise that belongs to a Workout
 class ExerciseDao {
-  final Database database;
+  final AppDatabase _db;
   static const String tableName = 'workout_exercises';
 
-  ExerciseDao(this.database);
+  ExerciseDao(this._db);
 
   /// Insert a new exercise into a workout
   /// Returns the ID of the newly inserted exercise
   Future<int> insert(ExerciseModel exercise) async {
+    final database = await _db.database;
     return await database.insert(tableName, exercise.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
@@ -24,6 +26,7 @@ class ExerciseDao {
       throw ArgumentError('Cannot update exercise without an ID');
     }
 
+    final database = await _db.database;
     return await database.update(tableName, exercise.toMap(), where: 'id = ?', whereArgs: [exercise.id]);
   }
 
@@ -35,6 +38,7 @@ class ExerciseDao {
     if (exerciseToDelete == null) return 0;
 
     // Delete the exercise
+    final database = await _db.database;
     final deletedCount = await database.delete(tableName, where: 'id = ?', whereArgs: [exerciseId]);
 
     return deletedCount;
@@ -43,6 +47,7 @@ class ExerciseDao {
   /// Get an exercise by its ID
   /// Returns null if no exercise with the given ID exists
   Future<ExerciseModel?> getById(int id) async {
+    final database = await _db.database;
     final maps = await database.query(tableName, where: 'id = ?', whereArgs: [id]);
 
     if (maps.isEmpty) return null;
@@ -52,6 +57,7 @@ class ExerciseDao {
   /// Get all exercises for a specific workout, ordered by their sequence
   /// This is the most common query - getting all exercises in a workout
   Future<List<ExerciseModel>> getByWorkoutId(int workoutId) async {
+    final database = await _db.database;
     final maps = await database.query(
       tableName,
       where: 'workout_id = ?',
@@ -67,6 +73,7 @@ class ExerciseDao {
   Future<List<Exercise>> getExercisesWithTypesByWorkoutId(int workoutId) async {
     // Use a JOIN query to get exercise and exercise type data in one query
     // This is more efficient than making separate queries for each exercise
+    final database = await _db.database;
     final maps = await database.rawQuery(
       '''
       SELECT 
@@ -108,6 +115,7 @@ class ExerciseDao {
   /// This handles drag-and-drop reordering scenarios
   Future<void> reorderExercises(int workoutId, List<int> exerciseIds) async {
     // Use a transaction to ensure all updates succeed or fail together
+    final database = await _db.database;
     await database.transaction((txn) async {
       for (int i = 0; i < exerciseIds.length; i++) {
         await txn.update(
@@ -123,6 +131,7 @@ class ExerciseDao {
   /// Get the next order number for a new exercise in a workout
   /// This ensures new exercises are added at the end of the sequence
   Future<int> getNextOrderForWorkout(int workoutId) async {
+    final database = await _db.database;
     final result = await database.rawQuery(
       '''
       SELECT COALESCE(MAX(order_index), 0) + 1 as next_order 
@@ -138,6 +147,7 @@ class ExerciseDao {
   /// Get the count of exercises in a specific workout
   /// Useful for UI indicators and validation
   Future<int> getCountByWorkoutId(int workoutId) async {
+    final database = await _db.database;
     final result = await database.rawQuery(
       '''
       SELECT COUNT(*) as count 
@@ -153,12 +163,14 @@ class ExerciseDao {
   /// Delete all exercises for a specific workout
   /// This is typically called when a workout is deleted
   Future<int> deleteByWorkoutId(int workoutId) async {
+    final database = await _db.database;
     return await database.delete(tableName, where: 'workout_id = ?', whereArgs: [workoutId]);
   }
 
   /// Get all exercises that use a specific exercise type
   /// This is useful for understanding the impact before deleting an exercise type
   Future<List<ExerciseModel>> getByExerciseTypeId(int exerciseTypeId) async {
+    final database = await _db.database;
     final maps = await database.query(
       tableName,
       where: 'exercise_type_id = ?',
