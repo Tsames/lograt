@@ -2,7 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/domain/usecases/clear_workouts.dart';
 import 'package:lograt/domain/usecases/seed_workouts.dart';
 import '../../data/database/app_database.dart';
-import '../../data/database/dao/exercise-dao.dart';
+import '../../data/database/dao/exercise_dao.dart';
+import '../../data/database/dao/exercise_set_dao.dart';
 import '../../data/database/dao/exercise_type_dao.dart';
 import '../../data/database/dao/workout_dao.dart';
 import '../../data/repositories/workout_repository_impl.dart';
@@ -31,10 +32,15 @@ final exerciseDaoProvider = Provider<ExerciseDao>((ref) {
   return ExerciseDao(database);
 });
 
+final exerciseSetDaoProvider = Provider<ExerciseSetDao>((ref) {
+  final database = ref.read(appDatabaseProvider);
+  return ExerciseSetDao(database);
+});
+
 // Repository provider
 final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
-  final dao = ref.read(workoutDaoProvider);
-  return WorkoutRepositoryImpl(dao);
+  final workoutDao = ref.read(workoutDaoProvider);
+  return WorkoutRepositoryImpl(workoutDao);
 });
 
 // --- Domain Layer providers ---

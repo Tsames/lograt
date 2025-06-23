@@ -33,6 +33,11 @@ class AppDatabase {
     return await openDatabaseWithMigration(path, config);
   }
 
+  static const workoutsTableName = 'workouts';
+  static const exerciseTypesTableName = "exercise_types";
+  static const exercisesTableName = "workout_exercises";
+  static const exerciseSetsTableName = "exercise_sets";
+
   // Build the complete schema for new installations
   List<String> _buildInitializationScript() {
     return [
@@ -55,7 +60,7 @@ class AppDatabase {
 
   String _createWorkoutsTableSQL() {
     return '''
-      CREATE TABLE workouts(
+      CREATE TABLE $workoutsTableName(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         createdOn INTEGER NOT NULL,
@@ -66,7 +71,7 @@ class AppDatabase {
 
   String _createExerciseTypesTableSQL() {
     return '''
-      CREATE TABLE exercise_types(
+      CREATE TABLE $exerciseTypesTableName(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE,
         description TEXT
@@ -76,7 +81,7 @@ class AppDatabase {
 
   String _createWorkoutExercisesTableSQL() {
     return '''
-      CREATE TABLE workout_exercises(
+      CREATE TABLE $exercisesTableName(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         workout_id INTEGER NOT NULL,
         exercise_type_id INTEGER NOT NULL,
@@ -90,7 +95,7 @@ class AppDatabase {
 
   String _createWorkoutSetsTableSQL() {
     return '''
-    CREATE TABLE workout_sets(
+    CREATE TABLE $exerciseSetsTableName(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       exercise_id INTEGER NOT NULL,
       order INTEGER NOT NULL,
