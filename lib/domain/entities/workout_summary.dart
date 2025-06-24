@@ -4,17 +4,11 @@ class WorkoutSummary {
   final int? id; //SQLite generated primary key
   final String name;
   final DateTime createdOn;
-  final String? description;
 
-  const WorkoutSummary({this.id, required this.name, required this.createdOn, required this.description});
+  const WorkoutSummary({this.id, required this.name, required this.createdOn});
 
-  WorkoutSummary copyWith({int? id, String? name, DateTime? createdOn, String? description}) {
-    return WorkoutSummary(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      createdOn: createdOn ?? this.createdOn,
-      description: description ?? this.description,
-    );
+  WorkoutSummary copyWith({int? id, String? name, DateTime? createdOn}) {
+    return WorkoutSummary(id: id ?? this.id, name: name ?? this.name, createdOn: createdOn ?? this.createdOn);
   }
 
   bool get isRecent => DateTime.now().difference(createdOn).inDays < 14;
