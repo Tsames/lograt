@@ -5,23 +5,15 @@ class Workout {
   final int? id; //SQLite generated primary key
   final String name;
   final DateTime createdOn;
-  final String? description;
   final List<Exercise> exercises;
 
-  const Workout({
-    this.id,
-    required this.name,
-    required this.createdOn,
-    required this.description,
-    required this.exercises,
-  });
+  const Workout({this.id, required this.name, required this.createdOn, required this.exercises});
 
-  Workout copyWith({int? id, String? name, DateTime? createdOn, String? description, List<Exercise>? exercises}) {
+  Workout copyWith({int? id, String? name, DateTime? createdOn, List<Exercise>? exercises}) {
     return Workout(
       id: id ?? this.id,
       name: name ?? this.name,
       createdOn: createdOn ?? this.createdOn,
-      description: description ?? this.description,
       exercises: exercises ?? this.exercises,
     );
   }
