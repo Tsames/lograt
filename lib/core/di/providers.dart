@@ -40,7 +40,16 @@ final exerciseSetDaoProvider = Provider<ExerciseSetDao>((ref) {
 // Repository provider
 final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
   final workoutDao = ref.read(workoutDaoProvider);
-  return WorkoutRepositoryImpl(workoutDao);
+  final exerciseDao = ref.read(exerciseDaoProvider);
+  final exerciseTypeDao = ref.read(exerciseTypeDaoProvider);
+  final exerciseSetDao = ref.read(exerciseSetDaoProvider);
+
+  return WorkoutRepositoryImpl(
+    workoutDao: workoutDao,
+    exerciseDao: exerciseDao,
+    exerciseTypeDao: exerciseTypeDao,
+    exerciseSetDao: exerciseSetDao,
+  );
 });
 
 // --- Domain Layer providers ---
