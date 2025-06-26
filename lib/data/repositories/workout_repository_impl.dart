@@ -103,9 +103,80 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
+  Future<List<Exercise>> getExercisesOfType({required int typeId, int limit = 20}) async {
+    try {
+      final exerciseModels = await _exerciseDao.getByExerciseTypeId(exerciseTypeId: typeId, limit: limit);
+
+      final exerciseType = await _exerciseTypeDao.getById(typeId);
+      if (exerciseType == null) {
+        throw WorkoutDataException('No associated exercise type for typeId: $typeId');
+      }
+
+      final completeExerciseEntities = <Exercise>[];
+
+      for (final exercise in exerciseModels) {
+        if (exercise.id == null) continue;
+
+        final sets = await _exerciseSetDao.getByExerciseId(exercise.id!);
+        final entitySets = sets != null ? sets.map((set) => set.toEntity()).toList() : <ExerciseSet>[];
+
+        completeExerciseEntities.add(exercise.toEntity(exerciseType: exerciseType.toEntity(), sets: entitySets));
+      }
+
+      return completeExerciseEntities;
+    } catch (e) {
+      throw WorkoutDataException('Unexpected error loading exercises of type $typeId: $e');
+    }
+  }
+
+  @override
   Future<int> createWorkout(Workout workout) async {
     final workoutModel = WorkoutModel.fromEntity(workout);
     return await _workoutDao.insert(workoutModel);
+  }
+
+  @override
+  Future<List<int>> createWorkouts(List<Workout> workouts) async {
+    final workoutModels = workouts.map(WorkoutModel.fromEntity).toList();
+    final workoutIds = <int>[];
+
+    // First, insert all workouts and collect their IDs
+    for (final workoutModel in workoutModels) {
+      final workoutId = await _workoutDao.insert(workoutModel);
+      workoutIds.add(workoutId);
+
+      // For each workout, prepare its exercises
+      if (workoutModel.toEntity().exercises.isNotEmpty) {
+        final exercises = workoutModel.toEntity().exercises;
+
+        // Insert each exercise and its associated sets
+        for (final exercise in exercises) {
+          // Insert the exercise type if needed
+          int exerciseTypeId =
+              exercise.exerciseType.id ??
+              await _exerciseTypeDao.insert(ExerciseTypeModel.fromEntity(exercise.exerciseType));
+
+          // Create and insert the exercise
+          final exerciseModel = ExerciseModel.fromEntity(
+            entity: exercise.copyWith(exerciseType: exercise.exerciseType.copyWith(id: exerciseTypeId)),
+            workoutId: workoutId,
+          );
+          final exerciseId = await _exerciseDao.insert(exerciseModel);
+
+          // Create and insert all sets for this exercise
+          if (exercise.sets.isNotEmpty) {
+            final setModels = exercise.sets
+                .map((set) => ExerciseSetModel.fromEntity(entity: set, exerciseId: exerciseId))
+                .toList();
+
+            // Batch insert the sets
+            await _exerciseSetDao.batchInsert(setModels);
+          }
+        }
+      }
+    }
+
+    return workoutIds;
   }
 
   @override
@@ -127,36 +198,47 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
-  Future<void> updateWorkout(Workout updatedWorkout) async {
-    final workoutModel = WorkoutModel.fromEntity(updatedWorkout);
+  Future<void> updateWorkout(Workout entity) async {
+    final workoutModel = WorkoutModel.fromEntity(entity);
     await _workoutDao.update(workoutModel);
   }
 
   @override
-  Future<void> updateExercise({required Exercise updatedExercise, required int workoutId}) async {
-    final exerciseModel = ExerciseModel.fromEntity(entity: updatedExercise, workoutId: workoutId);
+  Future<void> updateExercise({required Exercise entity, required int workoutId}) async {
+    final exerciseModel = ExerciseModel.fromEntity(entity: entity, workoutId: workoutId);
     await _exerciseDao.update(exerciseModel);
   }
 
   @override
-  Future<void> updateExerciseType(ExerciseType updatedType) async {
-    final exerciseTypeModel = ExerciseTypeModel.fromEntity(updatedType);
+  Future<void> updateExerciseType(ExerciseType entity) async {
+    final exerciseTypeModel = ExerciseTypeModel.fromEntity(entity);
     await _exerciseTypeDao.update(exerciseTypeModel);
   }
 
   @override
-  Future<void> updateExerciseSet({required ExerciseSet updatedSet, required int exerciseId}) async {
-    final exerciseSetModel = ExerciseSetModel.fromEntity(entity: updatedSet, exerciseId: exerciseId);
+  Future<void> updateExerciseSet({required ExerciseSet entity, required int exerciseId}) async {
+    final exerciseSetModel = ExerciseSetModel.fromEntity(entity: entity, exerciseId: exerciseId);
     await _exerciseSetDao.update(exerciseSetModel);
   }
 
   @override
-  Future<void> addWorkouts(List<Workout> workouts) async {
-    // Convert all domain entities to data models
-    final workoutModels = workouts.map(WorkoutModel.fromEntity).toList();
-    for (final workoutModel in workoutModels) {
-      await _workoutDao.insert(workoutModel);
-    }
+  Future<int> deleteWorkout(int id) async {
+    return await _workoutDao.delete(id);
+  }
+
+  @override
+  Future<int> deleteExercise(int id) async {
+    return await _exerciseDao.delete(id);
+  }
+
+  @override
+  Future<int> deleteExerciseType(int id) async {
+    return await _exerciseTypeDao.delete(id);
+  }
+
+  @override
+  Future<int> deleteExerciseSet(int id) async {
+    return await _exerciseSetDao.delete(id);
   }
 
   @override
@@ -167,6 +249,6 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   @override
   Future<void> seedWorkouts() async {
     final seedWorkouts = WorkoutSeed.sampleWorkouts.map((model) => model.toEntity()).toList();
-    await addWorkouts(seedWorkouts);
+    await createWorkouts(seedWorkouts);
   }
 }

@@ -40,7 +40,7 @@ class ExerciseModel {
     );
   }
 
-  Exercise toEntity({required ExerciseType exerciseType, List<ExerciseSet> sets = const []}) {
+  Exercise toEntity({required ExerciseType exerciseType, required List<ExerciseSet> sets}) {
     return Exercise(id: id, exerciseType: exerciseType, order: order, sets: sets, notes: notes);
   }
 

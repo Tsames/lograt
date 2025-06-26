@@ -44,6 +44,18 @@ class ExerciseSetDao {
     return await database.insert(_tableName, set.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  /// Batch insert a list of [ExerciseSetModel]
+  Future<void> batchInsert(List<ExerciseSetModel> sets) async {
+    final db = await _db.database;
+    final batch = db.batch();
+
+    for (final set in sets) {
+      batch.insert(_tableName, set.toMap());
+    }
+
+    batch.commit(noResult: true, continueOnError: true);
+  }
+
   /// Update an existing exercise set
   /// Returns the number of rows affected (should be 1 for success)
   Future<int> update(ExerciseSetModel set) async {

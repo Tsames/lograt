@@ -46,17 +46,17 @@ class WorkoutDao {
     return maps.map((map) => WorkoutSummaryModel.fromMap(map)).toList();
   }
 
-  Future<int> insertWorkout(WorkoutModel workout) async {
+  Future<int> insert(WorkoutModel workout) async {
     final db = await _db.database;
     return await db.insert(_tableName, workout.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<int> updateWorkout(WorkoutModel workout) async {
+  Future<int> update(WorkoutModel workout) async {
     final db = await _db.database;
     return await db.update(_tableName, workout.toMap(), where: 'id = ?', whereArgs: [workout.id]);
   }
 
-  Future<int> deleteWorkout(int id) async {
+  Future<int> delete(int id) async {
     final db = await _db.database;
     return await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
   }
