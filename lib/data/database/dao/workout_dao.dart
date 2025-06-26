@@ -1,3 +1,4 @@
+import 'package:lograt/data/models/workout_summary_model.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../models/workout_model.dart';
 import '../app_database.dart';
@@ -8,25 +9,56 @@ class WorkoutDao {
 
   WorkoutDao(this._db);
 
-  Future<List<WorkoutModel>> getWorkouts() async {
-    final db = await _db.database;
-    final List<Map<String, Object?>> workoutMaps = await db.query(_tableName);
-    return workoutMaps.map((map) => WorkoutModel.fromMap(map)).toList();
+  /// Get an workout by its ID as a [WorkoutSummaryModel]
+  /// Returns null if no workout with the given ID exists
+  Future<WorkoutSummaryModel?> getSummaryById(int id) async {
+    final database = await _db.database;
+    final maps = await database.query(_tableName, where: 'id = ?', whereArgs: [id]);
+
+    if (maps.isEmpty) return null;
+    return WorkoutSummaryModel.fromMap(maps.first);
   }
 
-  Future<void> insertWorkout(WorkoutModel workout) async {
-    final db = await _db.database;
-    await db.insert(_tableName, workout.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+  /// Get an workout by its ID as a [WorkoutModel]
+  /// Returns null if no workout with the given ID exists
+  Future<WorkoutModel?> getById(int id) async {
+    final database = await _db.database;
+    final maps = await database.query(_tableName, where: 'id = ?', whereArgs: [id]);
+
+    if (maps.isEmpty) return null;
+    return WorkoutModel.fromMap(maps.first);
   }
 
-  Future<void> updateWorkout(WorkoutModel workout) async {
+  /// Get a list of the most recent [limit] number of workouts as [WorkoutSummaryModel]
+  /// for workouts within the last three months of the current date
+  Future<List<WorkoutSummaryModel>> getRecentSummaries({int limit = 20}) async {
     final db = await _db.database;
-    db.update(_tableName, workout.toMap(), where: 'id = ?', whereArgs: [workout.id]);
+    final sixMonthsAgo = DateTime.now().subtract(Duration(days: 90)).millisecondsSinceEpoch;
+
+    final maps = await db.query(
+      _tableName,
+      where: 'created_on >= ?',
+      whereArgs: [sixMonthsAgo],
+      orderBy: 'created_on DESC',
+      limit: limit,
+    );
+
+    return maps.map((map) => WorkoutSummaryModel.fromMap(map)).toList();
   }
 
-  Future<void> deleteWorkout(int id) async {
+  Future<int> insertWorkout(WorkoutModel workout) async {
     final db = await _db.database;
-    await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
+    return await db.insert(_tableName, workout.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<int> updateWorkout(WorkoutModel workout) async {
+    final db = await _db.database;
+    return await db.update(_tableName, workout.toMap(), where: 'id = ?', whereArgs: [workout.id]);
+  }
+
+  Future<int> deleteWorkout(int id) async {
+    final db = await _db.database;
+    return await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
   }
 
   Future<void> clearTable() async {

@@ -1,4 +1,8 @@
+import 'package:lograt/data/database/dao/exercise_dao.dart';
+import 'package:lograt/data/database/dao/exercise_set_dao.dart';
+import 'package:lograt/data/database/dao/exercise_type_dao.dart';
 import 'package:lograt/data/database/workout_seed.dart';
+import 'package:lograt/data/models/exercise_model.dart';
 
 import '../../domain/entities/workout.dart';
 import '../../domain/repository/workout_repository.dart';
@@ -7,8 +11,19 @@ import '../models/workout_model.dart';
 
 class WorkoutRepositoryImpl implements WorkoutRepository {
   final WorkoutDao _workoutDao;
+  final ExerciseDao _exerciseDao;
+  final ExerciseTypeDao _exerciseTypeDao;
+  final ExerciseSetDao _exerciseSetDao;
 
-  WorkoutRepositoryImpl(this._workoutDao);
+  WorkoutRepositoryImpl({
+    required WorkoutDao workoutDao,
+    required ExerciseDao exerciseDao,
+    required ExerciseTypeDao exerciseTypeDao,
+    required ExerciseSetDao exerciseSetDao,
+  }) : _workoutDao = workoutDao,
+       _exerciseDao = exerciseDao,
+       _exerciseTypeDao = exerciseTypeDao,
+       _exerciseSetDao = exerciseSetDao;
 
   @override
   Future<void> addWorkout(Workout workout) async {

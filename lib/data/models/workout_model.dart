@@ -7,9 +7,8 @@ class WorkoutModel {
   final int? id;
   final String name;
   final DateTime createdOn;
-  final String? description;
 
-  WorkoutModel({this.id, required this.name, required this.createdOn, this.description});
+  WorkoutModel({this.id, required this.name, required this.createdOn});
 
   factory WorkoutModel.fromEntity(Workout workout) {
     return WorkoutModel(id: workout.id, name: workout.name, createdOn: workout.createdOn);
@@ -20,12 +19,11 @@ class WorkoutModel {
       id: map['id'] as int?,
       name: map['name'] as String,
       createdOn: DateTime.fromMillisecondsSinceEpoch(map['createdOn']),
-      description: map['description'] as String,
     );
   }
 
   Workout toEntity({List<Exercise> exercises = const []}) {
-    return Workout(id: id, name: name, createdOn: createdOn, description: description, exercises: exercises);
+    return Workout(id: id, name: name, createdOn: createdOn, exercises: exercises);
   }
 
   Map<String, dynamic> toMap() {
