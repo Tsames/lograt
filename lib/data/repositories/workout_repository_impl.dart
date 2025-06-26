@@ -105,7 +105,7 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   @override
   Future<int> createWorkout(Workout workout) async {
     final workoutModel = WorkoutModel.fromEntity(workout);
-    return await _workoutDao.insertWorkout(workoutModel);
+    return await _workoutDao.insert(workoutModel);
   }
 
   @override
@@ -127,11 +127,35 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
+  Future<void> updateWorkout(Workout updatedWorkout) async {
+    final workoutModel = WorkoutModel.fromEntity(updatedWorkout);
+    await _workoutDao.update(workoutModel);
+  }
+
+  @override
+  Future<void> updateExercise({required Exercise updatedExercise, required int workoutId}) async {
+    final exerciseModel = ExerciseModel.fromEntity(entity: updatedExercise, workoutId: workoutId);
+    await _exerciseDao.update(exerciseModel);
+  }
+
+  @override
+  Future<void> updateExerciseType(ExerciseType updatedType) async {
+    final exerciseTypeModel = ExerciseTypeModel.fromEntity(updatedType);
+    await _exerciseTypeDao.update(exerciseTypeModel);
+  }
+
+  @override
+  Future<void> updateExerciseSet({required ExerciseSet updatedSet, required int exerciseId}) async {
+    final exerciseSetModel = ExerciseSetModel.fromEntity(entity: updatedSet, exerciseId: exerciseId);
+    await _exerciseSetDao.update(exerciseSetModel);
+  }
+
+  @override
   Future<void> addWorkouts(List<Workout> workouts) async {
     // Convert all domain entities to data models
     final workoutModels = workouts.map(WorkoutModel.fromEntity).toList();
     for (final workoutModel in workoutModels) {
-      await _workoutDao.insertWorkout(workoutModel);
+      await _workoutDao.insert(workoutModel);
     }
   }
 

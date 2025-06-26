@@ -28,7 +28,7 @@ void main() {
     test('should insert and retrieve workout', () async {
       final workout = WorkoutModel(name: 'Test Workout', createdOn: DateTime.now());
 
-      await dao.insertWorkout(workout);
+      await dao.insert(workout);
       final workouts = await dao.getWorkouts();
 
       expect(workouts.length, equals(1));
@@ -39,8 +39,8 @@ void main() {
       final workout1 = WorkoutModel(name: 'Workout 1', createdOn: DateTime.now());
       final workout2 = WorkoutModel(name: 'Workout 2', createdOn: DateTime.now());
 
-      await dao.insertWorkout(workout1);
-      await dao.insertWorkout(workout2);
+      await dao.insert(workout1);
+      await dao.insert(workout2);
 
       final workouts = await dao.getWorkouts();
 
@@ -50,14 +50,14 @@ void main() {
     test('should delete a workout after inserting it', () async {
       final workout = WorkoutModel(name: 'Delete Test', createdOn: DateTime.now());
 
-      await dao.insertWorkout(workout);
+      await dao.insert(workout);
 
       var workouts = await dao.getWorkouts();
       expect(workouts.length, equals(1));
       expect(workouts.first.name, equals('Delete Test'));
 
       final workoutId = workouts.first.id;
-      await dao.deleteWorkout(workoutId!);
+      await dao.delete(workoutId!);
 
       workouts = await dao.getWorkouts();
       expect(workouts.length, equals(0));
@@ -66,7 +66,7 @@ void main() {
 
     test('should update a workout', () async {
       final workout = WorkoutModel(name: 'Update Test', createdOn: DateTime.now());
-      await dao.insertWorkout(workout);
+      await dao.insert(workout);
 
       var workouts = await dao.getWorkouts();
       expect(workouts.length, equals(1));
@@ -77,7 +77,7 @@ void main() {
         createdOn: workouts.first.createdOn,
       );
 
-      await dao.updateWorkout(updatedWorkout);
+      await dao.update(updatedWorkout);
 
       workouts = await dao.getWorkouts();
       expect(workouts.length, equals(1));
@@ -90,9 +90,9 @@ void main() {
       final workout2 = WorkoutModel(name: 'Workout 2', createdOn: DateTime.now());
       final workout3 = WorkoutModel(name: 'Workout 3', createdOn: DateTime.now());
 
-      await dao.insertWorkout(workout1);
-      await dao.insertWorkout(workout2);
-      await dao.insertWorkout(workout3);
+      await dao.insert(workout1);
+      await dao.insert(workout2);
+      await dao.insert(workout3);
 
       var workouts = await dao.getWorkouts();
       expect(workouts.length, equals(3));

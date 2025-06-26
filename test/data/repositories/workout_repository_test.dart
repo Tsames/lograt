@@ -25,7 +25,7 @@ void main() {
         await repository.addWorkout(workout);
 
         // Capture what was actually passed to the DAO
-        final captured = verify(mockDao.insertWorkout(captureAny)).captured.single as WorkoutModel;
+        final captured = verify(mockDao.insert(captureAny)).captured.single as WorkoutModel;
 
         // Verify the properties match the original entity
         expect(captured.id, equals(workout.id));
@@ -44,7 +44,7 @@ void main() {
 
         await repository.addWorkouts(workouts);
 
-        final capturedCalls = verify(mockDao.insertWorkout(captureAny)).captured;
+        final capturedCalls = verify(mockDao.insert(captureAny)).captured;
 
         expect(capturedCalls.length, equals(workouts.length));
 
@@ -66,7 +66,7 @@ void main() {
         expect(() => repository.addWorkouts(emptyWorkouts), returnsNormally);
 
         // Verify no DAO calls were made
-        verifyNever(mockDao.insertWorkout(any));
+        verifyNever(mockDao.insert(any));
       });
     });
 
@@ -80,7 +80,7 @@ void main() {
         final unsortedWorkouts = [oldWorkout, newestWorkout, newerWorkout];
         when(mockDao.getWorkouts()).thenAnswer((_) async => unsortedWorkouts);
 
-        final result = await repository.getMostRecentWorkouts();
+        final result = await repository.getMostRecentSummaries();
         verify(mockDao.getWorkouts()).called(1);
 
         // Verify workouts are sorted correctly (newest first)
@@ -93,7 +93,7 @@ void main() {
       test('should return empty list when DAO returns empty list', () async {
         when(mockDao.getWorkouts()).thenAnswer((_) async => <WorkoutModel>[]);
 
-        final result = await repository.getMostRecentWorkouts();
+        final result = await repository.getMostRecentSummaries();
 
         verify(mockDao.getWorkouts()).called(1);
         expect(result, isEmpty);
@@ -116,7 +116,7 @@ void main() {
         await repository.seedWorkouts();
 
         // Verify insertWorkout was called for each sample workout
-        verify(mockDao.insertWorkout(any)).called(greaterThan(0));
+        verify(mockDao.insert(any)).called(greaterThan(0));
       });
     });
 
@@ -124,13 +124,13 @@ void main() {
       test('should propagate exceptions from DAO operations', () async {
         when(mockDao.getWorkouts()).thenThrow(Exception('Database error'));
 
-        expect(() => repository.getMostRecentWorkouts(), throwsA(isA<Exception>()));
+        expect(() => repository.getMostRecentSummaries(), throwsA(isA<Exception>()));
       });
 
       test('should handle DAO insertion failures', () async {
         final workout = Workout(id: 1, name: 'Test Workout', createdOn: DateTime.now());
 
-        when(mockDao.insertWorkout(any)).thenThrow(Exception('Insert failed'));
+        when(mockDao.insert(any)).thenThrow(Exception('Insert failed'));
 
         expect(() => repository.addWorkout(workout), throwsA(isA<Exception>()));
       });

@@ -40,7 +40,7 @@ class MockWorkoutDao extends _i1.Mock implements _i2.WorkoutDao {
           as _i3.Future<List<_i4.WorkoutModel>>);
 
   @override
-  _i3.Future<void> insertWorkout(_i4.WorkoutModel? workout) =>
+  _i3.Future<void> insert(_i4.WorkoutModel? workout) =>
       (super.noSuchMethod(
             Invocation.method(#insertWorkout, [workout]),
             returnValue: _i3.Future<void>.value(),
@@ -49,7 +49,7 @@ class MockWorkoutDao extends _i1.Mock implements _i2.WorkoutDao {
           as _i3.Future<void>);
 
   @override
-  _i3.Future<void> updateWorkout(_i4.WorkoutModel? workout) =>
+  _i3.Future<void> update(_i4.WorkoutModel? workout) =>
       (super.noSuchMethod(
             Invocation.method(#updateWorkout, [workout]),
             returnValue: _i3.Future<void>.value(),
@@ -58,7 +58,7 @@ class MockWorkoutDao extends _i1.Mock implements _i2.WorkoutDao {
           as _i3.Future<void>);
 
   @override
-  _i3.Future<void> deleteWorkout(int? id) =>
+  _i3.Future<void> delete(int? id) =>
       (super.noSuchMethod(
             Invocation.method(#deleteWorkout, [id]),
             returnValue: _i3.Future<void>.value(),
