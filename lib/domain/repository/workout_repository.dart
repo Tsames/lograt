@@ -11,9 +11,9 @@ abstract class WorkoutRepository {
   Future<List<Exercise>> getRecentExercisesOfType({ExerciseType type, int limit});
 
   Future<int> createWorkout(Workout workout);
-  Future<int> createExercise(Exercise exercise);
+  Future<int> createExercise({required Exercise exercise, required int workoutId});
   Future<int> createExerciseType(ExerciseType type);
-  Future<int> createExerciseSet(ExerciseSet set);
+  Future<int> createExerciseSet({required ExerciseSet set, required int exerciseId});
   Future<int> createWorkouts(List<Workout> workouts);
 
   Future<void> updateWorkout({required int workoutId, required Workout updatedWorkout});
