@@ -84,13 +84,14 @@ class ExerciseDao {
   }
 
   /// Get all exercises that use a specific exercise type
-  Future<List<ExerciseModel>> getByExerciseTypeId(int exerciseTypeId) async {
+  Future<List<ExerciseModel>> getByExerciseTypeId({required int exerciseTypeId, required int limit}) async {
     final database = await _db.database;
     final maps = await database.query(
       _tableName,
       where: 'exercise_type_id = ?',
       whereArgs: [exerciseTypeId],
-      orderBy: 'workout_id ASC, order_index ASC',
+      orderBy: 'workout_id DESC',
+      limit: limit,
     );
 
     return maps.map((map) => ExerciseModel.fromMap(map)).toList();
