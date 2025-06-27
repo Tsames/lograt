@@ -37,10 +37,17 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   /// Main method for populating the recent workouts page.
   @override
   Future<List<WorkoutSummary>> getMostRecentSummaries(int limit) async {
-    final workoutSummaryModels = await _workoutDao.getRecentSummaries();
-    final workoutSummaryEntities = workoutSummaryModels.map((workoutModel) => workoutModel.toEntity()).toList();
+    try {
+      final workoutSummaryModels = await _workoutDao.getRecentSummaries(limit: limit);
 
-    return workoutSummaryEntities;
+      final workoutSummaryEntities = workoutSummaryModels.map((workoutModel) => workoutModel.toEntity()).toList();
+
+      return workoutSummaryEntities;
+    } on DatabaseException catch (e) {
+      throw WorkoutDataException('Failed to load recent workout summaries: $e');
+    } catch (e) {
+      throw WorkoutDataException('Unexpected error loading recent workout summaries: $e');
+    }
   }
 
   /// Get a [Workout] including all its associated exercises and their associated sets by [workoutId].
