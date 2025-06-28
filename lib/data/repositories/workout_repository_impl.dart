@@ -112,25 +112,48 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   @override
   Future<List<Exercise>> getExercisesOfType({required int typeId, int limit = 20}) async {
     try {
-      final exerciseModels = await _exerciseDao.getByExerciseTypeId(exerciseTypeId: typeId, limit: limit);
-
+      // Verify type exists
       final exerciseType = await _exerciseTypeDao.getById(typeId);
       if (exerciseType == null) {
-        throw WorkoutDataException('No associated exercise type for typeId: $typeId');
+        throw WorkoutDataException('Exercisetype with ID $typeId not found.');
       }
 
-      final completeExerciseEntities = <Exercise>[];
+      // Get all exercises of that type
+      final exerciseModels = await _exerciseDao.getByExerciseTypeId(exerciseTypeId: typeId, limit: limit);
 
-      for (final exercise in exerciseModels) {
-        if (exercise.id == null) continue;
+      // If there are no exercises of that type, then return an empty list
+      if (exerciseModels.isEmpty) return <Exercise>[];
 
-        final sets = await _exerciseSetDao.getByExerciseId(exercise.id!);
-        final entitySets = sets != null ? sets.map((set) => set.toEntity()).toList() : <ExerciseSet>[];
+      final exerciseIds = exerciseModels
+          .where((exercise) => exercise.id != null)
+          .map((exercise) => exercise.id!)
+          .toList();
 
-        completeExerciseEntities.add(exercise.toEntity(exerciseType: exerciseType.toEntity(), sets: entitySets));
+      // Get all sets for all our exercises
+      final allSets = await _exerciseSetDao.getBatchByExerciseIds(exerciseIds);
+
+      // Create a map from exercise id to associated sets
+      final setsByExerciseId = <int, List<ExerciseSetModel>>{};
+      for (final set in allSets) {
+        if (set.exerciseId != null) {
+          setsByExerciseId.putIfAbsent(set.exerciseId!, () => []).add(set);
+        }
       }
+
+      // Create a List of Exercise entities with the help of our map
+      final completeExerciseEntities = exerciseModels.where((exercise) => exercise.id != null).map((exercise) {
+        final exerciseId = exercise.id!;
+        final sets = setsByExerciseId[exerciseId] ?? <ExerciseSetModel>[];
+        final entitySets = sets.map((set) => set.toEntity()).toList();
+
+        return exercise.toEntity(exerciseType: exerciseType.toEntity(), sets: entitySets);
+      }).toList();
 
       return completeExerciseEntities;
+    } on WorkoutDataException {
+      rethrow;
+    } on DatabaseException catch (e) {
+      throw WorkoutDataException('Failed to load exercises of type $typeId: $e');
     } catch (e) {
       throw WorkoutDataException('Unexpected error loading exercises of type $typeId: $e');
     }
