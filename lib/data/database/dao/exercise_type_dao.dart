@@ -77,6 +77,10 @@ class ExerciseTypeDao {
     }
   }
 
+  Future<int> insertWithTransaction({required ExerciseTypeModel exerciseType, required Transaction txn}) async {
+    return await txn.insert(_tableName, exerciseType.toMap());
+  }
+
   /// Update an existing exercise type
   /// Returns the number of rows affected (should be 1 for success)
   Future<int> update(ExerciseTypeModel exerciseType) async {

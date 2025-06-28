@@ -60,15 +60,14 @@ class ExerciseSetDao {
   }
 
   /// Batch insert a list of [ExerciseSetModel]
-  Future<void> batchInsert(List<ExerciseSetModel> sets) async {
-    final db = await _db.database;
-    final batch = db.batch();
+  Future<void> batchInsertWithTransaction({required List<ExerciseSetModel> sets, required Transaction txn}) async {
+    final batch = txn.batch();
 
     for (final set in sets) {
       batch.insert(_tableName, set.toMap());
     }
 
-    batch.commit(noResult: true, continueOnError: true);
+    await batch.commit(noResult: true);
   }
 
   /// Update an existing exercise set

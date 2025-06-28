@@ -51,6 +51,10 @@ class WorkoutDao {
     return await db.insert(_tableName, workout.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  Future<int> insertWithTransaction({required WorkoutModel workout, required Transaction txn}) async {
+    return await txn.insert(_tableName, workout.toMap());
+  }
+
   Future<int> update(WorkoutModel workout) async {
     final db = await _db.database;
     return await db.update(_tableName, workout.toMap(), where: 'id = ?', whereArgs: [workout.id]);
