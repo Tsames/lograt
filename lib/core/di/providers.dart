@@ -39,12 +39,14 @@ final exerciseSetDaoProvider = Provider<ExerciseSetDao>((ref) {
 
 // Repository provider
 final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
+  final database = ref.read(appDatabaseProvider);
   final workoutDao = ref.read(workoutDaoProvider);
   final exerciseDao = ref.read(exerciseDaoProvider);
   final exerciseTypeDao = ref.read(exerciseTypeDaoProvider);
   final exerciseSetDao = ref.read(exerciseSetDaoProvider);
 
   return WorkoutRepositoryImpl(
+    databaseConnection: database,
     workoutDao: workoutDao,
     exerciseDao: exerciseDao,
     exerciseTypeDao: exerciseTypeDao,

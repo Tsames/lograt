@@ -119,6 +119,10 @@ class ExerciseDao {
     return await database.insert(_tableName, exercise.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  Future<int> insertWithTransaction({required ExerciseModel exercise, required Transaction txn}) async {
+    return await txn.insert(_tableName, exercise.toMap());
+  }
+
   /// Update an existing exercise
   /// Returns the number of rows affected (should be 1 for success)
   Future<int> update(ExerciseModel exercise) async {

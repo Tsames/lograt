@@ -1,3 +1,4 @@
+import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/database/dao/exercise_dao.dart';
 import 'package:lograt/data/database/dao/exercise_set_dao.dart';
 import 'package:lograt/data/database/dao/exercise_type_dao.dart';
@@ -18,17 +19,20 @@ import '../models/exercise_type_model.dart';
 import '../models/workout_model.dart';
 
 class WorkoutRepositoryImpl implements WorkoutRepository {
+  final AppDatabase _db;
   final WorkoutDao _workoutDao;
   final ExerciseDao _exerciseDao;
   final ExerciseTypeDao _exerciseTypeDao;
   final ExerciseSetDao _exerciseSetDao;
 
   WorkoutRepositoryImpl({
+    required AppDatabase databaseConnection,
     required WorkoutDao workoutDao,
     required ExerciseDao exerciseDao,
     required ExerciseTypeDao exerciseTypeDao,
     required ExerciseSetDao exerciseSetDao,
-  }) : _workoutDao = workoutDao,
+  }) : _db = databaseConnection,
+       _workoutDao = workoutDao,
        _exerciseDao = exerciseDao,
        _exerciseTypeDao = exerciseTypeDao,
        _exerciseSetDao = exerciseSetDao;
@@ -98,9 +102,6 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
       }
 
       final exerciseSetModels = await _exerciseSetDao.getByExerciseId(exerciseModel.id!);
-      if (exerciseSetModels == null) {
-        return exerciseModel.toEntity(exerciseType: exerciseTypeModel.toEntity(), sets: const []);
-      }
 
       final exerciseSetEntity = exerciseSetModels.map((set) => set.toEntity()).toList();
       return exerciseModel.toEntity(exerciseType: exerciseTypeModel.toEntity(), sets: exerciseSetEntity);
@@ -112,25 +113,48 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   @override
   Future<List<Exercise>> getExercisesOfType({required int typeId, int limit = 20}) async {
     try {
-      final exerciseModels = await _exerciseDao.getByExerciseTypeId(exerciseTypeId: typeId, limit: limit);
-
+      // Verify type exists
       final exerciseType = await _exerciseTypeDao.getById(typeId);
       if (exerciseType == null) {
-        throw WorkoutDataException('No associated exercise type for typeId: $typeId');
+        throw WorkoutDataException('ExerciseType with ID $typeId not found.');
       }
 
-      final completeExerciseEntities = <Exercise>[];
+      // Get all exercises of that type
+      final exerciseModels = await _exerciseDao.getByExerciseTypeId(exerciseTypeId: typeId, limit: limit);
 
-      for (final exercise in exerciseModels) {
-        if (exercise.id == null) continue;
+      // If there are no exercises of that type, then return an empty list
+      if (exerciseModels.isEmpty) return <Exercise>[];
 
-        final sets = await _exerciseSetDao.getByExerciseId(exercise.id!);
-        final entitySets = sets != null ? sets.map((set) => set.toEntity()).toList() : <ExerciseSet>[];
+      final exerciseIds = exerciseModels
+          .where((exercise) => exercise.id != null)
+          .map((exercise) => exercise.id!)
+          .toList();
 
-        completeExerciseEntities.add(exercise.toEntity(exerciseType: exerciseType.toEntity(), sets: entitySets));
+      // Get all sets for all our exercises
+      final allSets = await _exerciseSetDao.getBatchByExerciseIds(exerciseIds);
+
+      // Create a map from exercise id to associated sets
+      final setsByExerciseId = <int, List<ExerciseSetModel>>{};
+      for (final set in allSets) {
+        if (set.exerciseId != null) {
+          setsByExerciseId.putIfAbsent(set.exerciseId!, () => []).add(set);
+        }
       }
+
+      // Create a List of Exercise entities with the help of our map
+      final completeExerciseEntities = exerciseModels.where((exercise) => exercise.id != null).map((exercise) {
+        final exerciseId = exercise.id!;
+        final sets = setsByExerciseId[exerciseId] ?? <ExerciseSetModel>[];
+        final entitySets = sets.map((set) => set.toEntity()).toList();
+
+        return exercise.toEntity(exerciseType: exerciseType.toEntity(), sets: entitySets);
+      }).toList();
 
       return completeExerciseEntities;
+    } on WorkoutDataException {
+      rethrow;
+    } on DatabaseException catch (e) {
+      throw WorkoutDataException('Failed to load exercises of type $typeId: $e');
     } catch (e) {
       throw WorkoutDataException('Unexpected error loading exercises of type $typeId: $e');
     }
@@ -143,47 +167,46 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
-  Future<List<int>> createWorkouts(List<Workout> workouts) async {
-    final workoutModels = workouts.map(WorkoutModel.fromEntity).toList();
-    final workoutIds = <int>[];
+  Future<void> createWorkouts(List<Workout> workouts) async {
+    if (workouts.isEmpty) return;
 
-    // First, insert all workouts and collect their IDs
-    for (final workoutModel in workoutModels) {
-      final workoutId = await _workoutDao.insert(workoutModel);
-      workoutIds.add(workoutId);
+    try {
+      final db = await _db.database;
+      return await db.transaction<void>((txn) async {
+        for (final workout in workouts) {
+          final workoutModel = WorkoutModel.fromEntity(workout);
 
-      // For each workout, prepare its exercises
-      if (workoutModel.toEntity().exercises.isNotEmpty) {
-        final exercises = workoutModel.toEntity().exercises;
+          // Pass the transaction to each DAO operation
+          final workoutId = await _workoutDao.insertWithTransaction(workout: workoutModel, txn: txn);
 
-        // Insert each exercise and its associated sets
-        for (final exercise in exercises) {
-          // Insert the exercise type if needed
-          int exerciseTypeId =
-              exercise.exerciseType.id ??
-              await _exerciseTypeDao.insert(ExerciseTypeModel.fromEntity(exercise.exerciseType));
+          for (final exercise in workout.exercises) {
+            int exerciseTypeId =
+                exercise.exerciseType.id ??
+                await _exerciseTypeDao.insertWithTransaction(
+                  exerciseType: ExerciseTypeModel.fromEntity(exercise.exerciseType),
+                  txn: txn,
+                );
 
-          // Create and insert the exercise
-          final exerciseModel = ExerciseModel.fromEntity(
-            entity: exercise.copyWith(exerciseType: exercise.exerciseType.copyWith(id: exerciseTypeId)),
-            workoutId: workoutId,
-          );
-          final exerciseId = await _exerciseDao.insert(exerciseModel);
+            final exerciseModel = ExerciseModel.fromEntity(
+              entity: exercise.copyWith(exerciseType: exercise.exerciseType.copyWith(id: exerciseTypeId)),
+              workoutId: workoutId,
+            );
+            final exerciseId = await _exerciseDao.insertWithTransaction(exercise: exerciseModel, txn: txn);
 
-          // Create and insert all sets for this exercise
-          if (exercise.sets.isNotEmpty) {
-            final setModels = exercise.sets
-                .map((set) => ExerciseSetModel.fromEntity(entity: set, exerciseId: exerciseId))
-                .toList();
-
-            // Batch insert the sets
-            await _exerciseSetDao.batchInsert(setModels);
+            if (exercise.sets.isNotEmpty) {
+              final setModels = exercise.sets
+                  .map((set) => ExerciseSetModel.fromEntity(entity: set, exerciseId: exerciseId))
+                  .toList();
+              await _exerciseSetDao.batchInsertWithTransaction(sets: setModels, txn: txn);
+            }
           }
         }
-      }
+      });
+    } on DatabaseException catch (e) {
+      throw WorkoutDataException('Failed to create workouts: $e');
+    } catch (e) {
+      throw WorkoutDataException('Unexpected error creating workouts: $e');
     }
-
-    return workoutIds;
   }
 
   @override

@@ -22,18 +22,33 @@ class ExerciseSetDao {
   }
 
   /// Get all exercise sets for a specific exercise, ordered by their sequence
-  /// Returns null if no there are no exercise sets with the given exercise ID
-  Future<List<ExerciseSetModel>?> getByExerciseId(int exerciseId) async {
+  Future<List<ExerciseSetModel>> getByExerciseId(int exerciseId) async {
     final database = await _db.database;
     final maps = await database.query(
       _tableName,
       where: 'exercise_id = ?',
       whereArgs: [exerciseId],
-      orderBy: 'order ASC',
+      orderBy: 'exercise_id DESC, order DESC',
     );
 
-    final sets = maps.map((map) => ExerciseSetModel.fromMap(map)).toList();
-    return sets.isEmpty ? null : sets;
+    return maps.map((map) => ExerciseSetModel.fromMap(map)).toList();
+  }
+
+  /// For batch retrieval of all sets associated with a list of exercise ID
+  Future<List<ExerciseSetModel>> getBatchByExerciseIds(List<int> exerciseIds) async {
+    if (exerciseIds.isEmpty) return <ExerciseSetModel>[];
+
+    final db = await _db.database;
+
+    final placeholders = List.filled(exerciseIds.length, '?').join(",");
+    final result = await db.query(
+      _tableName,
+      where: 'exercise_id IN ($placeholders)',
+      whereArgs: exerciseIds,
+      orderBy: 'exercise_id DESC',
+    );
+
+    return result.map((row) => ExerciseSetModel.fromMap(row)).toList();
   }
 
   /// Insert a new exercise set
@@ -45,15 +60,14 @@ class ExerciseSetDao {
   }
 
   /// Batch insert a list of [ExerciseSetModel]
-  Future<void> batchInsert(List<ExerciseSetModel> sets) async {
-    final db = await _db.database;
-    final batch = db.batch();
+  Future<void> batchInsertWithTransaction({required List<ExerciseSetModel> sets, required Transaction txn}) async {
+    final batch = txn.batch();
 
     for (final set in sets) {
       batch.insert(_tableName, set.toMap());
     }
 
-    batch.commit(noResult: true, continueOnError: true);
+    await batch.commit(noResult: true);
   }
 
   /// Update an existing exercise set
