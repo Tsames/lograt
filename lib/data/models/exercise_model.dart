@@ -35,7 +35,7 @@ class ExerciseModel {
       id: map['id'] as int?,
       workoutId: map['workout_id'] as int,
       exerciseTypeId: map['exercise_type_id'] as int,
-      order: map['order'] as int,
+      order: map['exercise_order'] as int,
       notes: map['notes'] as String,
     );
   }
@@ -49,7 +49,7 @@ class ExerciseModel {
       if (id != null) 'id': id,
       'workout_id': workoutId,
       'exercise_type_id': exerciseTypeId,
-      'order': order,
+      'exercise_order': order,
       'notes': notes,
     };
   }
