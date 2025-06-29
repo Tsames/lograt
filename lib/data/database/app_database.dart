@@ -23,7 +23,12 @@ class AppDatabase {
   }
 
   Future<Database> initialize() async {
-    final path = connectionString == ':memory:' ? ':memory:' : join(await getDatabasesPath(), connectionString);
+    // For in-memory databases (testing), use simple initialization without migration tracking
+    if (connectionString == ':memory:') {
+      return await _initializeTestDatabase(connectionString);
+    }
+
+    final path = join(await getDatabasesPath(), connectionString);
 
     final config = MigrationConfig(
       initializationScript: _buildInitializationScript(),
@@ -33,6 +38,26 @@ class AppDatabase {
     return await openDatabaseWithMigration(path, config);
   }
 
+  Future<Database> _initializeTestDatabase(String path) async {
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (Database db, int version) async {
+        await db.execute(_createWorkoutsTableSQL());
+        await db.execute(_createExerciseTypesTableSQL());
+        await db.execute(_createWorkoutExercisesTableSQL());
+        await db.execute(_createWorkoutSetsTableSQL());
+      },
+    );
+  }
+
+  Future<void> close() async {
+    if (_database != null) {
+      await _database!.close();
+      _database = null; // Reset for next use
+    }
+  }
+
   static const workoutsTableName = 'workouts';
   static const exerciseTypesTableName = "exercise_types";
   static const exercisesTableName = "workout_exercises";
@@ -40,22 +65,12 @@ class AppDatabase {
 
   // Build the complete schema for new installations
   List<String> _buildInitializationScript() {
-    return [
-      _createWorkoutsTableSQL(),
-      _createExerciseTypesTableSQL(),
-      _createWorkoutExercisesTableSQL(),
-      _createIndexesSQL(),
-    ];
+    return [_createWorkoutsTableSQL(), _createExerciseTypesTableSQL(), _createWorkoutExercisesTableSQL()];
   }
 
   // Build the incremental migration steps for existing databases
   List<String> _buildMigrationScripts() {
-    return [
-      _createExerciseTypesTableSQL(),
-      _createWorkoutExercisesTableSQL(),
-      _createIndexesSQL(),
-      _createWorkoutSetsTableSQL(),
-    ];
+    return [_createExerciseTypesTableSQL(), _createWorkoutExercisesTableSQL(), _createWorkoutSetsTableSQL()];
   }
 
   String _createWorkoutsTableSQL() {
@@ -63,8 +78,7 @@ class AppDatabase {
       CREATE TABLE $workoutsTableName(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        createdOn INTEGER NOT NULL,
-        description TEXT
+        createdOn INTEGER NOT NULL
       )
     ''';
   }
@@ -85,7 +99,7 @@ class AppDatabase {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         workout_id INTEGER NOT NULL,
         exercise_type_id INTEGER NOT NULL,
-        order INTEGER NOT NULL,
+        exercise_order INTEGER NOT NULL,
         notes TEXT,
         FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE,
         FOREIGN KEY (exercise_type_id) REFERENCES exercise_types(id) ON DELETE RESTRICT
@@ -98,7 +112,7 @@ class AppDatabase {
     CREATE TABLE $exerciseSetsTableName(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       exercise_id INTEGER NOT NULL,
-      order INTEGER NOT NULL,
+      set_order INTEGER NOT NULL,
       reps INTEGER NOT NULL,
       weight INTEGER,
       rest_time_seconds INTEGER,
@@ -108,11 +122,11 @@ class AppDatabase {
     ''';
   }
 
-  String _createIndexesSQL() {
-    return '''
-      CREATE INDEX idx_workout_exercises_workout_id ON workout_exercises(workout_id);
-      CREATE INDEX idx_workout_exercises_exercise_type_id ON workout_exercises(exercise_type_id);
-      CREATE INDEX idx_workout_exercises_order ON workout_exercises(workout_id, order_index);
-    ''';
-  }
+  // String _createIndexesSQL() {
+  //   return '''
+  //     CREATE INDEX idx_workout_exercises_workout_id ON workout_exercises(workout_id);
+  //     CREATE INDEX idx_workout_exercises_exercise_type_id ON workout_exercises(exercise_type_id);
+  //     CREATE INDEX idx_workout_exercises_order ON workout_exercises(workout_id, order_index);
+  //   ''';
+  // }
 }
