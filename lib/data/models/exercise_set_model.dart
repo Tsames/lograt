@@ -37,7 +37,7 @@ class ExerciseSetModel {
     return ExerciseSetModel(
       id: map['id'] as int?,
       exerciseId: map['exercise_id'] as int,
-      order: map['order'] as int,
+      order: map['set_order'] as int,
       reps: map['reps'] as int,
       weight: map['weight'] as int?,
       restTimeSeconds: map['rest_time_seconds'] as int?,
@@ -60,7 +60,7 @@ class ExerciseSetModel {
     return {
       if (id != null) 'id': id,
       'exercise_id': exerciseId,
-      'order': order,
+      'set_order': order,
       'reps': reps,
       'weight': weight,
       'rest_time_seconds': restTimeSeconds,

@@ -30,6 +30,10 @@ class WorkoutModel {
     return {'id': id, 'name': name, 'createdOn': createdOn.millisecondsSinceEpoch};
   }
 
+  WorkoutModel copyWith({int? id, String? name, DateTime? createdOn, List<Exercise>? exercises}) {
+    return WorkoutModel(id: id ?? this.id, name: name ?? this.name, createdOn: createdOn ?? this.createdOn);
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) || other is WorkoutModel && runtimeType == other.runtimeType && id == other.id;

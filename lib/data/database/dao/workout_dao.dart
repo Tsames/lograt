@@ -37,9 +37,9 @@ class WorkoutDao {
 
     final maps = await db.query(
       _tableName,
-      where: 'created_on >= ?',
+      where: 'createdOn >= ?',
       whereArgs: [sixMonthsAgo],
-      orderBy: 'created_on DESC',
+      orderBy: 'createdOn DESC',
       limit: limit,
     );
 
@@ -48,7 +48,7 @@ class WorkoutDao {
 
   Future<int> insert(WorkoutModel workout) async {
     final db = await _db.database;
-    return await db.insert(_tableName, workout.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.insert(_tableName, workout.toMap(), conflictAlgorithm: ConflictAlgorithm.fail);
   }
 
   Future<int> insertWithTransaction({required WorkoutModel workout, required Transaction txn}) async {
