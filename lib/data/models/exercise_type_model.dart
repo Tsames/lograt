@@ -21,6 +21,10 @@ class ExerciseTypeModel {
     );
   }
 
+  ExerciseTypeModel copyWith({int? id, String? name, String? description}) {
+    return ExerciseTypeModel(id: id ?? this.id, name: name ?? this.name, description: description ?? this.description);
+  }
+
   ExerciseType toEntity() {
     return ExerciseType(id: id, name: name, description: description);
   }
