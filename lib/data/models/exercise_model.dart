@@ -40,6 +40,16 @@ class ExerciseModel {
     );
   }
 
+  ExerciseModel copyWith({int? id, int? workoutId, int? exerciseTypeId, int? order, String? notes}) {
+    return ExerciseModel(
+      id: id ?? this.id,
+      workoutId: workoutId ?? this.workoutId,
+      exerciseTypeId: exerciseTypeId ?? this.exerciseTypeId,
+      order: order ?? this.order,
+      notes: notes ?? this.notes,
+    );
+  }
+
   Exercise toEntity({required ExerciseType exerciseType, required List<ExerciseSet> sets}) {
     return Exercise(id: id, exerciseType: exerciseType, order: order, sets: sets, notes: notes);
   }

@@ -52,7 +52,7 @@ class ExerciseDao {
         we.id,
         we.workout_id,
         we.exercise_type_id,
-        we.order_index as order_index,
+        we.exercise_order as order_index,
         we.notes,
         et.name as exercise_type_name,
         et.description as exercise_type_description
