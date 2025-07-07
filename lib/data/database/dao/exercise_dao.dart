@@ -52,14 +52,14 @@ class ExerciseDao {
         we.id,
         we.workout_id,
         we.exercise_type_id,
-        we.exercise_order as order_index,
+        we.exercise_order,
         we.notes,
         et.name as exercise_type_name,
         et.description as exercise_type_description
       FROM $_tableName we
       JOIN exercise_types et ON we.exercise_type_id = et.id
       WHERE we.workout_id = ?
-      ORDER BY we.order_index ASC
+      ORDER BY we.exercise_order ASC
     ''',
       [workoutId],
     );

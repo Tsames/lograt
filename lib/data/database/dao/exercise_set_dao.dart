@@ -28,7 +28,7 @@ class ExerciseSetDao {
       _tableName,
       where: 'exercise_id = ?',
       whereArgs: [exerciseId],
-      orderBy: 'exercise_id DESC, order DESC',
+      orderBy: 'set_order ASC',
     );
 
     return maps.map((map) => ExerciseSetModel.fromMap(map)).toList();
