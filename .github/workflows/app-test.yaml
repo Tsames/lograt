@@ -1,0 +1,29 @@
+name: app-test.yml
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  app-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read FLUTTER_VERSION
+        uses: TarasMazepa/github-action-cat@main
+        id: get-flutter-version
+        with:
+          path: FLUTTER_VERSION
+          trim: true
+      - uses: flutter-actions/setup-flutter@v4
+        with:
+          version: ${{ steps.get-flutter-version.outputs.text }}
+      - run: flutter pub get
+        working-directory: app
+      - run: dart format . -o none --set-exit-if-changed
+        working-directory: app
+      - run: flutter analyze --fatal-infos
+        working-directory: app
+      - run: flutter test
+        working-directory: app
