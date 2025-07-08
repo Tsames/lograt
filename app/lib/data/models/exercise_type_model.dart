@@ -10,7 +10,11 @@ class ExerciseTypeModel {
   const ExerciseTypeModel({this.id, required this.name, this.description});
 
   factory ExerciseTypeModel.fromEntity(ExerciseType entity) {
-    return ExerciseTypeModel(id: entity.id, name: entity.name, description: entity.description);
+    return ExerciseTypeModel(
+      id: entity.id,
+      name: entity.name,
+      description: entity.description,
+    );
   }
 
   factory ExerciseTypeModel.fromMap(Map<String, dynamic> map) {
@@ -22,7 +26,11 @@ class ExerciseTypeModel {
   }
 
   ExerciseTypeModel copyWith({int? id, String? name, String? description}) {
-    return ExerciseTypeModel(id: id ?? this.id, name: name ?? this.name, description: description ?? this.description);
+    return ExerciseTypeModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+    );
   }
 
   ExerciseType toEntity() {
@@ -35,7 +43,10 @@ class ExerciseTypeModel {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is ExerciseTypeModel && runtimeType == other.runtimeType && id == other.id;
+      identical(this, other) ||
+      other is ExerciseTypeModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
 
   @override
   int get hashCode => id.hashCode;

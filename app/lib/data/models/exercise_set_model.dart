@@ -7,7 +7,7 @@ class ExerciseSetModel {
   final int? exerciseId; // Foreign key to workout_exercises table
   final int order;
   final int reps;
-  final int? weight;
+  final int? weightPounds;
   final int? restTimeSeconds;
   final String setType;
 
@@ -16,19 +16,22 @@ class ExerciseSetModel {
     required this.exerciseId,
     required this.order,
     required this.reps,
-    this.weight,
+    this.weightPounds,
     this.restTimeSeconds,
     this.setType = 'regular',
   });
 
-  factory ExerciseSetModel.fromEntity({required ExerciseSet entity, required int exerciseId}) {
+  factory ExerciseSetModel.fromEntity({
+    required ExerciseSet entity,
+    required int exerciseId,
+  }) {
     return ExerciseSetModel(
       id: entity.id,
       exerciseId: exerciseId,
       order: entity.order,
       reps: entity.reps,
-      weight: entity.weight,
-      restTimeSeconds: entity.restTime?.inSeconds,
+      weightPounds: entity.weightPounds,
+      restTimeSeconds: entity.restTimeSeconds?.inSeconds,
       setType: entity.setType.name,
     );
   }
@@ -39,9 +42,29 @@ class ExerciseSetModel {
       exerciseId: map['exercise_id'] as int,
       order: map['set_order'] as int,
       reps: map['reps'] as int,
-      weight: map['weight'] as int?,
+      weightPounds: map['weight'] as int?,
       restTimeSeconds: map['rest_time_seconds'] as int?,
       setType: map['set_type'] as String? ?? 'regular',
+    );
+  }
+
+  ExerciseSetModel copyWith({
+    int? id,
+    int? exerciseId,
+    int? order,
+    int? reps,
+    int? weightPounds,
+    int? restTimeSeconds,
+    String? setType,
+  }) {
+    return ExerciseSetModel(
+      id: id ?? this.id,
+      exerciseId: exerciseId ?? this.exerciseId,
+      order: order ?? this.order,
+      reps: reps ?? this.reps,
+      weightPounds: weightPounds ?? this.weightPounds,
+      restTimeSeconds: restTimeSeconds ?? this.restTimeSeconds,
+      setType: setType ?? this.setType,
     );
   }
 
@@ -50,9 +73,14 @@ class ExerciseSetModel {
       id: id,
       order: order,
       reps: reps,
-      weight: weight,
-      restTime: restTimeSeconds != null ? Duration(seconds: restTimeSeconds!) : null,
-      setType: SetType.values.firstWhere((e) => e.name == setType, orElse: () => SetType.working),
+      weightPounds: weightPounds,
+      restTimeSeconds: restTimeSeconds != null
+          ? Duration(seconds: restTimeSeconds!)
+          : null,
+      setType: SetType.values.firstWhere(
+        (e) => e.name == setType,
+        orElse: () => SetType.working,
+      ),
     );
   }
 
@@ -62,7 +90,7 @@ class ExerciseSetModel {
       'exercise_id': exerciseId,
       'set_order': order,
       'reps': reps,
-      'weight': weight,
+      'weight': weightPounds,
       'rest_time_seconds': restTimeSeconds,
       'set_type': setType,
     };
@@ -70,11 +98,15 @@ class ExerciseSetModel {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is ExerciseSetModel && runtimeType == other.runtimeType && id == other.id;
+      identical(this, other) ||
+      other is ExerciseSetModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
 
   @override
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => 'ExerciseSetModel{ id: ${id ?? 'null'}, workoutExerciseId: $exerciseId, set: $order }';
+  String toString() =>
+      'ExerciseSetModel{ id: ${id ?? 'null'}, workoutExerciseId: $exerciseId, set: $order }';
 }

@@ -10,7 +10,11 @@ class WorkoutSummaryModel {
   WorkoutSummaryModel({this.id, required this.name, required this.createdOn});
 
   factory WorkoutSummaryModel.fromEntity(WorkoutSummary workout) {
-    return WorkoutSummaryModel(id: workout.id, name: workout.name, createdOn: workout.createdOn);
+    return WorkoutSummaryModel(
+      id: workout.id,
+      name: workout.name,
+      createdOn: workout.createdOn,
+    );
   }
 
   factory WorkoutSummaryModel.fromMap(Map<String, dynamic> map) {
@@ -26,12 +30,19 @@ class WorkoutSummaryModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {'id': id, 'name': name, 'createdOn': createdOn.millisecondsSinceEpoch};
+    return {
+      'id': id,
+      'name': name,
+      'createdOn': createdOn.millisecondsSinceEpoch,
+    };
   }
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is WorkoutSummaryModel && runtimeType == other.runtimeType && id == other.id;
+      identical(this, other) ||
+      other is WorkoutSummaryModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
 
   @override
   int get hashCode => id.hashCode;

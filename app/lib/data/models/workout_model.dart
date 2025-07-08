@@ -11,7 +11,11 @@ class WorkoutModel {
   WorkoutModel({this.id, required this.name, required this.createdOn});
 
   factory WorkoutModel.fromEntity(Workout workout) {
-    return WorkoutModel(id: workout.id, name: workout.name, createdOn: workout.createdOn);
+    return WorkoutModel(
+      id: workout.id,
+      name: workout.name,
+      createdOn: workout.createdOn,
+    );
   }
 
   factory WorkoutModel.fromMap(Map<String, dynamic> map) {
@@ -23,20 +27,41 @@ class WorkoutModel {
   }
 
   Workout toEntity({List<Exercise> exercises = const []}) {
-    return Workout(id: id, name: name, createdOn: createdOn, exercises: exercises);
+    return Workout(
+      id: id,
+      name: name,
+      createdOn: createdOn,
+      exercises: exercises,
+    );
   }
 
   Map<String, dynamic> toMap() {
-    return {'id': id, 'name': name, 'createdOn': createdOn.millisecondsSinceEpoch};
+    return {
+      'id': id,
+      'name': name,
+      'createdOn': createdOn.millisecondsSinceEpoch,
+    };
   }
 
-  WorkoutModel copyWith({int? id, String? name, DateTime? createdOn, List<Exercise>? exercises}) {
-    return WorkoutModel(id: id ?? this.id, name: name ?? this.name, createdOn: createdOn ?? this.createdOn);
+  WorkoutModel copyWith({
+    int? id,
+    String? name,
+    DateTime? createdOn,
+    List<Exercise>? exercises,
+  }) {
+    return WorkoutModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      createdOn: createdOn ?? this.createdOn,
+    );
   }
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is WorkoutModel && runtimeType == other.runtimeType && id == other.id;
+      identical(this, other) ||
+      other is WorkoutModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
 
   @override
   int get hashCode => id.hashCode;

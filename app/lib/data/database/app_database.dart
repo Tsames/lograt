@@ -65,12 +65,20 @@ class AppDatabase {
 
   // Build the complete schema for new installations
   List<String> _buildInitializationScript() {
-    return [_createWorkoutsTableSQL(), _createExerciseTypesTableSQL(), _createWorkoutExercisesTableSQL()];
+    return [
+      _createWorkoutsTableSQL(),
+      _createExerciseTypesTableSQL(),
+      _createWorkoutExercisesTableSQL(),
+    ];
   }
 
   // Build the incremental migration steps for existing databases
   List<String> _buildMigrationScripts() {
-    return [_createExerciseTypesTableSQL(), _createWorkoutExercisesTableSQL(), _createWorkoutSetsTableSQL()];
+    return [
+      _createExerciseTypesTableSQL(),
+      _createWorkoutExercisesTableSQL(),
+      _createWorkoutSetsTableSQL(),
+    ];
   }
 
   String _createWorkoutsTableSQL() {

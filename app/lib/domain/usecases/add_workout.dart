@@ -11,6 +11,6 @@ class AddWorkout {
       throw ArgumentError('Workout name cannot be empty');
     }
 
-    await _repository.addWorkout(workout);
+    await _repository.createWorkout(workout);
   }
 }

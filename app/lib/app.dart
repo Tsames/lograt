@@ -15,7 +15,10 @@ class App extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow.shade700, brightness: Brightness.dark),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.yellow.shade700,
+          brightness: Brightness.dark,
+        ),
         useMaterial3: true,
       ),
       home: Home(),

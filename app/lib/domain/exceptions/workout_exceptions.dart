@@ -10,10 +10,12 @@ abstract class WorkoutException implements Exception {
 
 /// Thrown when trying to access a workout that doesn't exist
 class WorkoutNotFoundException extends WorkoutException {
-  WorkoutNotFoundException(int workoutId) : super('Workout with ID $workoutId was not found', workoutId);
+  WorkoutNotFoundException(int workoutId)
+    : super('Workout with ID $workoutId was not found', workoutId);
 
   @override
-  String toString() => 'WorkoutNotFoundException: Workout with ID $workoutId was not found';
+  String toString() =>
+      'WorkoutNotFoundException: Workout with ID $workoutId was not found';
 }
 
 /// Throw when there are problems with the workout data integrity

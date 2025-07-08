@@ -12,14 +12,26 @@ abstract class WorkoutRepository {
 
   Future<int> createWorkout(Workout workout);
   Future<void> createWorkouts(List<Workout> workouts);
-  Future<int> createExercise({required Exercise exercise, required int workoutId});
+  Future<int> createExercise({
+    required Exercise exercise,
+    required int workoutId,
+  });
   Future<int> createExerciseType(ExerciseType type);
-  Future<int> createExerciseSet({required ExerciseSet set, required int exerciseId});
+  Future<int> createExerciseSet({
+    required ExerciseSet set,
+    required int exerciseId,
+  });
 
   Future<void> updateWorkout(Workout entity);
-  Future<void> updateExercise({required Exercise entity, required int workoutId});
+  Future<void> updateExercise({
+    required Exercise entity,
+    required int workoutId,
+  });
   Future<void> updateExerciseType(ExerciseType entity);
-  Future<void> updateExerciseSet({required ExerciseSet entity, required int exerciseId});
+  Future<void> updateExerciseSet({
+    required ExerciseSet entity,
+    required int exerciseId,
+  });
 
   Future<int> deleteWorkout(int id);
   Future<int> deleteExercise(int id);

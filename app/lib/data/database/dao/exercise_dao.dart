@@ -18,7 +18,11 @@ class ExerciseDao {
   /// Returns null if no exercise with the given ID exists
   Future<ExerciseModel?> getById(int id) async {
     final database = await _db.database;
-    final maps = await database.query(_tableName, where: 'id = ?', whereArgs: [id]);
+    final maps = await database.query(
+      _tableName,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
 
     if (maps.isEmpty) return null;
     return ExerciseModel.fromMap(maps.first);
@@ -52,14 +56,14 @@ class ExerciseDao {
         we.id,
         we.workout_id,
         we.exercise_type_id,
-        we.exercise_order as order_index,
+        we.exercise_order,
         we.notes,
         et.name as exercise_type_name,
         et.description as exercise_type_description
       FROM $_tableName we
       JOIN exercise_types et ON we.exercise_type_id = et.id
       WHERE we.workout_id = ?
-      ORDER BY we.order_index ASC
+      ORDER BY we.exercise_order ASC
     ''',
       [workoutId],
     );
@@ -84,7 +88,10 @@ class ExerciseDao {
   }
 
   /// Get all exercises that use a specific exercise type
-  Future<List<ExerciseModel>> getByExerciseTypeId({required int exerciseTypeId, required int limit}) async {
+  Future<List<ExerciseModel>> getByExerciseTypeId({
+    required int exerciseTypeId,
+    required int limit,
+  }) async {
     final database = await _db.database;
     final maps = await database.query(
       _tableName,
@@ -116,10 +123,17 @@ class ExerciseDao {
   /// Returns the ID of the newly inserted exercise
   Future<int> insert(ExerciseModel exercise) async {
     final database = await _db.database;
-    return await database.insert(_tableName, exercise.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    return await database.insert(
+      _tableName,
+      exercise.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
-  Future<int> insertWithTransaction({required ExerciseModel exercise, required Transaction txn}) async {
+  Future<int> insertWithTransaction({
+    required ExerciseModel exercise,
+    required Transaction txn,
+  }) async {
     return await txn.insert(_tableName, exercise.toMap());
   }
 
@@ -131,7 +145,12 @@ class ExerciseDao {
     }
 
     final database = await _db.database;
-    return await database.update(_tableName, exercise.toMap(), where: 'id = ?', whereArgs: [exercise.id]);
+    return await database.update(
+      _tableName,
+      exercise.toMap(),
+      where: 'id = ?',
+      whereArgs: [exercise.id],
+    );
   }
 
   /// Delete an exercise from a workout
@@ -140,13 +159,21 @@ class ExerciseDao {
     if (exerciseToDelete == null) return 0;
 
     final database = await _db.database;
-    return await database.delete(_tableName, where: 'id = ?', whereArgs: [exerciseId]);
+    return await database.delete(
+      _tableName,
+      where: 'id = ?',
+      whereArgs: [exerciseId],
+    );
   }
 
   /// Delete all exercises for a specific workout
   /// This is typically called when a workout is deleted
   Future<int> deleteByWorkoutId(int workoutId) async {
     final database = await _db.database;
-    return await database.delete(_tableName, where: 'workout_id = ?', whereArgs: [workoutId]);
+    return await database.delete(
+      _tableName,
+      where: 'workout_id = ?',
+      whereArgs: [workoutId],
+    );
   }
 }
