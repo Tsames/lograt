@@ -21,7 +21,10 @@ void main() {
 
       workoutDao = WorkoutDao(testDatabase);
 
-      sampleWorkout = WorkoutModel(name: 'Morning Push Workout', createdOn: DateTime.now());
+      sampleWorkout = WorkoutModel(
+        name: 'Morning Push Workout',
+        createdOn: DateTime.now(),
+      );
     });
 
     tearDown(() async {
@@ -46,7 +49,10 @@ void main() {
         late int insertedId;
 
         await database.transaction((txn) async {
-          insertedId = await workoutDao.insertWithTransaction(workout: sampleWorkout, txn: txn);
+          insertedId = await workoutDao.insertWithTransaction(
+            workout: sampleWorkout,
+            txn: txn,
+          );
         });
 
         expect(insertedId, greaterThan(0));
@@ -72,7 +78,10 @@ void main() {
         expect(retrieved, isA<WorkoutModel>());
         expect(retrieved!.id, equals(existingWorkoutId));
         expect(retrieved.name, equals('Morning Push Workout'));
-        expect(retrieved.createdOn.difference(sampleWorkout.createdOn).inSeconds, lessThan(1));
+        expect(
+          retrieved.createdOn.difference(sampleWorkout.createdOn).inSeconds,
+          lessThan(1),
+        );
       });
 
       test('should retrieve workout by ID as WorkoutSummaryModel', () async {
@@ -82,7 +91,10 @@ void main() {
         expect(summary, isA<WorkoutSummaryModel>());
         expect(summary!.id, equals(existingWorkoutId));
         expect(summary.name, equals('Morning Push Workout'));
-        expect(summary.createdOn.difference(sampleWorkout.createdOn).inSeconds, lessThan(1));
+        expect(
+          summary.createdOn.difference(sampleWorkout.createdOn).inSeconds,
+          lessThan(1),
+        );
       });
 
       test('should return null when workout does not exist', () async {
@@ -101,7 +113,9 @@ void main() {
 
         final recentWorkout = WorkoutModel(
           name: 'Recent Workout',
-          createdOn: DateTime.now().subtract(Duration(days: 30)), // Recent enough
+          createdOn: DateTime.now().subtract(
+            Duration(days: 30),
+          ), // Recent enough
         );
 
         await workoutDao.insert(oldWorkout);
@@ -109,7 +123,10 @@ void main() {
 
         // Should exclude workouts older than 90 days
         final recentSummaries = await workoutDao.getRecentSummaries();
-        expect(recentSummaries.length, equals(2)); // Our original workout + recent workout
+        expect(
+          recentSummaries.length,
+          equals(2),
+        ); // Our original workout + recent workout
 
         final workoutNames = recentSummaries.map((w) => w.name).toList();
         expect(workoutNames, contains('Morning Push Workout'));
@@ -158,7 +175,9 @@ void main() {
       });
 
       test('should update existing workout successfully', () async {
-        final updatedWorkout = existingWorkout.copyWith(name: 'Updated Morning Workout');
+        final updatedWorkout = existingWorkout.copyWith(
+          name: 'Updated Morning Workout',
+        );
 
         final rowsAffected = await workoutDao.update(updatedWorkout);
 
@@ -170,14 +189,21 @@ void main() {
         expect(retrieved.createdOn, equals(existingWorkout.createdOn));
       });
 
-      test('should return 0 when trying to update non-existent workout', () async {
-        // Create a workout with an ID that doesn't exist in the database
-        final nonExistentWorkout = WorkoutModel(id: 99999, name: 'Ghost Workout', createdOn: DateTime.now());
+      test(
+        'should return 0 when trying to update non-existent workout',
+        () async {
+          // Create a workout with an ID that doesn't exist in the database
+          final nonExistentWorkout = WorkoutModel(
+            id: 99999,
+            name: 'Ghost Workout',
+            createdOn: DateTime.now(),
+          );
 
-        final rowsAffected = await workoutDao.update(nonExistentWorkout);
+          final rowsAffected = await workoutDao.update(nonExistentWorkout);
 
-        expect(rowsAffected, equals(0));
-      });
+          expect(rowsAffected, equals(0));
+        },
+      );
     });
 
     group('Delete Operations', () {
@@ -196,15 +222,21 @@ void main() {
         expect(retrieved, isNull);
       });
 
-      test('should return 0 when trying to delete non-existent workout', () async {
-        final rowsDeleted = await workoutDao.delete(99999);
+      test(
+        'should return 0 when trying to delete non-existent workout',
+        () async {
+          final rowsDeleted = await workoutDao.delete(99999);
 
-        expect(rowsDeleted, equals(0));
-      });
+          expect(rowsDeleted, equals(0));
+        },
+      );
 
       test('should clear entire table successfully', () async {
         for (int i = 0; i < 3; i++) {
-          final workout = WorkoutModel(name: 'Workout $i', createdOn: DateTime.now());
+          final workout = WorkoutModel(
+            name: 'Workout $i',
+            createdOn: DateTime.now(),
+          );
           await workoutDao.insert(workout);
         }
 

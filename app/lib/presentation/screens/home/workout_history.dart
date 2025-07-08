@@ -9,17 +9,21 @@ class WorkoutHistory extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final workoutHistoryState = ref.watch(workoutListProvider);
-    final workoutHistoryNotifier = ref.read(workoutListProvider.notifier);
+    // final workoutHistoryNotifier = ref.read(workoutListProvider.notifier);
 
     // Handle error state
     if (workoutHistoryState.error != null) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Error: ${workoutHistoryState.error}', style: const TextStyle(color: Colors.red)),
+          Text(
+            'Error: ${workoutHistoryState.error}',
+            style: const TextStyle(color: Colors.red),
+          ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () => ref.read(workoutListProvider.notifier).loadWorkouts(),
+            onPressed: () =>
+                ref.read(workoutListProvider.notifier).loadWorkouts(),
             child: const Text('Retry'),
           ),
         ],
@@ -45,7 +49,11 @@ class WorkoutHistory extends ConsumerWidget {
         final workout = workoutHistoryState.workouts[index];
         return Card(
           margin: const EdgeInsets.only(bottom: 16),
-          child: ListTile(title: Text(workout.name), subtitle: Text(workout.createdOn.toString()), onTap: () {}),
+          child: ListTile(
+            title: Text(workout.name),
+            subtitle: Text(workout.createdOn.toString()),
+            onTap: () {},
+          ),
         );
       },
     );

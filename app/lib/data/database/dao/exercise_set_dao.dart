@@ -15,7 +15,11 @@ class ExerciseSetDao {
   /// Returns null if no exercise set with the given ID exists
   Future<ExerciseSetModel?> getById(int setId) async {
     final database = await _db.database;
-    final maps = await database.query(_tableName, where: 'id = ?', whereArgs: [setId]);
+    final maps = await database.query(
+      _tableName,
+      where: 'id = ?',
+      whereArgs: [setId],
+    );
 
     if (maps.isEmpty) return null;
     return ExerciseSetModel.fromMap(maps.first);
@@ -28,14 +32,16 @@ class ExerciseSetDao {
       _tableName,
       where: 'exercise_id = ?',
       whereArgs: [exerciseId],
-      orderBy: 'exercise_id DESC, order DESC',
+      orderBy: 'set_order ASC',
     );
 
     return maps.map((map) => ExerciseSetModel.fromMap(map)).toList();
   }
 
   /// For batch retrieval of all sets associated with a list of exercise ID
-  Future<List<ExerciseSetModel>> getBatchByExerciseIds(List<int> exerciseIds) async {
+  Future<List<ExerciseSetModel>> getBatchByExerciseIds(
+    List<int> exerciseIds,
+  ) async {
     if (exerciseIds.isEmpty) return <ExerciseSetModel>[];
 
     final db = await _db.database;
@@ -56,11 +62,18 @@ class ExerciseSetDao {
   /// Will replace existing values if the id already exists
   Future<int> insert(ExerciseSetModel set) async {
     final database = await _db.database;
-    return await database.insert(_tableName, set.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    return await database.insert(
+      _tableName,
+      set.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   /// Batch insert a list of [ExerciseSetModel]
-  Future<void> batchInsertWithTransaction({required List<ExerciseSetModel> sets, required Transaction txn}) async {
+  Future<void> batchInsertWithTransaction({
+    required List<ExerciseSetModel> sets,
+    required Transaction txn,
+  }) async {
     final batch = txn.batch();
 
     for (final set in sets) {
@@ -78,22 +91,32 @@ class ExerciseSetDao {
     }
 
     final database = await _db.database;
-    return await database.update(_tableName, set.toMap(), where: 'id = ?', whereArgs: [set.id]);
+    return await database.update(
+      _tableName,
+      set.toMap(),
+      where: 'id = ?',
+      whereArgs: [set.id],
+    );
   }
 
   /// Delete an exercise set
   Future<int> delete(int setId) async {
-    final setToDelete = await getById(setId);
-    if (setToDelete == null) return 0;
-
     final database = await _db.database;
-    return await database.delete(_tableName, where: 'id = ?', whereArgs: [setToDelete]);
+    return await database.delete(
+      _tableName,
+      where: 'id = ?',
+      whereArgs: [setId],
+    );
   }
 
   /// Delete all exercise sets for a specific exercise
   /// This is typically called when an exercise is deleted
   Future<int> deleteByExerciseId(int exerciseId) async {
     final database = await _db.database;
-    return await database.delete(_tableName, where: 'exercise_id = ?', whereArgs: [exerciseId]);
+    return await database.delete(
+      _tableName,
+      where: 'exercise_id = ?',
+      whereArgs: [exerciseId],
+    );
   }
 }

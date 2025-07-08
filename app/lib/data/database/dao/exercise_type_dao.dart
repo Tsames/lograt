@@ -25,7 +25,11 @@ class ExerciseTypeDao {
   /// Returns null if no exercise set with the given ID exists
   Future<ExerciseTypeModel?> getByName(String name) async {
     final db = await _db.database;
-    final maps = await db.query(_tableName, where: 'name = ?', whereArgs: [name]);
+    final maps = await db.query(
+      _tableName,
+      where: 'name = ?',
+      whereArgs: [name],
+    );
 
     if (maps.isEmpty) return null;
     return ExerciseTypeModel.fromMap(maps.first);
@@ -42,7 +46,12 @@ class ExerciseTypeDao {
   /// Search exercise types by name (case-insensitive partial match)
   Future<List<ExerciseTypeModel>> searchByName(String searchTerm) async {
     final db = await _db.database;
-    final maps = await db.query(_tableName, where: 'name LIKE ?', whereArgs: ['%$searchTerm%'], orderBy: 'name ASC');
+    final maps = await db.query(
+      _tableName,
+      where: 'name LIKE ?',
+      whereArgs: ['%$searchTerm%'],
+      orderBy: 'name ASC',
+    );
 
     return maps.map((map) => ExerciseTypeModel.fromMap(map)).toList();
   }
@@ -50,14 +59,21 @@ class ExerciseTypeDao {
   /// Get the count of exercise types
   Future<int> getCount() async {
     final db = await _db.database;
-    final result = await db.rawQuery('SELECT COUNT(*) as count FROM $_tableName');
+    final result = await db.rawQuery(
+      'SELECT COUNT(*) as count FROM $_tableName',
+    );
     return result.first['count'] as int;
   }
 
   /// Check if an exercise type name already exists
   Future<bool> nameExists(String name) async {
     final db = await _db.database;
-    final maps = await db.query(_tableName, where: 'name = ?', whereArgs: [name], limit: 1);
+    final maps = await db.query(
+      _tableName,
+      where: 'name = ?',
+      whereArgs: [name],
+      limit: 1,
+    );
 
     return maps.isNotEmpty;
   }
@@ -77,7 +93,10 @@ class ExerciseTypeDao {
     }
   }
 
-  Future<int> insertWithTransaction({required ExerciseTypeModel exerciseType, required Transaction txn}) async {
+  Future<int> insertWithTransaction({
+    required ExerciseTypeModel exerciseType,
+    required Transaction txn,
+  }) async {
     return await txn.insert(_tableName, exerciseType.toMap());
   }
 
@@ -89,7 +108,12 @@ class ExerciseTypeDao {
     }
 
     final db = await _db.database;
-    return await db.update(_tableName, exerciseType.toMap(), where: 'id = ?', whereArgs: [exerciseType.id]);
+    return await db.update(
+      _tableName,
+      exerciseType.toMap(),
+      where: 'id = ?',
+      whereArgs: [exerciseType.id],
+    );
   }
 
   /// Delete an exercise type by ID

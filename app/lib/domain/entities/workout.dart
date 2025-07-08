@@ -7,9 +7,19 @@ class Workout {
   final DateTime createdOn;
   final List<Exercise> exercises;
 
-  const Workout({this.id, required this.name, required this.createdOn, required this.exercises});
+  const Workout({
+    this.id,
+    required this.name,
+    required this.createdOn,
+    required this.exercises,
+  });
 
-  Workout copyWith({int? id, String? name, DateTime? createdOn, List<Exercise>? exercises}) {
+  Workout copyWith({
+    int? id,
+    String? name,
+    DateTime? createdOn,
+    List<Exercise>? exercises,
+  }) {
     return Workout(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -22,11 +32,13 @@ class Workout {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Workout && runtimeType == other.runtimeType && id == other.id;
+      identical(this, other) ||
+      other is Workout && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => "Workout{ id: ${id ?? 'null'}, name: $name, createdOn: ${createdOn.toIso8601String()} }";
+  String toString() =>
+      "Workout{ id: ${id ?? 'null'}, name: $name, createdOn: ${createdOn.toIso8601String()} }";
 }

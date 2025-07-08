@@ -1,5 +1,4 @@
 import '../../domain/repository/workout_repository.dart';
-import '../../domain/entities/workout.dart';
 
 class ClearWorkout {
   final WorkoutRepository _repository;

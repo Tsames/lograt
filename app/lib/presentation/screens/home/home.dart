@@ -8,7 +8,10 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20), child: WorkoutHistory()),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          child: WorkoutHistory(),
+        ),
       ),
     );
   }

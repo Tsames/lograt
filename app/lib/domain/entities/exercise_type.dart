@@ -7,12 +7,19 @@ class ExerciseType {
   const ExerciseType({required this.id, required this.name, this.description});
 
   ExerciseType copyWith({int? id, String? name, String? description}) {
-    return ExerciseType(id: id ?? this.id, name: name ?? this.name, description: description ?? this.description);
+    return ExerciseType(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+    );
   }
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is ExerciseType && runtimeType == other.runtimeType && id == other.id;
+      identical(this, other) ||
+      other is ExerciseType &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
 
   @override
   int get hashCode => id.hashCode;

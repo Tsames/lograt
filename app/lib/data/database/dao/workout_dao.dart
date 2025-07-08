@@ -13,7 +13,11 @@ class WorkoutDao {
   /// Returns null if no workout with the given ID exists
   Future<WorkoutSummaryModel?> getSummaryById(int id) async {
     final database = await _db.database;
-    final maps = await database.query(_tableName, where: 'id = ?', whereArgs: [id]);
+    final maps = await database.query(
+      _tableName,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
 
     if (maps.isEmpty) return null;
     return WorkoutSummaryModel.fromMap(maps.first);
@@ -23,7 +27,11 @@ class WorkoutDao {
   /// Returns null if no workout with the given ID exists
   Future<WorkoutModel?> getById(int id) async {
     final database = await _db.database;
-    final maps = await database.query(_tableName, where: 'id = ?', whereArgs: [id]);
+    final maps = await database.query(
+      _tableName,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
 
     if (maps.isEmpty) return null;
     return WorkoutModel.fromMap(maps.first);
@@ -33,7 +41,9 @@ class WorkoutDao {
   /// for workouts within the last three months of the current date
   Future<List<WorkoutSummaryModel>> getRecentSummaries({int limit = 20}) async {
     final db = await _db.database;
-    final sixMonthsAgo = DateTime.now().subtract(Duration(days: 90)).millisecondsSinceEpoch;
+    final sixMonthsAgo = DateTime.now()
+        .subtract(Duration(days: 90))
+        .millisecondsSinceEpoch;
 
     final maps = await db.query(
       _tableName,
@@ -48,16 +58,28 @@ class WorkoutDao {
 
   Future<int> insert(WorkoutModel workout) async {
     final db = await _db.database;
-    return await db.insert(_tableName, workout.toMap(), conflictAlgorithm: ConflictAlgorithm.fail);
+    return await db.insert(
+      _tableName,
+      workout.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.fail,
+    );
   }
 
-  Future<int> insertWithTransaction({required WorkoutModel workout, required Transaction txn}) async {
+  Future<int> insertWithTransaction({
+    required WorkoutModel workout,
+    required Transaction txn,
+  }) async {
     return await txn.insert(_tableName, workout.toMap());
   }
 
   Future<int> update(WorkoutModel workout) async {
     final db = await _db.database;
-    return await db.update(_tableName, workout.toMap(), where: 'id = ?', whereArgs: [workout.id]);
+    return await db.update(
+      _tableName,
+      workout.toMap(),
+      where: 'id = ?',
+      whereArgs: [workout.id],
+    );
   }
 
   Future<int> delete(int id) async {

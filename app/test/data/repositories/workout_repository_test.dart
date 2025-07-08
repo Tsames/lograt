@@ -1,10 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:lograt/data/models/workout_model.dart';
-import 'package:lograt/domain/entities/workout.dart';
 import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 import 'package:lograt/data/database/dao/workout_dao.dart';
-import 'package:lograt/data/repositories/workout_repository_impl.dart';
 
 @GenerateMocks([WorkoutDao])
 void main() {

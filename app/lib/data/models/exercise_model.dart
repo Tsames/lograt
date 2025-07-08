@@ -20,7 +20,10 @@ class ExerciseModel {
     this.notes,
   });
 
-  factory ExerciseModel.fromEntity({required Exercise entity, required int workoutId}) {
+  factory ExerciseModel.fromEntity({
+    required Exercise entity,
+    required int workoutId,
+  }) {
     return ExerciseModel(
       id: entity.id,
       workoutId: workoutId,
@@ -40,7 +43,13 @@ class ExerciseModel {
     );
   }
 
-  ExerciseModel copyWith({int? id, int? workoutId, int? exerciseTypeId, int? order, String? notes}) {
+  ExerciseModel copyWith({
+    int? id,
+    int? workoutId,
+    int? exerciseTypeId,
+    int? order,
+    String? notes,
+  }) {
     return ExerciseModel(
       id: id ?? this.id,
       workoutId: workoutId ?? this.workoutId,
@@ -50,8 +59,17 @@ class ExerciseModel {
     );
   }
 
-  Exercise toEntity({required ExerciseType exerciseType, required List<ExerciseSet> sets}) {
-    return Exercise(id: id, exerciseType: exerciseType, order: order, sets: sets, notes: notes);
+  Exercise toEntity({
+    required ExerciseType exerciseType,
+    required List<ExerciseSet> sets,
+  }) {
+    return Exercise(
+      id: id,
+      exerciseType: exerciseType,
+      order: order,
+      sets: sets,
+      notes: notes,
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -66,7 +84,10 @@ class ExerciseModel {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is ExerciseModel && runtimeType == other.runtimeType && id == other.id;
+      identical(this, other) ||
+      other is ExerciseModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
 
   @override
   int get hashCode => id.hashCode;
