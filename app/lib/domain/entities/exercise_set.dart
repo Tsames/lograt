@@ -1,46 +1,48 @@
+import 'package:lograt/domain/entities/set_type.dart';
+import 'package:lograt/domain/entities/units.dart';
+
 /// Represents a single set within an exercise
 class ExerciseSet {
-  final int? id; // SQLite generated primary key
+  final int? databaseId; // SQLite generated primary key
   final int order; // 1st set, 2nd set, etc. within this exercise
   final int reps;
-  final int? weightPounds; // Weight used (null for body weight exercises)
+  final double weight; // 0 for body weight exercises
+  final Units units;
   final Duration?
-  restTimeSeconds; // Rest time before this set, for the first set this will be null
-  final SetType setType; // Regular, warm-up, drop set, etc.
-
-  int get volume {
-    return reps * (weightPounds ?? 1);
-  }
+  restTime; // Rest time before this set, this value will sometimes be null before the first set
+  final SetType setType;
+  final String? notes;
 
   const ExerciseSet({
-    required this.id,
+    this.databaseId,
     required this.order,
-    required this.reps,
-    this.weightPounds,
-    this.restTimeSeconds,
+    this.reps = 0,
+    this.weight = 0,
+    this.units = Units.pounds,
+    this.restTime,
     this.setType = SetType.working,
+    this.notes,
   });
 
   ExerciseSet copyWith({
-    int? id,
-    String? workoutExerciseId,
+    int? databaseId,
     int? order,
     int? reps,
-    int? weightPounds,
-    Duration? duration,
-    double? distance,
-    Duration? restTimeSeconds,
-    DateTime? completedAt,
-    String? notes,
+    double? weight,
+    Units? units,
+    Duration? restTime,
     SetType? setType,
+    String? notes,
   }) {
     return ExerciseSet(
-      id: id ?? this.id,
+      databaseId: databaseId ?? this.databaseId,
       order: order ?? this.order,
       reps: reps ?? this.reps,
-      weightPounds: weightPounds ?? this.weightPounds,
-      restTimeSeconds: restTimeSeconds ?? this.restTimeSeconds,
+      weight: weight ?? this.weight,
+      units: units ?? this.units,
+      restTime: restTime ?? this.restTime,
       setType: setType ?? this.setType,
+      notes: notes ?? this.notes,
     );
   }
 
@@ -48,23 +50,19 @@ class ExerciseSet {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ExerciseSet &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+          order == other.order &&
+          reps == other.reps &&
+          weight == other.weight &&
+          units == other.units &&
+          restTime == other.restTime &&
+          setType == other.setType &&
+          notes == other.notes;
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode =>
+      Object.hash(order, reps, weight, units, restTime, setType, notes);
 
   @override
   String toString() =>
-      'ExerciseSet{ id: ${id ?? 'null'}, order: $order, weight: ${weightPounds ?? 'BW'}, reps: $reps }';
-}
-
-enum SetType {
-  warmup('Warm-up'),
-  working('Working Set'), // Main work sets at target weight
-  dropSet('Drop Set'), // Reduce weight mid-set
-  failure('To Failure'); // Performed until failure
-
-  const SetType(this.displayName);
-  final String displayName;
+      'ExerciseSet{ id: ${databaseId ?? 'null'}, order: $order, weight: $weight, units: ${units.name}, reps: $reps }';
 }
