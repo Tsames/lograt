@@ -1,24 +1,30 @@
 import '../../domain/entities/exercise_set.dart';
+import '../../domain/entities/set_type.dart';
+import '../../domain/entities/units.dart';
 
 /// Data model for exercise_sets table
 /// Handles SQLite representation and conversion to/from domain entities
 class ExerciseSetModel {
-  final int? id;
+  final int? databaseId;
   final int? exerciseId; // Foreign key to workout_exercises table
   final int order;
   final int reps;
-  final int? weightPounds;
+  final double weight;
+  final String units;
   final int? restTimeSeconds;
   final String setType;
+  final String? notes;
 
   const ExerciseSetModel({
-    this.id,
+    this.databaseId,
     required this.exerciseId,
     required this.order,
     required this.reps,
-    this.weightPounds,
+    required this.weight,
+    required this.units,
     this.restTimeSeconds,
-    this.setType = 'regular',
+    required this.setType,
+    this.notes,
   });
 
   factory ExerciseSetModel.fromEntity({
@@ -26,87 +32,114 @@ class ExerciseSetModel {
     required int exerciseId,
   }) {
     return ExerciseSetModel(
-      id: entity.id,
+      databaseId: entity.databaseId,
       exerciseId: exerciseId,
       order: entity.order,
       reps: entity.reps,
-      weightPounds: entity.weightPounds,
-      restTimeSeconds: entity.restTimeSeconds?.inSeconds,
+      weight: entity.weight,
+      units: entity.units.name,
+      restTimeSeconds: entity.restTime?.inSeconds,
       setType: entity.setType.name,
+      notes: entity.notes,
     );
   }
 
   factory ExerciseSetModel.fromMap(Map<String, dynamic> map) {
     return ExerciseSetModel(
-      id: map['id'] as int?,
+      databaseId: map['database_id'] as int?,
       exerciseId: map['exercise_id'] as int,
       order: map['set_order'] as int,
       reps: map['reps'] as int,
-      weightPounds: map['weight'] as int?,
+      weight: map['weight'] as double,
+      units: map['units'] as String,
       restTimeSeconds: map['rest_time_seconds'] as int?,
-      setType: map['set_type'] as String? ?? 'regular',
+      setType: map['set_type'] as String? ?? 'Working Set',
+      notes: map['notes'] as String?,
     );
   }
 
   ExerciseSetModel copyWith({
-    int? id,
+    int? databaseId,
     int? exerciseId,
     int? order,
     int? reps,
-    int? weightPounds,
+    double? weight,
+    String? units,
     int? restTimeSeconds,
     String? setType,
+    String? notes,
   }) {
     return ExerciseSetModel(
-      id: id ?? this.id,
+      databaseId: databaseId ?? this.databaseId,
       exerciseId: exerciseId ?? this.exerciseId,
       order: order ?? this.order,
       reps: reps ?? this.reps,
-      weightPounds: weightPounds ?? this.weightPounds,
+      weight: weight ?? this.weight,
+      units: units ?? this.units,
       restTimeSeconds: restTimeSeconds ?? this.restTimeSeconds,
       setType: setType ?? this.setType,
+      notes: notes ?? this.notes,
     );
   }
 
   ExerciseSet toEntity() {
     return ExerciseSet(
-      id: id,
+      databaseId: databaseId,
       order: order,
       reps: reps,
-      weightPounds: weightPounds,
-      restTimeSeconds: restTimeSeconds != null
+      weight: weight,
+      units: Units.fromString(units),
+      restTime: restTimeSeconds != null
           ? Duration(seconds: restTimeSeconds!)
           : null,
-      setType: SetType.values.firstWhere(
-        (e) => e.name == setType,
-        orElse: () => SetType.working,
-      ),
+      setType: SetType.fromString(setType),
+      notes: notes,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      if (id != null) 'id': id,
+      'database_id': databaseId,
       'exercise_id': exerciseId,
       'set_order': order,
       'reps': reps,
-      'weight': weightPounds,
+      'weight': weight,
+      'units': units,
       'rest_time_seconds': restTimeSeconds,
       'set_type': setType,
+      'notes': notes,
     };
   }
 
   @override
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ExerciseSetModel &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+          databaseId == other.databaseId &&
+          exerciseId == other.exerciseId &&
+          order == other.order &&
+          reps == other.reps &&
+          weight == other.weight &&
+          units == other.units &&
+          restTimeSeconds == other.restTimeSeconds &&
+          setType == other.setType &&
+          notes == other.notes;
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => Object.hash(
+    databaseId,
+    exerciseId,
+    order,
+    reps,
+    weight,
+    units,
+    restTimeSeconds,
+    setType,
+    notes,
+  );
 
   @override
   String toString() =>
-      'ExerciseSetModel{ id: ${id ?? 'null'}, workoutExerciseId: $exerciseId, set: $order }';
+      'ExerciseSetModel{ id: ${databaseId ?? 'null'}, workoutExerciseId: $exerciseId, set: $order }';
 }
