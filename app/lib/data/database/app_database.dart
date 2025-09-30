@@ -122,9 +122,11 @@ class AppDatabase {
       exercise_id INTEGER NOT NULL,
       set_order INTEGER NOT NULL,
       reps INTEGER NOT NULL,
-      weight INTEGER,
+      weight REAL,
+      units TEXT,
       rest_time_seconds INTEGER,
       set_type TEXT,
+      notes TEXT,
       FOREIGN KEY (exercise_id) REFERENCES workout_exercises(id) ON DELETE CASCADE
     )
     ''';

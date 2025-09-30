@@ -86,7 +86,7 @@ class ExerciseSetDao {
   /// Update an existing exercise set
   /// Returns the number of rows affected (should be 1 for success)
   Future<int> update(ExerciseSetModel set) async {
-    if (set.id == null) {
+    if (set.databaseId == null) {
       throw ArgumentError('Cannot update exercise without an ID');
     }
 
@@ -95,7 +95,7 @@ class ExerciseSetDao {
       _tableName,
       set.toMap(),
       where: 'id = ?',
-      whereArgs: [set.id],
+      whereArgs: [set.databaseId],
     );
   }
 
