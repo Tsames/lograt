@@ -18,9 +18,9 @@ class Exercise {
     this.notes,
   });
 
-  double get totalVolume {
-    return sets.fold(0.0, (sum, set) => sum + set.volume);
-  }
+  // double get totalVolume {
+  //   return sets.fold(0.0, (sum, set) => sum + set.volume);
+  // }
 
   int get totalReps {
     return sets.fold(0, (sum, set) => sum + set.reps);

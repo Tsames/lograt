@@ -7,6 +7,8 @@ import 'package:lograt/data/models/exercise_set_model.dart';
 import 'package:lograt/data/models/exercise_model.dart';
 import 'package:lograt/data/models/exercise_type_model.dart';
 import 'package:lograt/data/models/workout_model.dart';
+import 'package:lograt/domain/entities/set_type.dart';
+import 'package:lograt/domain/entities/units.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lograt/data/database/app_database.dart';
 
@@ -58,9 +60,11 @@ void main() {
         exerciseId: testExerciseId,
         order: 1,
         reps: 10,
-        weightPounds: 135,
+        weight: 135,
+        units: Units.pounds.name,
         restTimeSeconds: 60,
-        setType: 'Working Set',
+        setType: SetType.working.name,
+        notes: "New PR!",
       );
     });
 
@@ -83,9 +87,11 @@ void main() {
         expect(retrieved!.exerciseId, equals(testExerciseId));
         expect(retrieved.order, equals(1));
         expect(retrieved.reps, equals(10));
-        expect(retrieved.weightPounds, equals(135));
+        expect(retrieved.weight, equals(135));
+        expect(Units.fromString(retrieved.units), Units.pounds);
         expect(retrieved.restTimeSeconds, 60);
-        expect(retrieved.setType, 'Working Set');
+        expect(SetType.fromString(retrieved.setType), SetType.working);
+        expect(retrieved.notes, "New PR!");
       });
 
       test('should handle batch insert with transaction correctly', () async {
@@ -95,22 +101,25 @@ void main() {
             exerciseId: testExerciseId,
             order: 1,
             reps: 12,
-            weightPounds: 135,
-            setType: 'Working Set',
+            weight: 135,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
           ),
           ExerciseSetModel(
             exerciseId: testExerciseId,
             order: 2,
             reps: 10,
-            weightPounds: 145,
-            setType: 'Working Set',
+            weight: 145,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
           ),
           ExerciseSetModel(
             exerciseId: testExerciseId,
             order: 3,
             reps: 8,
-            weightPounds: 155,
-            setType: 'Working Set',
+            weight: 155,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
           ),
         ];
 
@@ -126,15 +135,15 @@ void main() {
 
         // Verify each set was inserted correctly
         expect(
-          allSets.any((set) => set.reps == 12 && set.weightPounds == 135),
+          allSets.any((set) => set.reps == 12 && set.weight == 135),
           isTrue,
         );
         expect(
-          allSets.any((set) => set.reps == 10 && set.weightPounds == 145),
+          allSets.any((set) => set.reps == 10 && set.weight == 145),
           isTrue,
         );
         expect(
-          allSets.any((set) => set.reps == 8 && set.weightPounds == 155),
+          allSets.any((set) => set.reps == 8 && set.weight == 155),
           isTrue,
         );
       });
@@ -172,13 +181,13 @@ void main() {
         // Should get back the same data we inserted
         expect(retrieved, isNotNull);
         expect(retrieved, isA<ExerciseSetModel>());
-        expect(retrieved!.id, equals(existingExerciseSetId));
+        expect(retrieved!.databaseId, equals(existingExerciseSetId));
         expect(retrieved.exerciseId, equals(testExerciseId));
         expect(retrieved.order, equals(1));
         expect(retrieved.reps, equals(10));
-        expect(retrieved.weightPounds, equals(135));
+        expect(retrieved.weight, equals(135));
         expect(retrieved.restTimeSeconds, 60);
-        expect(retrieved.setType, 'Working Set');
+        expect(SetType.fromString(retrieved.setType), SetType.working);
       });
 
       test('should return null when exercise set does not exist', () async {
@@ -197,16 +206,18 @@ void main() {
             exerciseId: testExerciseId,
             order: 2,
             reps: 8,
-            weightPounds: 145,
-            setType: 'Working Set',
+            weight: 145,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
           );
 
           final set3 = ExerciseSetModel(
             exerciseId: testExerciseId,
             order: 3,
             reps: 6,
-            weightPounds: 155,
-            setType: 'Working Set',
+            weight: 155,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
           );
 
           await exerciseSetDao.insert(set3);
@@ -223,11 +234,11 @@ void main() {
 
           // The ordering is 'set_order ASC', so it should be in order
           expect(exerciseSets[0].order, equals(1));
-          expect(exerciseSets[0].weightPounds, equals(135));
+          expect(exerciseSets[0].weight, equals(135));
           expect(exerciseSets[1].order, equals(2));
-          expect(exerciseSets[1].weightPounds, equals(145));
+          expect(exerciseSets[1].weight, equals(145));
           expect(exerciseSets[2].order, equals(3));
-          expect(exerciseSets[2].weightPounds, equals(155));
+          expect(exerciseSets[2].weight, equals(155));
         },
       );
 
@@ -265,8 +276,9 @@ void main() {
             exerciseId: exercise2Id,
             order: 1,
             reps: 15,
-            weightPounds: 65,
-            setType: 'Working Set',
+            weight: 65,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
           ),
         );
 
@@ -275,8 +287,9 @@ void main() {
             exerciseId: exercise2Id,
             order: 2,
             reps: 12,
-            weightPounds: 75,
-            setType: 'Working Set',
+            weight: 75,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
           ),
         );
 
@@ -356,9 +369,9 @@ void main() {
         // Modify the exercise set data
         final updatedExerciseSet = existingExerciseSet.copyWith(
           reps: 12,
-          weightPounds: 145,
+          weight: 145,
           restTimeSeconds: 90,
-          setType: "To Failure",
+          setType: SetType.failure.name,
         );
 
         // Update the exercise set in the database
@@ -370,9 +383,9 @@ void main() {
         // Verify the changes were actually saved
         final retrieved = await exerciseSetDao.getById(existingExerciseSetId);
         expect(retrieved!.reps, equals(12));
-        expect(retrieved.weightPounds, equals(145));
+        expect(retrieved.weight, equals(145));
         expect(retrieved.restTimeSeconds, 90);
-        expect(retrieved.setType, 'To Failure');
+        expect(SetType.fromString(retrieved.setType), SetType.failure);
 
         // Verify unchanged fields remain the same
         expect(retrieved.exerciseId, equals(existingExerciseSet.exerciseId));
@@ -384,12 +397,13 @@ void main() {
         () async {
           // Create an exercise set with an ID that doesn't exist
           final nonExistentExerciseSet = ExerciseSetModel(
-            id: 99999,
+            databaseId: 99999,
             exerciseId: testExerciseId,
             order: 1,
             reps: 10,
-            weightPounds: 135,
-            setType: "Working Set",
+            weight: 135,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
           );
 
           // Try to update the non-existent exercise set
@@ -410,8 +424,9 @@ void main() {
             exerciseId: testExerciseId,
             order: 1,
             reps: 10,
-            weightPounds: 135,
-            setType: 'Working Set',
+            weight: 135,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
           );
 
           // Should throw ArgumentError
@@ -460,8 +475,9 @@ void main() {
             exerciseId: testExerciseId,
             order: 2,
             reps: 8,
-            weightPounds: 145,
-            setType: 'Working Set',
+            weight: 145,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
           ),
         );
 
@@ -470,8 +486,9 @@ void main() {
             exerciseId: testExerciseId,
             order: 3,
             reps: 6,
-            weightPounds: 155,
-            setType: 'Working Set',
+            weight: 155,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
           ),
         );
 
