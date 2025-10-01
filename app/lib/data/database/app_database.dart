@@ -69,16 +69,13 @@ class AppDatabase {
       _createWorkoutsTableSQL(),
       _createExerciseTypesTableSQL(),
       _createWorkoutExercisesTableSQL(),
+      _createWorkoutSetsTableSQL(),
     ];
   }
 
   // Build the incremental migration steps for existing databases
   List<String> _buildMigrationScripts() {
-    return [
-      _createExerciseTypesTableSQL(),
-      _createWorkoutExercisesTableSQL(),
-      _createWorkoutSetsTableSQL(),
-    ];
+    return [];
   }
 
   String _createWorkoutsTableSQL() {
@@ -109,8 +106,8 @@ class AppDatabase {
         exercise_type_id INTEGER NOT NULL,
         exercise_order INTEGER NOT NULL,
         notes TEXT,
-        FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE,
-        FOREIGN KEY (exercise_type_id) REFERENCES exercise_types(id) ON DELETE RESTRICT
+        FOREIGN KEY (workout_id) REFERENCES $workoutsTableName(id) ON DELETE CASCADE,
+        FOREIGN KEY (exercise_type_id) REFERENCES $exerciseTypesTableName(id) ON DELETE RESTRICT
       )
     ''';
   }
@@ -127,16 +124,8 @@ class AppDatabase {
       rest_time_seconds INTEGER,
       set_type TEXT,
       notes TEXT,
-      FOREIGN KEY (exercise_id) REFERENCES workout_exercises(id) ON DELETE CASCADE
+      FOREIGN KEY (exercise_id) REFERENCES $exercisesTableName(id) ON DELETE CASCADE
     )
     ''';
   }
-
-  // String _createIndexesSQL() {
-  //   return '''
-  //     CREATE INDEX idx_workout_exercises_workout_id ON workout_exercises(workout_id);
-  //     CREATE INDEX idx_workout_exercises_exercise_type_id ON workout_exercises(exercise_type_id);
-  //     CREATE INDEX idx_workout_exercises_order ON workout_exercises(workout_id, order_index);
-  //   ''';
-  // }
 }

@@ -7,12 +7,7 @@ class Workout {
   final DateTime createdOn;
   final List<Exercise> exercises;
 
-  const Workout({
-    this.id,
-    required this.name,
-    required this.createdOn,
-    required this.exercises,
-  });
+  const Workout(this.name, this.createdOn, this.exercises, {this.id});
 
   Workout copyWith({
     int? id,
@@ -22,18 +17,19 @@ class Workout {
   }) {
     return Workout(
       id: id ?? this.id,
-      name: name ?? this.name,
-      createdOn: createdOn ?? this.createdOn,
-      exercises: exercises ?? this.exercises,
+      name ?? this.name,
+      createdOn ?? this.createdOn,
+      exercises ?? this.exercises,
     );
   }
+
+  int get exerciseCount => exercises.length;
 
   bool get isRecent => DateTime.now().difference(createdOn).inDays < 14;
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Workout && runtimeType == other.runtimeType && id == other.id;
+      identical(this, other) || other is Workout && id == other.id;
 
   @override
   int get hashCode => id.hashCode;

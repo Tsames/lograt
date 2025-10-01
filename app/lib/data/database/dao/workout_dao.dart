@@ -1,4 +1,3 @@
-import 'package:lograt/data/models/workout_summary_model.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../models/workout_model.dart';
 import '../app_database.dart';
@@ -9,21 +8,7 @@ class WorkoutDao {
 
   WorkoutDao(this._db);
 
-  /// Get an workout by its ID as a [WorkoutSummaryModel]
-  /// Returns null if no workout with the given ID exists
-  Future<WorkoutSummaryModel?> getSummaryById(int id) async {
-    final database = await _db.database;
-    final maps = await database.query(
-      _tableName,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-
-    if (maps.isEmpty) return null;
-    return WorkoutSummaryModel.fromMap(maps.first);
-  }
-
-  /// Get an workout by its ID as a [WorkoutModel]
+  /// Get a workout by its ID
   /// Returns null if no workout with the given ID exists
   Future<WorkoutModel?> getById(int id) async {
     final database = await _db.database;
@@ -37,23 +22,18 @@ class WorkoutDao {
     return WorkoutModel.fromMap(maps.first);
   }
 
-  /// Get a list of the most recent [limit] number of workouts as [WorkoutSummaryModel]
-  /// for workouts within the last three months of the current date
-  Future<List<WorkoutSummaryModel>> getRecentSummaries({int limit = 20}) async {
+  /// Get a list of the workouts of length [limit]
+  /// Workouts returned will be in order of creation date DESC
+  Future<List<WorkoutModel>> getWorkoutSummaries(int limit) async {
     final db = await _db.database;
-    final sixMonthsAgo = DateTime.now()
-        .subtract(Duration(days: 90))
-        .millisecondsSinceEpoch;
 
     final maps = await db.query(
       _tableName,
-      where: 'createdOn >= ?',
-      whereArgs: [sixMonthsAgo],
       orderBy: 'createdOn DESC',
       limit: limit,
     );
 
-    return maps.map((map) => WorkoutSummaryModel.fromMap(map)).toList();
+    return maps.map((map) => WorkoutModel.fromMap(map)).toList();
   }
 
   Future<int> insert(WorkoutModel workout) async {
@@ -65,10 +45,10 @@ class WorkoutDao {
     );
   }
 
-  Future<int> insertWithTransaction({
-    required WorkoutModel workout,
-    required Transaction txn,
-  }) async {
+  Future<int> insertWithTransaction(
+    WorkoutModel workout,
+    Transaction txn,
+  ) async {
     return await txn.insert(_tableName, workout.toMap());
   }
 

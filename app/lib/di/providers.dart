@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/domain/usecases/clear_workouts.dart';
-import 'package:lograt/domain/usecases/seed_workouts.dart';
+import 'package:lograt/domain/usecases/seed_data.dart';
 import '../../data/database/app_database.dart';
 import '../../data/database/dao/exercise_dao.dart';
 import '../../data/database/dao/exercise_set_dao.dart';
@@ -71,7 +71,7 @@ final clearWorkoutProvider = Provider<ClearWorkout>((ref) {
   return ClearWorkout(repository);
 });
 
-final seedWorkoutsProvider = Provider<SeedWorkouts>((ref) {
+final seedDataProvider = Provider<SeedData>((ref) {
   final repository = ref.read(workoutRepositoryProvider);
-  return SeedWorkouts(repository);
+  return SeedData(repository);
 });

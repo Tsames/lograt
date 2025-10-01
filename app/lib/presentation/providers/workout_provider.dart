@@ -1,28 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/domain/usecases/clear_workouts.dart';
 
-import '../../core/di/providers.dart';
-import '../../domain/entities/workout_summary.dart';
+import '../../di/providers.dart';
+import '../../domain/entities/workout.dart';
 import '../../domain/usecases/get_most_recent_workouts.dart';
-import '../../domain/usecases/seed_workouts.dart';
 
 // This represents the state of your workout list screen
 class WorkoutListState {
-  final List<WorkoutSummary> workouts;
+  final List<Workout> workouts;
   final bool isLoading;
   final String? error;
 
-  const WorkoutListState({
-    this.workouts = const [],
-    this.isLoading = false,
-    this.error,
-  });
+  const WorkoutListState({this.workouts = const [], this.isLoading = false, this.error});
 
-  WorkoutListState copyWith({
-    List<WorkoutSummary>? workouts,
-    bool? isLoading,
-    String? error,
-  }) {
+  WorkoutListState copyWith({List<Workout>? workouts, bool? isLoading, String? error}) {
     return WorkoutListState(
       workouts: workouts ?? this.workouts,
       isLoading: isLoading ?? this.isLoading,
@@ -36,13 +27,8 @@ class WorkoutListState {
 class WorkoutHistoryNotifier extends StateNotifier<WorkoutListState> {
   final GetMostRecentWorkouts _getMostRecentWorkouts;
   final ClearWorkout _clearWorkouts;
-  final SeedWorkouts _seedWorkouts;
 
-  WorkoutHistoryNotifier(
-    this._getMostRecentWorkouts,
-    this._clearWorkouts,
-    this._seedWorkouts,
-  ) : super(const WorkoutListState()) {
+  WorkoutHistoryNotifier(this._getMostRecentWorkouts, this._clearWorkouts) : super(const WorkoutListState()) {
     loadWorkouts();
   }
 
@@ -67,24 +53,13 @@ class WorkoutHistoryNotifier extends StateNotifier<WorkoutListState> {
     await _clearWorkouts();
     state = state.copyWith(workouts: const []);
   }
-
-  Future<void> seedWorkouts() async {
-    await _seedWorkouts();
-    loadWorkouts();
-  }
 }
 
 // Provider for your ViewModel
 // This is what your UI will watch for state changes
-final workoutListProvider =
-    StateNotifierProvider<WorkoutHistoryNotifier, WorkoutListState>((ref) {
-      final getMostRecentWorkouts = ref.read(getMostRecentWorkoutsProvider);
-      final clearWorkoutList = ref.read(clearWorkoutProvider);
-      final seedWorkoutsList = ref.read(seedWorkoutsProvider);
+final workoutListProvider = StateNotifierProvider<WorkoutHistoryNotifier, WorkoutListState>((ref) {
+  final getMostRecentWorkouts = ref.read(getMostRecentWorkoutsProvider);
+  final clearWorkoutList = ref.read(clearWorkoutProvider);
 
-      return WorkoutHistoryNotifier(
-        getMostRecentWorkouts,
-        clearWorkoutList,
-        seedWorkoutsList,
-      );
-    });
+  return WorkoutHistoryNotifier(getMostRecentWorkouts, clearWorkoutList);
+});
