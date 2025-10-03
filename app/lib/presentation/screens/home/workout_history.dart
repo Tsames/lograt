@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/util/human_friendly_date_format.dart';
 
 import '../../providers/workout_provider.dart';
 
@@ -47,13 +48,10 @@ class WorkoutHistory extends ConsumerWidget {
       itemCount: workoutHistoryState.workouts.length,
       itemBuilder: (context, index) {
         final workout = workoutHistoryState.workouts[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 16),
-          child: ListTile(
-            title: Text(workout.name),
-            subtitle: Text(workout.createdOn.toString()),
-            onTap: () {},
-          ),
+        return ListTile(
+          title: Text(workout.name),
+          subtitle: Text(workout.createdOn.toHumanFriendlyFormat()),
+          onTap: () {},
         );
       },
     );
