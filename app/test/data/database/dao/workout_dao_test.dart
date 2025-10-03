@@ -45,7 +45,10 @@ void main() {
         late int insertedId;
 
         await database.transaction((txn) async {
-          insertedId = await workoutDao.insertWithTransaction(sampleWorkout, txn);
+          insertedId = await workoutDao.insertWithTransaction(
+            sampleWorkout,
+            txn,
+          );
         });
 
         expect(insertedId, greaterThan(0));
@@ -71,7 +74,10 @@ void main() {
         expect(retrieved, isA<WorkoutModel>());
         expect(retrieved!.id, equals(existingWorkoutId));
         expect(retrieved.name, equals('Morning Push Workout'));
-        expect(retrieved.createdOn.difference(sampleWorkout.createdOn).inSeconds, lessThan(1));
+        expect(
+          retrieved.createdOn.difference(sampleWorkout.createdOn).inSeconds,
+          lessThan(1),
+        );
       });
 
       test('should return null when workout does not exist', () async {
@@ -82,7 +88,10 @@ void main() {
 
       test('should respect limit parameter in getRecentSummaries', () async {
         for (int i = 0; i < 5; i++) {
-          final workout = WorkoutModel('Workout $i', DateTime.now().add(Duration(hours: i)));
+          final workout = WorkoutModel(
+            'Workout $i',
+            DateTime.now().add(Duration(hours: i)),
+          );
           await workoutDao.insert(workout);
         }
 
@@ -104,7 +113,9 @@ void main() {
         });
 
         test('should update existing workout successfully', () async {
-          final updatedWorkout = existingWorkout.copyWith(name: 'Updated Morning Workout');
+          final updatedWorkout = existingWorkout.copyWith(
+            name: 'Updated Morning Workout',
+          );
 
           final rowsAffected = await workoutDao.update(updatedWorkout);
 
@@ -116,14 +127,21 @@ void main() {
           expect(retrieved.createdOn, equals(existingWorkout.createdOn));
         });
 
-        test('should return 0 when trying to update non-existent workout', () async {
-          // Create a workout with an ID that doesn't exist in the database
-          final nonExistentWorkout = WorkoutModel(id: 99999, 'Ghost Workout', DateTime.now());
+        test(
+          'should return 0 when trying to update non-existent workout',
+          () async {
+            // Create a workout with an ID that doesn't exist in the database
+            final nonExistentWorkout = WorkoutModel(
+              id: 99999,
+              'Ghost Workout',
+              DateTime.now(),
+            );
 
-          final rowsAffected = await workoutDao.update(nonExistentWorkout);
+            final rowsAffected = await workoutDao.update(nonExistentWorkout);
 
-          expect(rowsAffected, equals(0));
-        });
+            expect(rowsAffected, equals(0));
+          },
+        );
       });
 
       group('Delete Operations', () {
@@ -142,11 +160,14 @@ void main() {
           expect(retrieved, isNull);
         });
 
-        test('should return 0 when trying to delete non-existent workout', () async {
-          final rowsDeleted = await workoutDao.delete(99999);
+        test(
+          'should return 0 when trying to delete non-existent workout',
+          () async {
+            final rowsDeleted = await workoutDao.delete(99999);
 
-          expect(rowsDeleted, equals(0));
-        });
+            expect(rowsDeleted, equals(0));
+          },
+        );
 
         test('should clear entire table successfully', () async {
           for (int i = 0; i < 3; i++) {

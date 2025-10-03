@@ -27,11 +27,24 @@ class WorkoutModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {'id': id, 'name': name, 'createdOn': createdOn.millisecondsSinceEpoch};
+    return {
+      'id': id,
+      'name': name,
+      'createdOn': createdOn.millisecondsSinceEpoch,
+    };
   }
 
-  WorkoutModel copyWith({int? id, String? name, DateTime? createdOn, List<Exercise>? exercises}) {
-    return WorkoutModel(id: id ?? this.id, name ?? this.name, createdOn ?? this.createdOn);
+  WorkoutModel copyWith({
+    int? id,
+    String? name,
+    DateTime? createdOn,
+    List<Exercise>? exercises,
+  }) {
+    return WorkoutModel(
+      id: id ?? this.id,
+      name ?? this.name,
+      createdOn ?? this.createdOn,
+    );
   }
 
   @override
@@ -44,5 +57,6 @@ class WorkoutModel {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => 'WorkoutModel{ id: ${id ?? 'null'}, name: $name, createdOn: ${createdOn.toIso8601String()} }';
+  String toString() =>
+      'WorkoutModel{ id: ${id ?? 'null'}, name: $name, createdOn: ${createdOn.toIso8601String()} }';
 }

@@ -38,7 +38,10 @@ void main() {
       final testWorkout = WorkoutModel('Test Workout', DateTime.now());
       final testWorkoutId = await workoutDao.insert(testWorkout);
 
-      final testExerciseType = ExerciseTypeModel(name: 'Bench Press', description: 'Chest exercise');
+      final testExerciseType = ExerciseTypeModel(
+        name: 'Bench Press',
+        description: 'Chest exercise',
+      );
       final testExerciseTypeId = await exerciseTypeDao.insert(testExerciseType);
 
       final testExercise = ExerciseModel(
@@ -128,9 +131,18 @@ void main() {
         expect(allSets.length, equals(3));
 
         // Verify each set was inserted correctly
-        expect(allSets.any((set) => set.reps == 12 && set.weight == 135), isTrue);
-        expect(allSets.any((set) => set.reps == 10 && set.weight == 145), isTrue);
-        expect(allSets.any((set) => set.reps == 8 && set.weight == 155), isTrue);
+        expect(
+          allSets.any((set) => set.reps == 12 && set.weight == 135),
+          isTrue,
+        );
+        expect(
+          allSets.any((set) => set.reps == 10 && set.weight == 145),
+          isTrue,
+        );
+        expect(
+          allSets.any((set) => set.reps == 8 && set.weight == 155),
+          isTrue,
+        );
       });
 
       test('should handle empty batch insert gracefully', () async {
@@ -140,7 +152,10 @@ void main() {
         // Try to batch insert empty list
         final database = await testDatabase.database;
         await database.transaction((txn) async {
-          await exerciseSetDao.batchInsertWithTransaction(sets: emptySets, txn: txn);
+          await exerciseSetDao.batchInsertWithTransaction(
+            sets: emptySets,
+            txn: txn,
+          );
         });
 
         // Should complete without error
@@ -180,44 +195,49 @@ void main() {
         expect(nonExistentSet, isNull);
       });
 
-      test('should retrieve all exercise sets for an exercise ordered correctly', () async {
-        // Add multiple sets to the same exercise with different orders
-        final set2 = ExerciseSetModel(
-          exerciseId: testExerciseId,
-          order: 2,
-          reps: 8,
-          weight: 145,
-          units: Units.pounds.name,
-          setType: SetType.working.name,
-        );
+      test(
+        'should retrieve all exercise sets for an exercise ordered correctly',
+        () async {
+          // Add multiple sets to the same exercise with different orders
+          final set2 = ExerciseSetModel(
+            exerciseId: testExerciseId,
+            order: 2,
+            reps: 8,
+            weight: 145,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
+          );
 
-        final set3 = ExerciseSetModel(
-          exerciseId: testExerciseId,
-          order: 3,
-          reps: 6,
-          weight: 155,
-          units: Units.pounds.name,
-          setType: SetType.working.name,
-        );
+          final set3 = ExerciseSetModel(
+            exerciseId: testExerciseId,
+            order: 3,
+            reps: 6,
+            weight: 155,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
+          );
 
-        await exerciseSetDao.insert(set3);
-        await exerciseSetDao.insert(set2);
+          await exerciseSetDao.insert(set3);
+          await exerciseSetDao.insert(set2);
 
-        // Get all sets for the exercise
-        final exerciseSets = await exerciseSetDao.getByExerciseId(testExerciseId);
+          // Get all sets for the exercise
+          final exerciseSets = await exerciseSetDao.getByExerciseId(
+            testExerciseId,
+          );
 
-        // Should return all sets ordered by order DESC
-        expect(exerciseSets.length, equals(3));
-        expect(exerciseSets, everyElement(isA<ExerciseSetModel>()));
+          // Should return all sets ordered by order DESC
+          expect(exerciseSets.length, equals(3));
+          expect(exerciseSets, everyElement(isA<ExerciseSetModel>()));
 
-        // The ordering is 'set_order ASC', so it should be in order
-        expect(exerciseSets[0].order, equals(1));
-        expect(exerciseSets[0].weight, equals(135));
-        expect(exerciseSets[1].order, equals(2));
-        expect(exerciseSets[1].weight, equals(145));
-        expect(exerciseSets[2].order, equals(3));
-        expect(exerciseSets[2].weight, equals(155));
-      });
+          // The ordering is 'set_order ASC', so it should be in order
+          expect(exerciseSets[0].order, equals(1));
+          expect(exerciseSets[0].weight, equals(135));
+          expect(exerciseSets[1].order, equals(2));
+          expect(exerciseSets[1].weight, equals(145));
+          expect(exerciseSets[2].order, equals(3));
+          expect(exerciseSets[2].weight, equals(155));
+        },
+      );
 
       test('should return empty list when exercise has no sets', () async {
         // Create a new exercise with no sets
@@ -271,45 +291,64 @@ void main() {
         );
 
         // Batch retrieve sets for both exercises
-        final batchSets = await exerciseSetDao.getBatchByExerciseIds([testExerciseId, exercise2Id]);
+        final batchSets = await exerciseSetDao.getBatchByExerciseIds([
+          testExerciseId,
+          exercise2Id,
+        ]);
 
         // Should return sets from both exercises
-        expect(batchSets.length, equals(3)); // 1 from first exercise + 2 from second
+        expect(
+          batchSets.length,
+          equals(3),
+        ); // 1 from first exercise + 2 from second
         expect(batchSets, everyElement(isA<ExerciseSetModel>()));
 
         // Verify we have sets from both exercises
-        final exercise1Sets = batchSets.where((set) => set.exerciseId == testExerciseId);
-        final exercise2Sets = batchSets.where((set) => set.exerciseId == exercise2Id);
+        final exercise1Sets = batchSets.where(
+          (set) => set.exerciseId == testExerciseId,
+        );
+        final exercise2Sets = batchSets.where(
+          (set) => set.exerciseId == exercise2Id,
+        );
 
         expect(exercise1Sets.length, equals(1));
         expect(exercise2Sets.length, equals(2));
       });
 
-      test('should return empty list when batch retrieving with empty exercise ID list', () async {
-        // Try to batch retrieve with empty list
-        final batchSets = await exerciseSetDao.getBatchByExerciseIds([]);
+      test(
+        'should return empty list when batch retrieving with empty exercise ID list',
+        () async {
+          // Try to batch retrieve with empty list
+          final batchSets = await exerciseSetDao.getBatchByExerciseIds([]);
 
-        // Should return empty list immediately
-        expect(batchSets, isEmpty);
-        expect(batchSets, isA<List<ExerciseSetModel>>());
-      });
+          // Should return empty list immediately
+          expect(batchSets, isEmpty);
+          expect(batchSets, isA<List<ExerciseSetModel>>());
+        },
+      );
 
-      test('should return empty list when batch retrieving for exercises with no sets', () async {
-        // Create exercises with no sets
-        final exercise2 = ExerciseModel(
-          workoutId: testExerciseId,
-          exerciseTypeId: testExerciseId,
-          order: 2,
-          notes: 'Empty exercise',
-        );
-        final exercise2Id = await exerciseDao.insert(exercise2);
+      test(
+        'should return empty list when batch retrieving for exercises with no sets',
+        () async {
+          // Create exercises with no sets
+          final exercise2 = ExerciseModel(
+            workoutId: testExerciseId,
+            exerciseTypeId: testExerciseId,
+            order: 2,
+            notes: 'Empty exercise',
+          );
+          final exercise2Id = await exerciseDao.insert(exercise2);
 
-        // Batch retrieve for exercises that have no sets
-        final batchSets = await exerciseSetDao.getBatchByExerciseIds([exercise2Id, 99999]);
+          // Batch retrieve for exercises that have no sets
+          final batchSets = await exerciseSetDao.getBatchByExerciseIds([
+            exercise2Id,
+            99999,
+          ]);
 
-        // Should return empty list
-        expect(batchSets, isEmpty);
-      });
+          // Should return empty list
+          expect(batchSets, isEmpty);
+        },
+      );
     });
 
     group('Update Operations', () {
@@ -318,7 +357,9 @@ void main() {
 
       setUp(() async {
         existingExerciseSetId = await exerciseSetDao.insert(sampleExerciseSet);
-        existingExerciseSet = (await exerciseSetDao.getById(existingExerciseSetId))!;
+        existingExerciseSet = (await exerciseSetDao.getById(
+          existingExerciseSetId,
+        ))!;
       });
 
       test('should update existing exercise set successfully', () async {
@@ -348,39 +389,50 @@ void main() {
         expect(retrieved.order, equals(existingExerciseSet.order));
       });
 
-      test('should return 0 when trying to update non-existent exercise set', () async {
-        // Create an exercise set with an ID that doesn't exist
-        final nonExistentExerciseSet = ExerciseSetModel(
-          databaseId: 99999,
-          exerciseId: testExerciseId,
-          order: 1,
-          reps: 10,
-          weight: 135,
-          units: Units.pounds.name,
-          setType: SetType.working.name,
-        );
+      test(
+        'should return 0 when trying to update non-existent exercise set',
+        () async {
+          // Create an exercise set with an ID that doesn't exist
+          final nonExistentExerciseSet = ExerciseSetModel(
+            databaseId: 99999,
+            exerciseId: testExerciseId,
+            order: 1,
+            reps: 10,
+            weight: 135,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
+          );
 
-        // Try to update the non-existent exercise set
-        final rowsAffected = await exerciseSetDao.update(nonExistentExerciseSet);
+          // Try to update the non-existent exercise set
+          final rowsAffected = await exerciseSetDao.update(
+            nonExistentExerciseSet,
+          );
 
-        // Should indicate no rows were affected
-        expect(rowsAffected, equals(0));
-      });
+          // Should indicate no rows were affected
+          expect(rowsAffected, equals(0));
+        },
+      );
 
-      test('should throw ArgumentError when trying to update exercise set without ID', () async {
-        // Create an exercise set without an ID
-        final setWithoutId = ExerciseSetModel(
-          exerciseId: testExerciseId,
-          order: 1,
-          reps: 10,
-          weight: 135,
-          units: Units.pounds.name,
-          setType: SetType.working.name,
-        );
+      test(
+        'should throw ArgumentError when trying to update exercise set without ID',
+        () async {
+          // Create an exercise set without an ID
+          final setWithoutId = ExerciseSetModel(
+            exerciseId: testExerciseId,
+            order: 1,
+            reps: 10,
+            weight: 135,
+            units: Units.pounds.name,
+            setType: SetType.working.name,
+          );
 
-        // Should throw ArgumentError
-        expect(() async => await exerciseSetDao.update(setWithoutId), throwsA(isA<ArgumentError>()));
-      });
+          // Should throw ArgumentError
+          expect(
+            () async => await exerciseSetDao.update(setWithoutId),
+            throwsA(isA<ArgumentError>()),
+          );
+        },
+      );
     });
 
     group('Delete Operations', () {
@@ -402,13 +454,16 @@ void main() {
         expect(retrieved, isNull);
       });
 
-      test('should return 0 when trying to delete non-existent exercise set', () async {
-        // Try to delete an exercise set that doesn't exist
-        final rowsDeleted = await exerciseSetDao.delete(99999);
+      test(
+        'should return 0 when trying to delete non-existent exercise set',
+        () async {
+          // Try to delete an exercise set that doesn't exist
+          final rowsDeleted = await exerciseSetDao.delete(99999);
 
-        // Should indicate no rows were affected
-        expect(rowsDeleted, equals(0));
-      });
+          // Should indicate no rows were affected
+          expect(rowsDeleted, equals(0));
+        },
+      );
 
       test('should delete all exercise sets for a specific exercise', () async {
         // Add multiple sets to the exercise
@@ -439,7 +494,9 @@ void main() {
         expect(beforeSets.length, equals(3));
 
         // Delete all sets for the exercise
-        final rowsDeleted = await exerciseSetDao.deleteByExerciseId(testExerciseId);
+        final rowsDeleted = await exerciseSetDao.deleteByExerciseId(
+          testExerciseId,
+        );
 
         // Should delete all sets for the exercise
         expect(rowsDeleted, equals(3));
@@ -449,22 +506,27 @@ void main() {
         expect(afterSets, isEmpty);
       });
 
-      test('should return 0 when trying to delete sets from exercise with no sets', () async {
-        // Create a new exercise with no sets
-        final newExercise = ExerciseModel(
-          workoutId: testExerciseId,
-          exerciseTypeId: testExerciseId,
-          order: 2,
-          notes: 'Exercise with no sets',
-        );
-        final newExerciseId = await exerciseDao.insert(newExercise);
+      test(
+        'should return 0 when trying to delete sets from exercise with no sets',
+        () async {
+          // Create a new exercise with no sets
+          final newExercise = ExerciseModel(
+            workoutId: testExerciseId,
+            exerciseTypeId: testExerciseId,
+            order: 2,
+            notes: 'Exercise with no sets',
+          );
+          final newExerciseId = await exerciseDao.insert(newExercise);
 
-        // Try to delete sets from the exercise with no sets
-        final rowsDeleted = await exerciseSetDao.deleteByExerciseId(newExerciseId);
+          // Try to delete sets from the exercise with no sets
+          final rowsDeleted = await exerciseSetDao.deleteByExerciseId(
+            newExerciseId,
+          );
 
-        // Should indicate no rows were affected
-        expect(rowsDeleted, equals(0));
-      });
+          // Should indicate no rows were affected
+          expect(rowsDeleted, equals(0));
+        },
+      );
     });
   });
 }

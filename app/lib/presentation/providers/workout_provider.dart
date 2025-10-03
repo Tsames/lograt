@@ -11,9 +11,17 @@ class WorkoutListState {
   final bool isLoading;
   final String? error;
 
-  const WorkoutListState({this.workouts = const [], this.isLoading = false, this.error});
+  const WorkoutListState({
+    this.workouts = const [],
+    this.isLoading = false,
+    this.error,
+  });
 
-  WorkoutListState copyWith({List<Workout>? workouts, bool? isLoading, String? error}) {
+  WorkoutListState copyWith({
+    List<Workout>? workouts,
+    bool? isLoading,
+    String? error,
+  }) {
     return WorkoutListState(
       workouts: workouts ?? this.workouts,
       isLoading: isLoading ?? this.isLoading,
@@ -28,7 +36,8 @@ class WorkoutHistoryNotifier extends StateNotifier<WorkoutListState> {
   final GetMostRecentWorkouts _getMostRecentWorkouts;
   final ClearWorkout _clearWorkouts;
 
-  WorkoutHistoryNotifier(this._getMostRecentWorkouts, this._clearWorkouts) : super(const WorkoutListState()) {
+  WorkoutHistoryNotifier(this._getMostRecentWorkouts, this._clearWorkouts)
+    : super(const WorkoutListState()) {
     loadWorkouts();
   }
 
@@ -57,9 +66,10 @@ class WorkoutHistoryNotifier extends StateNotifier<WorkoutListState> {
 
 // Provider for your ViewModel
 // This is what your UI will watch for state changes
-final workoutListProvider = StateNotifierProvider<WorkoutHistoryNotifier, WorkoutListState>((ref) {
-  final getMostRecentWorkouts = ref.read(getMostRecentWorkoutsProvider);
-  final clearWorkoutList = ref.read(clearWorkoutProvider);
+final workoutListProvider =
+    StateNotifierProvider<WorkoutHistoryNotifier, WorkoutListState>((ref) {
+      final getMostRecentWorkouts = ref.read(getMostRecentWorkoutsProvider);
+      final clearWorkoutList = ref.read(clearWorkoutProvider);
 
-  return WorkoutHistoryNotifier(getMostRecentWorkouts, clearWorkoutList);
-});
+      return WorkoutHistoryNotifier(getMostRecentWorkouts, clearWorkoutList);
+    });

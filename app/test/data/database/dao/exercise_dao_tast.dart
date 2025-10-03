@@ -34,7 +34,10 @@ void main() {
       final testWorkout = WorkoutModel('Test Workout', DateTime.now());
       testWorkoutId = await workoutDao.insert(testWorkout);
 
-      final testExerciseType = ExerciseTypeModel(name: 'Bench Press', description: 'Chest exercise');
+      final testExerciseType = ExerciseTypeModel(
+        name: 'Bench Press',
+        description: 'Chest exercise',
+      );
       testExerciseTypeId = await exerciseTypeDao.insert(testExerciseType);
 
       // Create sample exercise data
@@ -70,7 +73,10 @@ void main() {
         late int insertedId;
 
         await database.transaction((txn) async {
-          insertedId = await exerciseDao.insertWithTransaction(exercise: sampleExercise, txn: txn);
+          insertedId = await exerciseDao.insertWithTransaction(
+            exercise: sampleExercise,
+            txn: txn,
+          );
         });
 
         expect(insertedId, greaterThan(0));
@@ -106,38 +112,43 @@ void main() {
         expect(nonExistentExercise, isNull);
       });
 
-      test('should retrieve all exercises for a workout ordered by sequence', () async {
-        // Add multiple exercises to the same workout in an out of sequence order
-        final exercise2 = ExerciseModel(
-          workoutId: testWorkoutId,
-          exerciseTypeId: testExerciseTypeId,
-          order: 3,
-          notes: 'Third exercise',
-        );
+      test(
+        'should retrieve all exercises for a workout ordered by sequence',
+        () async {
+          // Add multiple exercises to the same workout in an out of sequence order
+          final exercise2 = ExerciseModel(
+            workoutId: testWorkoutId,
+            exerciseTypeId: testExerciseTypeId,
+            order: 3,
+            notes: 'Third exercise',
+          );
 
-        final exercise3 = ExerciseModel(
-          workoutId: testWorkoutId,
-          exerciseTypeId: testExerciseTypeId,
-          order: 2,
-          notes: 'Second exercise',
-        );
+          final exercise3 = ExerciseModel(
+            workoutId: testWorkoutId,
+            exerciseTypeId: testExerciseTypeId,
+            order: 2,
+            notes: 'Second exercise',
+          );
 
-        await exerciseDao.insert(exercise2);
-        await exerciseDao.insert(exercise3);
+          await exerciseDao.insert(exercise2);
+          await exerciseDao.insert(exercise3);
 
-        final workoutExercises = await exerciseDao.getByWorkoutId(testWorkoutId);
+          final workoutExercises = await exerciseDao.getByWorkoutId(
+            testWorkoutId,
+          );
 
-        expect(workoutExercises.length, equals(3));
-        expect(workoutExercises, everyElement(isA<ExerciseModel>()));
+          expect(workoutExercises.length, equals(3));
+          expect(workoutExercises, everyElement(isA<ExerciseModel>()));
 
-        // Verify correct ordering despite out of order insertion
-        expect(workoutExercises[0].order, equals(1));
-        expect(workoutExercises[0].notes, equals('New PR today!'));
-        expect(workoutExercises[1].order, equals(2));
-        expect(workoutExercises[1].notes, equals('Second exercise'));
-        expect(workoutExercises[2].order, equals(3));
-        expect(workoutExercises[2].notes, equals('Third exercise'));
-      });
+          // Verify correct ordering despite out of order insertion
+          expect(workoutExercises[0].order, equals(1));
+          expect(workoutExercises[0].notes, equals('New PR today!'));
+          expect(workoutExercises[1].order, equals(2));
+          expect(workoutExercises[1].notes, equals('Second exercise'));
+          expect(workoutExercises[2].order, equals(3));
+          expect(workoutExercises[2].notes, equals('Third exercise'));
+        },
+      );
 
       test('should return empty list when workout has no exercises', () async {
         // Create a new workout with no exercises
@@ -154,7 +165,10 @@ void main() {
 
       test('should retrieve exercises with types by workout id', () async {
         // Create additional exercise type and exercise to test the JOIN
-        final squatType = ExerciseTypeModel(name: 'Squat', description: 'Leg exercise');
+        final squatType = ExerciseTypeModel(
+          name: 'Squat',
+          description: 'Leg exercise',
+        );
         final squatTypeId = await exerciseTypeDao.insert(squatType);
 
         final squatExercise = ExerciseModel(
@@ -166,7 +180,8 @@ void main() {
         await exerciseDao.insert(squatExercise);
 
         // Get exercises with their type information
-        final exercisesWithTypes = await exerciseDao.getExercisesWithTypesByWorkoutId(testWorkoutId);
+        final exercisesWithTypes = await exerciseDao
+            .getExercisesWithTypesByWorkoutId(testWorkoutId);
 
         // Should return Exercise domain entities with complete type information
         expect(exercisesWithTypes.length, equals(2));
@@ -174,31 +189,44 @@ void main() {
 
         // Verify the first exercise (Bench Press)
         expect(exercisesWithTypes[0].exerciseType.name, equals('Bench Press'));
-        expect(exercisesWithTypes[0].exerciseType.description, equals('Chest exercise'));
+        expect(
+          exercisesWithTypes[0].exerciseType.description,
+          equals('Chest exercise'),
+        );
         expect(exercisesWithTypes[0].order, equals(1));
         expect(exercisesWithTypes[0].notes, equals('New PR today!'));
-        expect(exercisesWithTypes[0].sets, isEmpty); // Should have no sets as documented
+        expect(
+          exercisesWithTypes[0].sets,
+          isEmpty,
+        ); // Should have no sets as documented
 
         // Verify the second exercise (Squat)
         expect(exercisesWithTypes[1].exerciseType.name, equals('Squat'));
-        expect(exercisesWithTypes[1].exerciseType.description, equals('Leg exercise'));
+        expect(
+          exercisesWithTypes[1].exerciseType.description,
+          equals('Leg exercise'),
+        );
         expect(exercisesWithTypes[1].order, equals(2));
         expect(exercisesWithTypes[1].notes, equals('Remember proper form'));
         expect(exercisesWithTypes[1].sets, isEmpty);
       });
 
-      test('should return empty list when JOIN query finds no exercises', () async {
-        // Create a workout with no exercises
-        final emptyWorkout = WorkoutModel('Empty Workout', DateTime.now());
-        final emptyWorkoutId = await workoutDao.insert(emptyWorkout);
+      test(
+        'should return empty list when JOIN query finds no exercises',
+        () async {
+          // Create a workout with no exercises
+          final emptyWorkout = WorkoutModel('Empty Workout', DateTime.now());
+          final emptyWorkoutId = await workoutDao.insert(emptyWorkout);
 
-        // Try the JOIN query on the empty workout
-        final exercisesWithTypes = await exerciseDao.getExercisesWithTypesByWorkoutId(emptyWorkoutId);
+          // Try the JOIN query on the empty workout
+          final exercisesWithTypes = await exerciseDao
+              .getExercisesWithTypesByWorkoutId(emptyWorkoutId);
 
-        // Should return empty list
-        expect(exercisesWithTypes, isEmpty);
-        expect(exercisesWithTypes, isA<List<Exercise>>());
-      });
+          // Should return empty list
+          expect(exercisesWithTypes, isEmpty);
+          expect(exercisesWithTypes, isA<List<Exercise>>());
+        },
+      );
 
       test('should retrieve exercises by exercise type with limit', () async {
         // Create multiple workouts with the same exercise type
@@ -228,17 +256,26 @@ void main() {
         );
 
         // Get exercises by type with a limit
-        final typeExercises = await exerciseDao.getByExerciseTypeId(exerciseTypeId: testExerciseTypeId, limit: 2);
+        final typeExercises = await exerciseDao.getByExerciseTypeId(
+          exerciseTypeId: testExerciseTypeId,
+          limit: 2,
+        );
 
         // Should return limited results ordered by most recent workout
         expect(typeExercises.length, equals(2));
         expect(typeExercises, everyElement(isA<ExerciseModel>()));
 
         // Should be ordered by workout_id DESC (most recent first)
-        expect(typeExercises[0].workoutId, greaterThan(typeExercises[1].workoutId));
+        expect(
+          typeExercises[0].workoutId,
+          greaterThan(typeExercises[1].workoutId),
+        );
 
         // All should use the same exercise type
-        expect(typeExercises.every((ex) => ex.exerciseTypeId == testExerciseTypeId), isTrue);
+        expect(
+          typeExercises.every((ex) => ex.exerciseTypeId == testExerciseTypeId),
+          isTrue,
+        );
       });
 
       test('should return correct count of exercises in a workout', () async {
@@ -291,7 +328,10 @@ void main() {
 
       test('should update existing exercise successfully', () async {
         // Modify the exercise data
-        final updatedExercise = existingExercise.copyWith(order: 5, notes: 'Updated notes for the exercise');
+        final updatedExercise = existingExercise.copyWith(
+          order: 5,
+          notes: 'Updated notes for the exercise',
+        );
 
         final rowsAffected = await exerciseDao.update(updatedExercise);
 
@@ -304,37 +344,49 @@ void main() {
 
         // Verify unchanged fields remain the same
         expect(retrieved.workoutId, equals(existingExercise.workoutId));
-        expect(retrieved.exerciseTypeId, equals(existingExercise.exerciseTypeId));
-      });
-
-      test('should return 0 when trying to update non-existent exercise', () async {
-        // Create an exercise with an ID that doesn't exist
-        final nonExistentExercise = ExerciseModel(
-          id: 99999,
-          workoutId: testWorkoutId,
-          exerciseTypeId: testExerciseTypeId,
-          order: 1,
-          notes: 'This exercise does not exist',
+        expect(
+          retrieved.exerciseTypeId,
+          equals(existingExercise.exerciseTypeId),
         );
-
-        final rowsAffected = await exerciseDao.update(nonExistentExercise);
-
-        // Should indicate no rows were affected
-        expect(rowsAffected, equals(0));
       });
 
-      test('should throw ArgumentError when trying to update exercise without ID', () async {
-        // Create an exercise without an ID
-        final exerciseWithoutId = ExerciseModel(
-          workoutId: testWorkoutId,
-          exerciseTypeId: testExerciseTypeId,
-          order: 1,
-          notes: 'Exercise without ID',
-        );
+      test(
+        'should return 0 when trying to update non-existent exercise',
+        () async {
+          // Create an exercise with an ID that doesn't exist
+          final nonExistentExercise = ExerciseModel(
+            id: 99999,
+            workoutId: testWorkoutId,
+            exerciseTypeId: testExerciseTypeId,
+            order: 1,
+            notes: 'This exercise does not exist',
+          );
 
-        // Should throw ArgumentError
-        expect(() async => await exerciseDao.update(exerciseWithoutId), throwsA(isA<ArgumentError>()));
-      });
+          final rowsAffected = await exerciseDao.update(nonExistentExercise);
+
+          // Should indicate no rows were affected
+          expect(rowsAffected, equals(0));
+        },
+      );
+
+      test(
+        'should throw ArgumentError when trying to update exercise without ID',
+        () async {
+          // Create an exercise without an ID
+          final exerciseWithoutId = ExerciseModel(
+            workoutId: testWorkoutId,
+            exerciseTypeId: testExerciseTypeId,
+            order: 1,
+            notes: 'Exercise without ID',
+          );
+
+          // Should throw ArgumentError
+          expect(
+            () async => await exerciseDao.update(exerciseWithoutId),
+            throwsA(isA<ArgumentError>()),
+          );
+        },
+      );
     });
 
     group('Delete Operations', () {
@@ -355,13 +407,16 @@ void main() {
         expect(retrieved, isNull);
       });
 
-      test('should return 0 when trying to delete non-existent exercise', () async {
-        // Try to delete an exercise that doesn't exist
-        final rowsDeleted = await exerciseDao.delete(99999);
+      test(
+        'should return 0 when trying to delete non-existent exercise',
+        () async {
+          // Try to delete an exercise that doesn't exist
+          final rowsDeleted = await exerciseDao.delete(99999);
 
-        // Should indicate no rows were affected (the method checks existence first)
-        expect(rowsDeleted, equals(0));
-      });
+          // Should indicate no rows were affected (the method checks existence first)
+          expect(rowsDeleted, equals(0));
+        },
+      );
 
       test('should delete all exercises for a specific workout', () async {
         // Add multiple exercises to the workout
@@ -384,7 +439,9 @@ void main() {
         );
 
         // Verify we have exercises before deletion
-        final beforeCount = await exerciseDao.getCountByWorkoutId(testWorkoutId);
+        final beforeCount = await exerciseDao.getCountByWorkoutId(
+          testWorkoutId,
+        );
         expect(beforeCount, equals(3));
 
         // Delete all exercises for the workout
@@ -397,21 +454,28 @@ void main() {
         final afterCount = await exerciseDao.getCountByWorkoutId(testWorkoutId);
         expect(afterCount, equals(0));
 
-        final remainingExercises = await exerciseDao.getByWorkoutId(testWorkoutId);
+        final remainingExercises = await exerciseDao.getByWorkoutId(
+          testWorkoutId,
+        );
         expect(remainingExercises, isEmpty);
       });
 
-      test('should return 0 when trying to delete exercises from workout with no exercises', () async {
-        // Create a new empty workout
-        final emptyWorkout = WorkoutModel('Empty Workout', DateTime.now());
-        final emptyWorkoutId = await workoutDao.insert(emptyWorkout);
+      test(
+        'should return 0 when trying to delete exercises from workout with no exercises',
+        () async {
+          // Create a new empty workout
+          final emptyWorkout = WorkoutModel('Empty Workout', DateTime.now());
+          final emptyWorkoutId = await workoutDao.insert(emptyWorkout);
 
-        // Try to delete exercises from the empty workout
-        final rowsDeleted = await exerciseDao.deleteByWorkoutId(emptyWorkoutId);
+          // Try to delete exercises from the empty workout
+          final rowsDeleted = await exerciseDao.deleteByWorkoutId(
+            emptyWorkoutId,
+          );
 
-        // Should indicate no rows were affected
-        expect(rowsDeleted, equals(0));
-      });
+          // Should indicate no rows were affected
+          expect(rowsDeleted, equals(0));
+        },
+      );
     });
   });
 }
