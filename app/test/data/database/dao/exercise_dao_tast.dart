@@ -31,10 +31,7 @@ void main() {
       workoutDao = WorkoutDao(testDatabase);
 
       // Create prerequisite data that exercises depend on
-      final testWorkout = WorkoutModel(
-        name: 'Test Workout',
-        createdOn: DateTime.now(),
-      );
+      final testWorkout = WorkoutModel('Test Workout', DateTime.now());
       testWorkoutId = await workoutDao.insert(testWorkout);
 
       final testExerciseType = ExerciseTypeModel(
@@ -155,10 +152,7 @@ void main() {
 
       test('should return empty list when workout has no exercises', () async {
         // Create a new workout with no exercises
-        final emptyWorkout = WorkoutModel(
-          name: 'Empty Workout',
-          createdOn: DateTime.now(),
-        );
+        final emptyWorkout = WorkoutModel('Empty Workout', DateTime.now());
         final emptyWorkoutId = await workoutDao.insert(emptyWorkout);
 
         final exercises = await exerciseDao.getByWorkoutId(emptyWorkoutId);
@@ -221,10 +215,7 @@ void main() {
         'should return empty list when JOIN query finds no exercises',
         () async {
           // Create a workout with no exercises
-          final emptyWorkout = WorkoutModel(
-            name: 'Empty Workout',
-            createdOn: DateTime.now(),
-          );
+          final emptyWorkout = WorkoutModel('Empty Workout', DateTime.now());
           final emptyWorkoutId = await workoutDao.insert(emptyWorkout);
 
           // Try the JOIN query on the empty workout
@@ -239,16 +230,10 @@ void main() {
 
       test('should retrieve exercises by exercise type with limit', () async {
         // Create multiple workouts with the same exercise type
-        final workout2 = WorkoutModel(
-          name: 'Workout 2',
-          createdOn: DateTime.now(),
-        );
+        final workout2 = WorkoutModel('Workout 2', DateTime.now());
         final workout2Id = await workoutDao.insert(workout2);
 
-        final workout3 = WorkoutModel(
-          name: 'Workout 3',
-          createdOn: DateTime.now(),
-        );
+        final workout3 = WorkoutModel('Workout 3', DateTime.now());
         final workout3Id = await workoutDao.insert(workout3);
 
         // Add bench press exercises to different workouts
@@ -322,10 +307,7 @@ void main() {
 
       test('should return 0 count for workout with no exercises', () async {
         // Create a new empty workout
-        final emptyWorkout = WorkoutModel(
-          name: 'Empty Workout',
-          createdOn: DateTime.now(),
-        );
+        final emptyWorkout = WorkoutModel('Empty Workout', DateTime.now());
         final emptyWorkoutId = await workoutDao.insert(emptyWorkout);
 
         final count = await exerciseDao.getCountByWorkoutId(emptyWorkoutId);
@@ -482,10 +464,7 @@ void main() {
         'should return 0 when trying to delete exercises from workout with no exercises',
         () async {
           // Create a new empty workout
-          final emptyWorkout = WorkoutModel(
-            name: 'Empty Workout',
-            createdOn: DateTime.now(),
-          );
+          final emptyWorkout = WorkoutModel('Empty Workout', DateTime.now());
           final emptyWorkoutId = await workoutDao.insert(emptyWorkout);
 
           // Try to delete exercises from the empty workout

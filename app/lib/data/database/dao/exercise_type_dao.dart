@@ -66,7 +66,8 @@ class ExerciseTypeDao {
   }
 
   /// Check if an exercise type name already exists
-  Future<bool> nameExists(String name) async {
+  /// If it does, return the id of the exercise type. Otherwise return null.
+  Future<int?> nameExists(String name) async {
     final db = await _db.database;
     final maps = await db.query(
       _tableName,
@@ -75,7 +76,8 @@ class ExerciseTypeDao {
       limit: 1,
     );
 
-    return maps.isNotEmpty;
+    if (maps.isEmpty) return null;
+    return ExerciseTypeModel.fromMap(maps.first).id;
   }
 
   /// Insert a new exercise type into the database
@@ -97,7 +99,11 @@ class ExerciseTypeDao {
     required ExerciseTypeModel exerciseType,
     required Transaction txn,
   }) async {
-    return await txn.insert(_tableName, exerciseType.toMap());
+    return await txn.insert(
+      _tableName,
+      exerciseType.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.ignore,
+    );
   }
 
   /// Update an existing exercise type

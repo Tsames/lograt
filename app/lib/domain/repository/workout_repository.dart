@@ -3,10 +3,10 @@ import 'package:lograt/domain/entities/exercise_type.dart';
 import '../../domain/entities/workout.dart';
 import '../entities/exercise.dart';
 import '../entities/exercise_set.dart';
-import '../entities/workout_summary.dart';
 
 abstract class WorkoutRepository {
-  Future<List<WorkoutSummary>> getMostRecentSummaries(int limit);
+  Future<Workout?> getWorkoutSummary(int workoutId);
+  Future<List<Workout>> getWorkoutSummaries([int limit]);
   Future<Workout> getFullWorkoutDetails(int workoutId);
   Future<List<Exercise>> getExercisesOfType({required int typeId, int limit});
 

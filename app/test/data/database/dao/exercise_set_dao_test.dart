@@ -35,10 +35,7 @@ void main() {
       workoutDao = WorkoutDao(testDatabase);
 
       // Create prerequisite data that exercise sets depend on
-      final testWorkout = WorkoutModel(
-        name: 'Test Workout',
-        createdOn: DateTime.now(),
-      );
+      final testWorkout = WorkoutModel('Test Workout', DateTime.now());
       final testWorkoutId = await workoutDao.insert(testWorkout);
 
       final testExerciseType = ExerciseTypeModel(

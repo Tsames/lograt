@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
+import 'di/providers.dart';
 
 void main() async {
   SystemChrome.setSystemUIOverlayStyle(
@@ -15,6 +17,16 @@ void main() async {
   );
 
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Seed Database if running in debug or profile
+  if (kDebugMode || kProfileMode) {
+    final container = ProviderContainer();
+    final seedWorkouts = container.read(seedDataProvider);
+
+    await seedWorkouts();
+
+    container.dispose();
+  }
 
   runApp(ProviderScope(child: const App()));
 }
