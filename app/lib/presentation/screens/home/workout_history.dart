@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/util/human_friendly_date_format.dart';
 
 import '../../providers/workout_provider.dart';
+import '../log/workout_log.dart';
 
 class WorkoutHistory extends ConsumerWidget {
   const WorkoutHistory({super.key});
@@ -51,7 +52,12 @@ class WorkoutHistory extends ConsumerWidget {
         return ListTile(
           title: Text(workout.name),
           subtitle: Text(workout.createdOn.toHumanFriendlyFormat()),
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => WorkoutLog(workout)),
+            );
+          },
         );
       },
     );
