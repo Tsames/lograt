@@ -10,6 +10,7 @@ class WorkoutHistory extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final textTheme = Theme.of(context).textTheme;
     final workoutHistoryState = ref.watch(workoutListProvider);
     // final workoutHistoryNotifier = ref.read(workoutListProvider.notifier);
 
@@ -18,14 +19,10 @@ class WorkoutHistory extends ConsumerWidget {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            'Error: ${workoutHistoryState.error}',
-            style: const TextStyle(color: Colors.red),
-          ),
+          Text('Error: ${workoutHistoryState.error}', style: const TextStyle(color: Colors.red)),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () =>
-                ref.read(workoutListProvider.notifier).loadWorkouts(),
+            onPressed: () => ref.read(workoutListProvider.notifier).loadWorkouts(),
             child: const Text('Retry'),
           ),
         ],
@@ -37,7 +34,7 @@ class WorkoutHistory extends ConsumerWidget {
       return const CircularProgressIndicator();
     }
 
-    // Handle empty state
+    // Handle empty state814906
     if (workoutHistoryState.workouts.isEmpty) {
       return const Text("No workouts yet.", style: TextStyle(fontSize: 18));
     }
@@ -50,13 +47,10 @@ class WorkoutHistory extends ConsumerWidget {
       itemBuilder: (context, index) {
         final workout = workoutHistoryState.workouts[index];
         return ListTile(
-          title: Text(workout.name),
-          subtitle: Text(workout.createdOn.toHumanFriendlyFormat()),
+          title: Text(workout.name, style: textTheme.bodyLarge),
+          subtitle: Text(workout.createdOn.toHumanFriendlyFormat(), style: textTheme.labelSmall),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => WorkoutLog(workout)),
-            );
+            Navigator.push(context, MaterialPageRoute(builder: (context) => WorkoutLog(workout)));
           },
         );
       },
