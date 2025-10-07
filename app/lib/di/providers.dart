@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/domain/usecases/clear_workouts.dart';
+import 'package:lograt/domain/usecases/get_all_exercise_types.dart';
 import 'package:lograt/domain/usecases/seed_data.dart';
 import '../../data/database/app_database.dart';
 import '../../data/database/dao/exercise_dao.dart';
@@ -59,6 +60,11 @@ final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
 final getMostRecentWorkoutsProvider = Provider<GetMostRecentWorkouts>((ref) {
   final repository = ref.read(workoutRepositoryProvider);
   return GetMostRecentWorkouts(repository);
+});
+
+final getAllExerciseTypesProvider = Provider<GetAllExerciseTypes>((ref) {
+  final repository = ref.read(workoutRepositoryProvider);
+  return GetAllExerciseTypes(repository);
 });
 
 final addWorkoutProvider = Provider<AddWorkout>((ref) {
