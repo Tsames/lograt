@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lograt/domain/entities/exercise.dart';
+// import 'package:lograt/domain/entities/exercise.dart';
 
 import '../../../domain/entities/exercise_type.dart';
 import 'exercise_tracker.dart';

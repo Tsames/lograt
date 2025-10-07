@@ -5,24 +5,24 @@ import '../../di/providers.dart';
 import '../../domain/entities/workout.dart';
 import '../../domain/usecases/get_most_recent_workouts.dart';
 
-// This represents the state of your workout list screen
-class WorkoutListState {
+// This represents the state of the workout history widget
+class WorkoutHistoryState {
   final List<Workout> workouts;
   final bool isLoading;
   final String? error;
 
-  const WorkoutListState({
+  const WorkoutHistoryState({
     this.workouts = const [],
     this.isLoading = false,
     this.error,
   });
 
-  WorkoutListState copyWith({
+  WorkoutHistoryState copyWith({
     List<Workout>? workouts,
     bool? isLoading,
     String? error,
   }) {
-    return WorkoutListState(
+    return WorkoutHistoryState(
       workouts: workouts ?? this.workouts,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
@@ -30,30 +30,23 @@ class WorkoutListState {
   }
 }
 
-// This is your ViewModel using StateNotifier
-// It handles all business logic coordination for the workout list screen
-class WorkoutHistoryNotifier extends StateNotifier<WorkoutListState> {
+// This is the ViewModel using StateNotifier
+class WorkoutHistoryNotifier extends StateNotifier<WorkoutHistoryState> {
   final GetMostRecentWorkouts _getMostRecentWorkouts;
   final ClearWorkout _clearWorkouts;
 
   WorkoutHistoryNotifier(this._getMostRecentWorkouts, this._clearWorkouts)
-    : super(const WorkoutListState()) {
+    : super(const WorkoutHistoryState()) {
     loadWorkouts();
   }
 
-  // This method handles loading workouts with proper error handling
   Future<void> loadWorkouts() async {
-    // Set loading state
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      // Use the use case to get workouts - this is where business logic happens
       final workouts = await _getMostRecentWorkouts();
-
-      // Update state with successful data
       state = state.copyWith(workouts: workouts, isLoading: false);
     } catch (error) {
-      // Handle errors gracefully
       state = state.copyWith(isLoading: false, error: error.toString());
     }
   }
@@ -64,10 +57,10 @@ class WorkoutHistoryNotifier extends StateNotifier<WorkoutListState> {
   }
 }
 
-// Provider for your ViewModel
-// This is what your UI will watch for state changes
-final workoutListProvider =
-    StateNotifierProvider<WorkoutHistoryNotifier, WorkoutListState>((ref) {
+// Provider for the ViewModel
+// This is what the UI will watch for state changes
+final workoutHistoryProvider =
+    StateNotifierProvider<WorkoutHistoryNotifier, WorkoutHistoryState>((ref) {
       final getMostRecentWorkouts = ref.read(getMostRecentWorkoutsProvider);
       final clearWorkoutList = ref.read(clearWorkoutProvider);
 
