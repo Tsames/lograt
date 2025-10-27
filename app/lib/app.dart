@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lograt/presentation/screens/home/home.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -21,7 +20,23 @@ class App extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: Home(),
+      home: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          bottomNavigationBar: BottomAppBar(
+            child: TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.view_week), text: "This Week"),
+                Tab(icon: Icon(Icons.history), text: "Workout History"),
+                Tab(icon: Icon(Icons.settings), text: "Settings"),
+              ],
+            ),
+          ),
+          body: TabBarView(
+            children: [Placeholder(), Placeholder(), Placeholder()],
+          ),
+        ),
+      ),
     );
   }
 }
