@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/util/human_friendly_date_format.dart';
 
-import '../log/workout_log.dart';
+import '../workout_log/workout_log.dart';
 import 'this_week_workout_history_provider.dart';
 
 class ThisWeekWorkoutHistory extends ConsumerWidget {
