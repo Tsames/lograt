@@ -10,12 +10,8 @@ class ThisWeekWorkoutHistory extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    late final thisWeekWorkoutHistoryState = ref.watch(
-      thisWeekWorkoutHistoryProvider,
-    );
-    late final thisWeekWorkoutHistoryNotifier = ref.read(
-      thisWeekWorkoutHistoryProvider.notifier,
-    );
+    late final thisWeekWorkoutHistoryState = ref.watch(thisWeekWorkoutHistoryProvider);
+    late final thisWeekWorkoutHistoryNotifier = ref.read(thisWeekWorkoutHistoryProvider.notifier);
 
     final textTheme = Theme.of(context).textTheme;
     final workouts = thisWeekWorkoutHistoryState.workoutsThisWeek;
@@ -29,14 +25,10 @@ class ThisWeekWorkoutHistory extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Error: ${thisWeekWorkoutHistoryState.error}',
-                      style: const TextStyle(color: Colors.red),
-                    ),
+                    Text('Error: ${thisWeekWorkoutHistoryState.error}', style: const TextStyle(color: Colors.red)),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () =>
-                          thisWeekWorkoutHistoryNotifier.loadWorkouts(),
+                      onPressed: () => thisWeekWorkoutHistoryNotifier.loadWorkouts(),
                       child: const Text('Retry'),
                     ),
                   ],
@@ -52,36 +44,28 @@ class ThisWeekWorkoutHistory extends ConsumerWidget {
 
           // Handle empty state
           if (workouts.isEmpty) {
-            return const [
-              Text("No workouts yet.", style: TextStyle(fontSize: 18)),
-            ];
+            return const [Text("No workouts yet.", style: TextStyle(fontSize: 18))];
           }
 
           return [
-            Text("This Week", style: textTheme.bodyMedium),
+            Text("This Week", style: textTheme.headlineSmall),
             Divider(),
-            ListView.builder(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(16),
-              itemCount: workouts.length,
-              itemBuilder: (context, index) {
-                final workout = workouts[index];
-                return ListTile(
-                  title: Text(workout.name, style: textTheme.bodyLarge),
-                  subtitle: Text(
-                    workout.createdOn.toHumanFriendlyFormat(),
-                    style: textTheme.labelSmall,
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WorkoutLog(workout),
-                      ),
-                    );
-                  },
-                );
-              },
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(16),
+                itemCount: workouts.length,
+                itemBuilder: (context, index) {
+                  final workout = workouts[index];
+                  return ListTile(
+                    title: Text(workout.name, style: textTheme.bodyLarge),
+                    subtitle: Text(workout.createdOn.toHumanFriendlyFormat(), style: textTheme.labelSmall),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => WorkoutLog(workout)));
+                    },
+                  );
+                },
+              ),
             ),
           ];
         }(),
