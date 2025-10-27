@@ -13,7 +13,11 @@ class WorkoutDao {
   /// Returns null if no workout with the given ID exists
   Future<WorkoutModel?> getById(int id) async {
     final database = await _db.database;
-    final maps = await database.query(_tableName, where: 'id = ?', whereArgs: [id]);
+    final maps = await database.query(
+      _tableName,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
 
     if (maps.isEmpty) return null;
     return WorkoutModel.fromMap(maps.first);
@@ -24,14 +28,20 @@ class WorkoutDao {
   Future<List<WorkoutModel>> getWorkoutSummaries(int limit) async {
     final db = await _db.database;
 
-    final maps = await db.query(_tableName, orderBy: 'createdOn DESC', limit: limit);
+    final maps = await db.query(
+      _tableName,
+      orderBy: 'createdOn DESC',
+      limit: limit,
+    );
 
     return maps.map((map) => WorkoutModel.fromMap(map)).toList();
   }
 
   /// Get a list of the workouts that were created after the given datetime in milliseconds
   /// Workouts returned will be in order of creation date DESC
-  Future<List<WorkoutModel>> getWorkoutSummariesAfterTime(int dateThresholdInMilliseconds) async {
+  Future<List<WorkoutModel>> getWorkoutSummariesAfterTime(
+    int dateThresholdInMilliseconds,
+  ) async {
     final db = await _db.database;
 
     final maps = await db.query(
@@ -46,16 +56,28 @@ class WorkoutDao {
 
   Future<int> insert(WorkoutModel workout) async {
     final db = await _db.database;
-    return await db.insert(_tableName, workout.toMap(), conflictAlgorithm: ConflictAlgorithm.fail);
+    return await db.insert(
+      _tableName,
+      workout.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.fail,
+    );
   }
 
-  Future<int> insertWithTransaction(WorkoutModel workout, Transaction txn) async {
+  Future<int> insertWithTransaction(
+    WorkoutModel workout,
+    Transaction txn,
+  ) async {
     return await txn.insert(_tableName, workout.toMap());
   }
 
   Future<int> update(WorkoutModel workout) async {
     final db = await _db.database;
-    return await db.update(_tableName, workout.toMap(), where: 'id = ?', whereArgs: [workout.id]);
+    return await db.update(
+      _tableName,
+      workout.toMap(),
+      where: 'id = ?',
+      whereArgs: [workout.id],
+    );
   }
 
   Future<int> delete(int id) async {
