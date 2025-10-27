@@ -3,7 +3,7 @@ import 'package:lograt/domain/usecases/clear_workouts.dart';
 
 import '../../../di/providers.dart';
 import '../../../domain/entities/workout.dart';
-import '../../../domain/usecases/get_most_recent_workouts.dart';
+import '../../../domain/usecases/get_this_weeks_workouts.dart';
 
 class ThisWeekWorkoutHistoryState {
   final List<Workout> workoutsThisWeek;
@@ -31,11 +31,11 @@ class ThisWeekWorkoutHistoryState {
 
 class ThisWeekWorkoutHistoryNotifier
     extends StateNotifier<ThisWeekWorkoutHistoryState> {
-  final GetMostRecentWorkouts _getMostRecentWorkouts;
+  final GetThisWeeksWorkouts _getThisWeeksWorkouts;
   final ClearWorkout _clearWorkouts;
 
   ThisWeekWorkoutHistoryNotifier(
-    this._getMostRecentWorkouts,
+    this._getThisWeeksWorkouts,
     this._clearWorkouts,
   ) : super(const ThisWeekWorkoutHistoryState()) {
     loadWorkouts();
@@ -45,7 +45,7 @@ class ThisWeekWorkoutHistoryNotifier
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final workouts = await _getMostRecentWorkouts();
+      final workouts = await _getThisWeeksWorkouts();
       state = state.copyWith(workouts: workouts, isLoading: false);
     } catch (error) {
       state = state.copyWith(isLoading: false, error: error.toString());
@@ -63,11 +63,11 @@ final thisWeekWorkoutHistoryProvider =
       ThisWeekWorkoutHistoryNotifier,
       ThisWeekWorkoutHistoryState
     >((ref) {
-      final getMostRecentWorkouts = ref.read(getMostRecentWorkoutsProvider);
+      final getThisWeeksWorkouts = ref.read(getThisWeeksWorkoutsProvider);
       final clearWorkoutList = ref.read(clearWorkoutProvider);
 
       return ThisWeekWorkoutHistoryNotifier(
-        getMostRecentWorkouts,
+        getThisWeeksWorkouts,
         clearWorkoutList,
       );
     });
