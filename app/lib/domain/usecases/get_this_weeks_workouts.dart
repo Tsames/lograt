@@ -5,11 +5,14 @@ import '../entities/workout.dart';
 
 class GetThisWeeksWorkouts {
   final WorkoutRepository _repository;
-  final int beginningOfTheWeekInMillisecondsSinceEpoch = DateTime.now().beginningOfTheWeek.millisecondsSinceEpoch;
+  final int beginningOfTheWeekInMillisecondsSinceEpoch =
+      DateTime.now().beginningOfTheWeek.millisecondsSinceEpoch;
 
   GetThisWeeksWorkouts(this._repository);
 
   Future<List<Workout>> call() async {
-    return await _repository.getWorkoutSummariesAfterTime(beginningOfTheWeekInMillisecondsSinceEpoch);
+    return await _repository.getWorkoutSummariesAfterTime(
+      beginningOfTheWeekInMillisecondsSinceEpoch,
+    );
   }
 }

@@ -10,9 +10,17 @@ class ThisWeekWorkoutHistoryState {
   final bool isLoading;
   final String? error;
 
-  const ThisWeekWorkoutHistoryState({this.workoutsThisWeek = const [], this.isLoading = false, this.error});
+  const ThisWeekWorkoutHistoryState({
+    this.workoutsThisWeek = const [],
+    this.isLoading = false,
+    this.error,
+  });
 
-  ThisWeekWorkoutHistoryState copyWith({List<Workout>? workouts, bool? isLoading, String? error}) {
+  ThisWeekWorkoutHistoryState copyWith({
+    List<Workout>? workouts,
+    bool? isLoading,
+    String? error,
+  }) {
     return ThisWeekWorkoutHistoryState(
       workoutsThisWeek: workouts ?? workoutsThisWeek,
       isLoading: isLoading ?? this.isLoading,
@@ -21,12 +29,15 @@ class ThisWeekWorkoutHistoryState {
   }
 }
 
-class ThisWeekWorkoutHistoryNotifier extends StateNotifier<ThisWeekWorkoutHistoryState> {
+class ThisWeekWorkoutHistoryNotifier
+    extends StateNotifier<ThisWeekWorkoutHistoryState> {
   final GetThisWeeksWorkouts _getThisWeeksWorkouts;
   final ClearWorkout _clearWorkouts;
 
-  ThisWeekWorkoutHistoryNotifier(this._getThisWeeksWorkouts, this._clearWorkouts)
-    : super(const ThisWeekWorkoutHistoryState()) {
+  ThisWeekWorkoutHistoryNotifier(
+    this._getThisWeeksWorkouts,
+    this._clearWorkouts,
+  ) : super(const ThisWeekWorkoutHistoryState()) {
     loadWorkouts();
   }
 
@@ -48,9 +59,15 @@ class ThisWeekWorkoutHistoryNotifier extends StateNotifier<ThisWeekWorkoutHistor
 }
 
 final thisWeekWorkoutHistoryProvider =
-    StateNotifierProvider<ThisWeekWorkoutHistoryNotifier, ThisWeekWorkoutHistoryState>((ref) {
+    StateNotifierProvider<
+      ThisWeekWorkoutHistoryNotifier,
+      ThisWeekWorkoutHistoryState
+    >((ref) {
       final getThisWeeksWorkouts = ref.read(getThisWeeksWorkoutsProvider);
       final clearWorkoutList = ref.read(clearWorkoutProvider);
 
-      return ThisWeekWorkoutHistoryNotifier(getThisWeeksWorkouts, clearWorkoutList);
+      return ThisWeekWorkoutHistoryNotifier(
+        getThisWeeksWorkouts,
+        clearWorkoutList,
+      );
     });
