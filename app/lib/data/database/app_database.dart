@@ -1,5 +1,5 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_migration/sqflite_migration.dart';
 
 class AppDatabase {
@@ -70,6 +70,7 @@ class AppDatabase {
       _createExerciseTypesTableSQL(),
       _createWorkoutExercisesTableSQL(),
       _createWorkoutSetsTableSQL(),
+      _createWorkoutsTableCreatedOnIndexSQL(),
     ];
   }
 
@@ -126,6 +127,12 @@ class AppDatabase {
       notes TEXT,
       FOREIGN KEY (exercise_id) REFERENCES $exercisesTableName(id) ON DELETE CASCADE
     )
+    ''';
+  }
+
+  String _createWorkoutsTableCreatedOnIndexSQL() {
+    return '''
+    CREATE INDEX idx_workouts_created_on ON $workoutsTableName(createdOn)
     ''';
   }
 }
