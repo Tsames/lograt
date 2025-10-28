@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/database/dao/workout_dao.dart';
 import 'package:lograt/data/models/workout_model.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
   setUpAll(() async {
@@ -95,7 +95,7 @@ void main() {
           await workoutDao.insert(workout);
         }
 
-        final limitedResults = await workoutDao.getWorkoutSummaries(3);
+        final limitedResults = await workoutDao.getWorkoutSummaries(limit: 3);
         expect(limitedResults.length, equals(3));
 
         expect(limitedResults[0].name, equals('Workout 4')); // Most recent
@@ -177,7 +177,7 @@ void main() {
 
           await workoutDao.clearTable();
 
-          final remaining = await workoutDao.getWorkoutSummaries(10);
+          final remaining = await workoutDao.getWorkoutSummaries(limit: 10);
           expect(remaining, isEmpty);
 
           final original = await workoutDao.getById(existingWorkoutId);

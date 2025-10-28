@@ -25,13 +25,17 @@ class WorkoutDao {
 
   /// Get a list of the workouts of length [limit]
   /// Workouts returned will be in order of creation date DESC
-  Future<List<WorkoutModel>> getWorkoutSummaries(int limit) async {
+  Future<List<WorkoutModel>> getWorkoutSummaries({
+    int? limit,
+    int? offset,
+  }) async {
     final db = await _db.database;
 
     final maps = await db.query(
       _tableName,
       orderBy: 'createdOn DESC',
       limit: limit,
+      offset: offset,
     );
 
     return maps.map((map) => WorkoutModel.fromMap(map)).toList();
