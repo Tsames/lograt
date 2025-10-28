@@ -12,7 +12,7 @@ import '../../data/database/dao/workout_dao.dart';
 import '../../data/repositories/workout_repository_impl.dart';
 import '../../domain/repository/workout_repository.dart';
 import '../../domain/usecases/add_workout.dart';
-import '../../domain/usecases/get_most_recent_workouts.dart';
+import '../../domain/usecases/get_paginated_workouts_sorted_by_creation_date.dart';
 
 // --- Data Layer providers ---
 
@@ -59,10 +59,11 @@ final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
 
 // --- Domain Layer providers ---
 
-final getMostRecentWorkoutsProvider = Provider<GetMostRecentWorkouts>((ref) {
-  final repository = ref.read(workoutRepositoryProvider);
-  return GetMostRecentWorkouts(repository);
-});
+final getSortedPaginatedWorkouts =
+    Provider<GetPaginatedWorkoutsSortedByCreationDate>((ref) {
+      final repository = ref.read(workoutRepositoryProvider);
+      return GetPaginatedWorkoutsSortedByCreationDate(repository);
+    });
 
 final getThisWeeksWorkoutsProvider = Provider<GetThisWeeksWorkouts>((ref) {
   final repository = ref.read(workoutRepositoryProvider);

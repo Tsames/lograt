@@ -5,23 +5,23 @@ import '../../../di/providers.dart';
 import '../../../domain/entities/workout.dart';
 import '../../../domain/usecases/get_this_weeks_workouts.dart';
 
-class ThisWeekWorkoutHistoryState {
+class WorkoutsThisWeekTabState {
   final List<Workout> workoutsThisWeek;
   final bool isLoading;
   final String? error;
 
-  const ThisWeekWorkoutHistoryState({
+  const WorkoutsThisWeekTabState({
     this.workoutsThisWeek = const [],
     this.isLoading = false,
     this.error,
   });
 
-  ThisWeekWorkoutHistoryState copyWith({
+  WorkoutsThisWeekTabState copyWith({
     List<Workout>? workouts,
     bool? isLoading,
     String? error,
   }) {
-    return ThisWeekWorkoutHistoryState(
+    return WorkoutsThisWeekTabState(
       workoutsThisWeek: workouts ?? workoutsThisWeek,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
@@ -29,15 +29,13 @@ class ThisWeekWorkoutHistoryState {
   }
 }
 
-class ThisWeekWorkoutHistoryNotifier
-    extends StateNotifier<ThisWeekWorkoutHistoryState> {
+class WorkoutsThisWeekTabNotifier
+    extends StateNotifier<WorkoutsThisWeekTabState> {
   final GetThisWeeksWorkouts _getThisWeeksWorkouts;
   final ClearWorkout _clearWorkouts;
 
-  ThisWeekWorkoutHistoryNotifier(
-    this._getThisWeeksWorkouts,
-    this._clearWorkouts,
-  ) : super(const ThisWeekWorkoutHistoryState()) {
+  WorkoutsThisWeekTabNotifier(this._getThisWeeksWorkouts, this._clearWorkouts)
+    : super(const WorkoutsThisWeekTabState()) {
     loadWorkouts();
   }
 
@@ -58,15 +56,15 @@ class ThisWeekWorkoutHistoryNotifier
   }
 }
 
-final thisWeekWorkoutHistoryProvider =
+final workoutsThisWeekTabProvider =
     StateNotifierProvider<
-      ThisWeekWorkoutHistoryNotifier,
-      ThisWeekWorkoutHistoryState
+      WorkoutsThisWeekTabNotifier,
+      WorkoutsThisWeekTabState
     >((ref) {
       final getThisWeeksWorkouts = ref.read(getThisWeeksWorkoutsProvider);
       final clearWorkoutList = ref.read(clearWorkoutProvider);
 
-      return ThisWeekWorkoutHistoryNotifier(
+      return WorkoutsThisWeekTabNotifier(
         getThisWeeksWorkouts,
         clearWorkoutList,
       );
