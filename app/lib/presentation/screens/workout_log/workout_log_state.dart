@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lograt/presentation/screens/workout_log/workout_log.dart';
-import 'package:lograt/util/human_friendly_date_format.dart';
+import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 
 class WorkoutLogState extends State<WorkoutLog> {
   @override

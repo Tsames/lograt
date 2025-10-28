@@ -1,4 +1,4 @@
-import 'package:lograt/util/beginning_of_the_week.dart';
+import 'package:lograt/util/extensions/beginning_of_the_week.dart';
 
 import '../../domain/repository/workout_repository.dart';
 import '../entities/workout.dart';
