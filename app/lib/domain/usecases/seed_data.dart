@@ -6,9 +6,7 @@ class SeedData {
   SeedData(this._repository);
 
   Future<void> call() async {
-    final mostRecentWorkout = await _repository.getWorkoutSummaries(1);
-    if (mostRecentWorkout.isEmpty) {
-      await _repository.seedWorkouts();
-    }
+    _repository.clearWorkouts();
+    _repository.seedWorkouts();
   }
 }
