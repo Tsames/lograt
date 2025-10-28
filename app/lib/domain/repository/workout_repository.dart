@@ -7,7 +7,7 @@ import '../entities/exercise_set.dart';
 abstract class WorkoutRepository {
   Future<Workout?> getWorkoutSummary(int workoutId);
 
-  Future<List<Workout>> getWorkoutSummaries([int limit]);
+  Future<List<Workout>> getWorkoutSummaries({int limit, int? offset});
 
   Future<List<Workout>> getWorkoutSummariesAfterTime(
     int dateTimeThresholdInMilliseconds,

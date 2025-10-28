@@ -81,9 +81,12 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   /// Get a list of length [limit] of [Workout]s without their corresponding exercises
   /// ordered by creation date descending.
   @override
-  Future<List<Workout>> getWorkoutSummaries([int limit = 20]) async {
+  Future<List<Workout>> getWorkoutSummaries({int? limit, int? offset}) async {
     try {
-      final workoutModels = await _workoutDao.getWorkoutSummaries(limit);
+      final workoutModels = await _workoutDao.getWorkoutSummaries(
+        limit: limit,
+        offset: offset,
+      );
 
       final workoutEntities = workoutModels
           .map((workoutModel) => workoutModel.toEntity())
