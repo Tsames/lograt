@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lograt/presentation/tabs/workout_history_tab/workout_history_tab_widget.dart';
-import 'package:lograt/presentation/tabs/workouts_this_week_tab/workouts_this_week_tab.dart';
+import 'package:lograt/presentation/tabs/workouts_this_week_tab/workouts_this_week_tab_widget.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -36,7 +36,7 @@ class App extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              WorkoutsThisWeekTab(),
+              WorkoutsThisWeekTabWidget(),
               WorkoutHistoryTabWidget(),
               Placeholder(),
             ],
