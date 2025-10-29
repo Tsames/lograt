@@ -73,11 +73,12 @@ final getThisWeeksWorkoutsUsecaseProvider =
       return GetThisWeeksWorkoutsUsecase(repository);
     });
 
-final getAllExerciseTypesUsecaseProvider =
-    Provider<GetAllExerciseTypesUsecaseUsecase>((ref) {
-      final repository = ref.read(workoutRepositoryProvider);
-      return GetAllExerciseTypesUsecaseUsecase(repository);
-    });
+final getAllExerciseTypesUsecaseProvider = Provider<GetAllExerciseTypesUsecase>(
+  (ref) {
+    final repository = ref.read(workoutRepositoryProvider);
+    return GetAllExerciseTypesUsecase(repository);
+  },
+);
 
 final addWorkoutUsecaseProvider = Provider<AddWorkoutUsecase>((ref) {
   final repository = ref.read(workoutRepositoryProvider);
