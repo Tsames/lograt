@@ -19,57 +19,50 @@ class WorkoutsThisWeekTabWidget extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
     final workouts = workoutsThisWeekTabState.workoutsThisWeek;
 
-    return SafeArea(
-      child: () {
-        if (workoutsThisWeekTabState.error != null) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Error: ${workoutsThisWeekTabState.error}',
-                style: const TextStyle(color: Colors.red),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => thisWeekWorkoutHistoryNotifier.loadWorkouts(),
-                child: const Text('Retry'),
-              ),
-            ],
-          );
-        }
+    if (workoutsThisWeekTabState.error != null) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Error: ${workoutsThisWeekTabState.error}',
+            style: const TextStyle(color: Colors.red),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => thisWeekWorkoutHistoryNotifier.loadWorkouts(),
+            child: const Text('Retry'),
+          ),
+        ],
+      );
+    }
 
-        // Handle loading state with existing data
-        if (workoutsThisWeekTabState.isLoading && workouts.isEmpty) {
-          return Center(child: const CircularProgressIndicator());
-        }
+    // Handle loading state with existing data
+    if (workoutsThisWeekTabState.isLoading && workouts.isEmpty) {
+      return Center(child: const CircularProgressIndicator());
+    }
 
-        // Handle empty state
-        if (workouts.isEmpty) {
-          return Center(
-            child: const Text(
-              "No workouts yet.",
-              style: TextStyle(fontSize: 18),
-            ),
-          );
-        }
+    // Handle empty state
+    if (workouts.isEmpty) {
+      return Center(
+        child: const Text("No workouts yet.", style: TextStyle(fontSize: 18)),
+      );
+    }
 
-        return Column(
-          children: [
-            Text("This Week", style: textTheme.headlineSmall),
-            Divider(),
-            Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(16),
-                itemCount: workouts.length,
-                itemBuilder: (context, index) {
-                  return WorkoutListTile(workouts[index]);
-                },
-              ),
-            ),
-          ],
-        );
-      }(),
+    return Column(
+      children: [
+        Text("This Week", style: textTheme.headlineSmall),
+        Divider(),
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            padding: const EdgeInsets.all(16),
+            itemCount: workouts.length,
+            itemBuilder: (context, index) {
+              return WorkoutListTile(workouts[index]);
+            },
+          ),
+        ),
+      ],
     );
   }
 }
