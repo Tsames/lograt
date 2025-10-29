@@ -3,7 +3,7 @@ import 'package:lograt/presentation/tabs/workouts_this_week_tab/workouts_this_we
 
 import '../app_tab.dart';
 
-class WorkoutHistoryTab implements AppTab {
+class WorkoutsThisWeekTab implements AppTab {
   @override
   final title = "This Week";
 
@@ -13,5 +13,5 @@ class WorkoutHistoryTab implements AppTab {
   @override
   Widget get widget => WorkoutsThisWeekTabWidget();
 
-  WorkoutHistoryTab();
+  WorkoutsThisWeekTab();
 }
