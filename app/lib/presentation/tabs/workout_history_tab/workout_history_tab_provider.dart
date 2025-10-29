@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/domain/usecases/get_paginated_workouts_sorted_by_creation_date.dart';
 
-import '../../../di/providers.dart';
-import '../../../domain/entities/workout.dart';
+import '../../../data/entities/workout.dart';
+import '../../../data/providers.dart';
+import '../../../data/usecases/get_paginated_workouts_sorted_by_creation_date_usecase.dart';
 
 class WorkoutHistoryTabState {
   final List<Workout> sortedWorkouts;
@@ -38,7 +38,8 @@ class WorkoutHistoryTabState {
 }
 
 class WorkoutHistoryTabNotifier extends StateNotifier<WorkoutHistoryTabState> {
-  final GetPaginatedWorkoutsSortedByCreationDate _getPaginatedSortedWorkouts;
+  final GetPaginatedWorkoutsSortedByCreationDateUsecase
+  _getPaginatedSortedWorkouts;
 
   WorkoutHistoryTabNotifier(this._getPaginatedSortedWorkouts)
     : super(const WorkoutHistoryTabState()) {
@@ -72,7 +73,9 @@ final workoutHistoryTabProvider =
     StateNotifierProvider<WorkoutHistoryTabNotifier, WorkoutHistoryTabState>((
       ref,
     ) {
-      final getSortedWorkouts = ref.read(getSortedPaginatedWorkouts);
+      final getSortedWorkouts = ref.read(
+        getSortedPaginatedWorkoutsUsecaseProvider,
+      );
 
       return WorkoutHistoryTabNotifier(getSortedWorkouts);
     });

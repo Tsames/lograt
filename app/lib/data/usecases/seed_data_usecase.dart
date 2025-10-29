@@ -1,9 +1,9 @@
-import '../repository/workout_repository.dart';
+import '../repositories/workout_repository.dart';
 
-class SeedData {
+class SeedDataUsecase {
   final WorkoutRepository _repository;
 
-  SeedData(this._repository);
+  SeedDataUsecase(this._repository);
 
   Future<void> call() async {
     _repository.clearWorkouts();

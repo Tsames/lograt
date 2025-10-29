@@ -1,8 +1,7 @@
-import 'package:lograt/domain/entities/exercise_type.dart';
-
-import '../../domain/entities/workout.dart';
 import '../entities/exercise.dart';
 import '../entities/exercise_set.dart';
+import '../entities/exercise_type.dart';
+import '../entities/workout.dart';
 
 abstract class WorkoutRepository {
   Future<Workout?> getWorkoutSummary(int workoutId);

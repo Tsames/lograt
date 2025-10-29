@@ -1,9 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/domain/usecases/clear_workouts.dart';
 
-import '../../../di/providers.dart';
-import '../../../domain/entities/workout.dart';
-import '../../../domain/usecases/get_this_weeks_workouts.dart';
+import '../../../data/entities/workout.dart';
+import '../../../data/providers.dart';
+import '../../../data/usecases/get_this_weeks_workouts_usecase.dart';
 
 class WorkoutsThisWeekTabState {
   final List<Workout> workoutsThisWeek;
@@ -31,10 +30,9 @@ class WorkoutsThisWeekTabState {
 
 class WorkoutsThisWeekTabNotifier
     extends StateNotifier<WorkoutsThisWeekTabState> {
-  final GetThisWeeksWorkouts _getThisWeeksWorkouts;
-  final ClearWorkout _clearWorkouts;
+  final GetThisWeeksWorkoutsUsecase _getThisWeeksWorkouts;
 
-  WorkoutsThisWeekTabNotifier(this._getThisWeeksWorkouts, this._clearWorkouts)
+  WorkoutsThisWeekTabNotifier(this._getThisWeeksWorkouts)
     : super(const WorkoutsThisWeekTabState()) {
     loadWorkouts();
   }
@@ -51,7 +49,6 @@ class WorkoutsThisWeekTabNotifier
   }
 
   Future<void> clearWorkouts() async {
-    await _clearWorkouts();
     state = state.copyWith(workouts: const []);
   }
 }
@@ -61,11 +58,9 @@ final workoutsThisWeekTabProvider =
       WorkoutsThisWeekTabNotifier,
       WorkoutsThisWeekTabState
     >((ref) {
-      final getThisWeeksWorkouts = ref.read(getThisWeeksWorkoutsProvider);
-      final clearWorkoutList = ref.read(clearWorkoutProvider);
-
-      return WorkoutsThisWeekTabNotifier(
-        getThisWeeksWorkouts,
-        clearWorkoutList,
+      final getThisWeeksWorkouts = ref.read(
+        getThisWeeksWorkoutsUsecaseProvider,
       );
+
+      return WorkoutsThisWeekTabNotifier(getThisWeeksWorkouts);
     });

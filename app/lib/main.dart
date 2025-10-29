@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
-import 'di/providers.dart';
+import 'data/providers.dart';
 
 void main() async {
   SystemChrome.setSystemUIOverlayStyle(
@@ -21,7 +21,7 @@ void main() async {
   // Seed Database if running in debug or profile
   if (kDebugMode || kProfileMode) {
     final container = ProviderContainer();
-    final seedWorkouts = container.read(seedDataProvider);
+    final seedWorkouts = container.read(seedDataUsecaseProvider);
 
     await seedWorkouts();
 

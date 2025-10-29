@@ -1,5 +1,5 @@
-import 'package:lograt/domain/entities/set_type.dart';
-import 'package:lograt/domain/entities/units.dart';
+import 'package:lograt/data/entities/set_type.dart';
+import 'package:lograt/data/entities/units.dart';
 
 /// Represents a single set within an exercise
 class ExerciseSet {

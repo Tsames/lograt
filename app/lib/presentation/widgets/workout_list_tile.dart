@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lograt/domain/entities/workout.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 
+import '../../data/entities/workout.dart';
 import '../screens/workout_log/workout_log.dart';
 
 class WorkoutListTile extends StatelessWidget {

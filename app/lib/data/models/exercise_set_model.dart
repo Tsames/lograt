@@ -1,6 +1,6 @@
-import '../../domain/entities/exercise_set.dart';
-import '../../domain/entities/set_type.dart';
-import '../../domain/entities/units.dart';
+import '../entities/exercise_set.dart';
+import '../entities/set_type.dart';
+import '../entities/units.dart';
 
 /// Data model for exercise_sets table
 /// Handles SQLite representation and conversion to/from domain entities

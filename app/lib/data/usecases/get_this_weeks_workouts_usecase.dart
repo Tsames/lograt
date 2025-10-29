@@ -1,14 +1,14 @@
 import 'package:lograt/util/extensions/beginning_of_the_week.dart';
 
-import '../../domain/repository/workout_repository.dart';
 import '../entities/workout.dart';
+import '../repositories/workout_repository.dart';
 
-class GetThisWeeksWorkouts {
+class GetThisWeeksWorkoutsUsecase {
   final WorkoutRepository _repository;
   final int beginningOfTheWeekInMillisecondsSinceEpoch =
       DateTime.now().beginningOfTheWeek.millisecondsSinceEpoch;
 
-  GetThisWeeksWorkouts(this._repository);
+  GetThisWeeksWorkoutsUsecase(this._repository);
 
   Future<List<Workout>> call() async {
     return await _repository.getWorkoutSummariesAfterTime(

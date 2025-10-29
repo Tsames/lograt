@@ -1,10 +1,10 @@
-import '../../domain/repository/workout_repository.dart';
-import '../../domain/entities/workout.dart';
+import '../entities/workout.dart';
+import '../repositories/workout_repository.dart';
 
-class AddWorkout {
+class AddWorkoutUsecase {
   final WorkoutRepository _repository;
 
-  AddWorkout(this._repository);
+  AddWorkoutUsecase(this._repository);
 
   Future<void> call(Workout workout) async {
     if (workout.name.trim().isEmpty) {
