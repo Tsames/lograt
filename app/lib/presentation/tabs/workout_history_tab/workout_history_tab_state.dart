@@ -38,59 +38,52 @@ class WorkoutHistoryTabState extends ConsumerState<WorkoutHistoryTabWidget> {
     final workoutHistoryTabState = ref.watch(workoutHistoryTabProvider);
     final workouts = workoutHistoryTabState.sortedWorkouts;
     final textTheme = Theme.of(context).textTheme;
-    return SafeArea(
-      child: () {
-        if (workoutHistoryTabState.error != null) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Error: ${workoutHistoryTabState.error}',
-                style: const TextStyle(color: Colors.red),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () =>
-                    workoutHistoryTabNotifier.loadPaginatedWorkouts(),
-                child: const Text('Retry'),
-              ),
-            ],
-          );
-        }
 
-        // Handle loading state with existing data
-        if (workoutHistoryTabState.isLoading && workouts.isEmpty) {
-          return Center(child: const CircularProgressIndicator());
-        }
+    if (workoutHistoryTabState.error != null) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Error: ${workoutHistoryTabState.error}',
+            style: const TextStyle(color: Colors.red),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => workoutHistoryTabNotifier.loadPaginatedWorkouts(),
+            child: const Text('Retry'),
+          ),
+        ],
+      );
+    }
 
-        // Handle empty state
-        if (workouts.isEmpty) {
-          return Center(
-            child: const Text(
-              "No workouts yet.",
-              style: TextStyle(fontSize: 18),
-            ),
-          );
-        }
+    // Handle loading state with existing data
+    if (workoutHistoryTabState.isLoading && workouts.isEmpty) {
+      return Center(child: const CircularProgressIndicator());
+    }
 
-        return Column(
-          children: [
-            Text("Workout History", style: textTheme.headlineSmall),
-            Divider(),
-            Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(16),
-                itemCount: workouts.length,
-                itemBuilder: (context, index) {
-                  return WorkoutListTile(workouts[index]);
-                },
-                controller: scrollController,
-              ),
-            ),
-          ],
-        );
-      }(),
+    // Handle empty state
+    if (workouts.isEmpty) {
+      return Center(
+        child: const Text("No workouts yet.", style: TextStyle(fontSize: 18)),
+      );
+    }
+
+    return Column(
+      children: [
+        Text("Workout History", style: textTheme.headlineSmall),
+        Divider(),
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            padding: const EdgeInsets.all(16),
+            itemCount: workouts.length,
+            itemBuilder: (context, index) {
+              return WorkoutListTile(workouts[index]);
+            },
+            controller: scrollController,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -20,7 +20,9 @@ class Home extends StatelessWidget {
                 .toList(),
           ),
         ),
-        body: TabBarView(children: tabs.map((tab) => tab.widget).toList()),
+        body: SafeArea(
+          child: TabBarView(children: tabs.map((tab) => tab.widget).toList()),
+        ),
       ),
     );
   }
