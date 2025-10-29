@@ -1,7 +1,6 @@
-import 'package:lograt/domain/entities/exercise_set.dart';
-
-import '../../domain/entities/exercise.dart';
-import '../../domain/entities/exercise_type.dart';
+import '../entities/exercise.dart';
+import '../entities/exercise_set.dart';
+import '../entities/exercise_type.dart';
 
 /// Data model for workout_exercises table
 /// This handles the SQLite representation and conversion to/from domain entities

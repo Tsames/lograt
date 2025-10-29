@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 
-import '../../models/workout_model.dart';
-import '../app_database.dart';
+import '../database/app_database.dart';
+import '../models/workout_model.dart';
 
 class WorkoutDao {
   final AppDatabase _db;

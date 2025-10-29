@@ -1,16 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lograt/data/database/dao/exercise_set_dao.dart';
-import 'package:lograt/data/database/dao/exercise_dao.dart';
-import 'package:lograt/data/database/dao/exercise_type_dao.dart';
-import 'package:lograt/data/database/dao/workout_dao.dart';
-import 'package:lograt/data/models/exercise_set_model.dart';
+import 'package:lograt/data/dao/exercise_dao.dart';
+import 'package:lograt/data/dao/exercise_set_dao.dart';
+import 'package:lograt/data/dao/exercise_type_dao.dart';
+import 'package:lograt/data/dao/workout_dao.dart';
+import 'package:lograt/data/database/app_database.dart';
+import 'package:lograt/data/entities/set_type.dart';
+import 'package:lograt/data/entities/units.dart';
 import 'package:lograt/data/models/exercise_model.dart';
+import 'package:lograt/data/models/exercise_set_model.dart';
 import 'package:lograt/data/models/exercise_type_model.dart';
 import 'package:lograt/data/models/workout_model.dart';
-import 'package:lograt/domain/entities/set_type.dart';
-import 'package:lograt/domain/entities/units.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:lograt/data/database/app_database.dart';
 
 void main() {
   setUpAll(() async {

@@ -1,5 +1,5 @@
-import '../../domain/entities/exercise.dart';
-import '../../domain/entities/workout.dart';
+import '../entities/exercise.dart';
+import '../entities/workout.dart';
 
 /// Data model for workouts table
 /// This handles the SQLite representation and conversion to/from domain entities

@@ -1,4 +1,4 @@
-import '../../domain/entities/exercise_type.dart';
+import '../entities/exercise_type.dart';
 
 /// Data model for exercise_types table
 /// This handles the SQLite representation and conversion to/from domain entities

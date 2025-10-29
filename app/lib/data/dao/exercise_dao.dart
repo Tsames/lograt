@@ -1,10 +1,9 @@
 import 'package:lograt/data/database/app_database.dart';
-import 'package:lograt/data/database/dao/exercise_set_dao.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../../domain/entities/exercise.dart';
-import '../../../domain/entities/exercise_type.dart';
-import '../../models/exercise_model.dart';
+import '../entities/exercise.dart';
+import '../entities/exercise_type.dart';
+import '../models/exercise_model.dart';
 
 /// Data Access Object operations for an Exercise
 /// This class handles all database operations related to exercises
@@ -81,7 +80,8 @@ class ExerciseDao {
         id: map['id'] as int,
         exerciseType: exerciseType,
         order: map['order_index'] as int,
-        sets: [], // ExerciseSet data needs to be gathered using a separate DAO
+        sets: [],
+        // ExerciseSet data needs to be gathered using a separate DAO
         notes: map['notes'] as String?,
       );
     }).toList();

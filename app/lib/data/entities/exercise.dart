@@ -1,6 +1,5 @@
-import 'package:lograt/domain/entities/exercise_type.dart';
-
 import 'exercise_set.dart';
+import 'exercise_type.dart';
 
 /// Represents a specific exercise performed within a workout
 class Exercise {

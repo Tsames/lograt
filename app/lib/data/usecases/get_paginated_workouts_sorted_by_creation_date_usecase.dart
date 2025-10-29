@@ -1,11 +1,11 @@
-import '../../domain/repository/workout_repository.dart';
 import '../entities/workout.dart';
+import '../repositories/workout_repository.dart';
 
-class GetPaginatedWorkoutsSortedByCreationDate {
+class GetPaginatedWorkoutsSortedByCreationDateUsecase {
   static const pageSize = 25;
   final WorkoutRepository _repository;
 
-  GetPaginatedWorkoutsSortedByCreationDate(this._repository);
+  GetPaginatedWorkoutsSortedByCreationDateUsecase(this._repository);
 
   Future<PaginatedWorkoutResults> call(int? offset) async {
     final workoutsToReturn = await _repository.getWorkoutSummaries(
