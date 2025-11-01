@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 
 import '../../data/entities/workout.dart';
-import '../screens/workout_log/workout_log.dart';
+import '../screens/workout_log/workout_log_widget.dart';
 
 class WorkoutListTile extends StatelessWidget {
   final Workout workoutData;
@@ -21,7 +21,9 @@ class WorkoutListTile extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => WorkoutLog(workoutData)),
+          MaterialPageRoute(
+            builder: (context) => WorkoutLogWidget(workoutData),
+          ),
         );
       },
     );

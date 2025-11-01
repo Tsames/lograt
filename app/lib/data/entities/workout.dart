@@ -9,6 +9,8 @@ class Workout {
 
   const Workout(this.name, this.createdOn, this.exercises, {this.id});
 
+  Workout.empty() : this("", DateTime.now(), const []);
+
   Workout copyWith({
     int? id,
     String? name,
