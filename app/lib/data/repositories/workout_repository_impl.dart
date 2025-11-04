@@ -389,8 +389,8 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
-  Future<int> deleteExerciseType(int id) async {
-    return await _exerciseTypeDao.delete(id);
+  Future<bool> deleteExerciseType(int id) async {
+    return await _exerciseTypeDao.deleteById(id);
   }
 
   @override

@@ -3,29 +3,45 @@ import 'package:sqflite/sqflite.dart';
 
 import '../models/exercise_type_model.dart';
 
-/// Data Access Object for ExerciseType operations
-/// This class handles all database operations related to exercise types
 class ExerciseTypeDao {
   final AppDatabase _db;
   static const String _tableName = AppDatabase.exerciseTypesTableName;
 
   ExerciseTypeDao(this._db);
 
-  /// Get an exercise type by its ID
-  /// Returns null if no exercise set with the given ID exists
-  Future<ExerciseTypeModel?> getById(int id) async {
-    final db = await _db.database;
-    final maps = await db.query(_tableName, where: 'id = ?', whereArgs: [id]);
+  /// Retrieves an exercise type from the database by its id.
+  ///
+  /// Optionally accepts a [txn] parameter to execute the query within an existing
+  /// database transaction. If no transaction is provided, the query runs directly
+  /// against the database.
+  ///
+  /// Returns the [ExerciseTypeModel] if found, or `null` if no exercise type
+  /// with the given [id] exists.
+  Future<ExerciseTypeModel?> getById(int id, [Transaction? txn]) async {
+    final DatabaseExecutor executor = txn ?? await _db.database;
+
+    final maps = await executor.query(
+      _tableName,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
 
     if (maps.isEmpty) return null;
     return ExerciseTypeModel.fromMap(maps.first);
   }
 
-  /// Get an exercise type by its name
-  /// Returns null if no exercise set with the given ID exists
-  Future<ExerciseTypeModel?> getByName(String name) async {
-    final db = await _db.database;
-    final maps = await db.query(
+  /// Retrieves an exercise type from the database by its name.
+  ///
+  /// Optionally accepts a [txn] parameter to execute the query within an existing
+  /// database transaction. If no transaction is provided, the query runs directly
+  /// against the database.
+  ///
+  /// Returns the [ExerciseTypeModel] if found, or `null` if no exercise type
+  /// with the given [name] exists.
+  Future<ExerciseTypeModel?> getByName(String name, [Transaction? txn]) async {
+    final DatabaseExecutor executor = txn ?? await _db.database;
+
+    final maps = await executor.query(
       _tableName,
       where: 'name = ?',
       whereArgs: [name],
@@ -35,56 +51,48 @@ class ExerciseTypeDao {
     return ExerciseTypeModel.fromMap(maps.first);
   }
 
-  /// Get all exercise types, ordered by name
-  Future<List<ExerciseTypeModel>> getAll() async {
-    final db = await _db.database;
-    final maps = await db.query(_tableName, orderBy: 'name ASC');
+  /// Retrieves all exercise types from the database, ordered alphabetically by name.
+  ///
+  /// Optionally accepts [limit] and [offset] parameters for pagination.
+  ///
+  /// Optionally accepts a [txn] parameter to execute the query within an existing
+  /// database transaction. If no transaction is provided, the query runs directly
+  /// against the database.
+  ///
+  /// Returns a list of [ExerciseTypeModel] instances matching the query parameters,
+  /// or an empty list if none exist.
+  Future<List<ExerciseTypeModel>> getAll({
+    int? limit,
+    int? offset,
+    Transaction? txn,
+  }) async {
+    final DatabaseExecutor executor = txn ?? await _db.database;
 
-    return maps.map((map) => ExerciseTypeModel.fromMap(map)).toList();
-  }
-
-  /// Search exercise types by name (case-insensitive partial match)
-  Future<List<ExerciseTypeModel>> searchByName(String searchTerm) async {
-    final db = await _db.database;
-    final maps = await db.query(
+    final maps = await executor.query(
       _tableName,
-      where: 'name LIKE ?',
-      whereArgs: ['%$searchTerm%'],
       orderBy: 'name ASC',
+      limit: limit,
+      offset: offset,
     );
 
     return maps.map((map) => ExerciseTypeModel.fromMap(map)).toList();
   }
 
-  /// Get the count of exercise types
-  Future<int> getCount() async {
-    final db = await _db.database;
-    final result = await db.rawQuery(
-      'SELECT COUNT(*) as count FROM $_tableName',
-    );
-    return result.first['count'] as int;
-  }
-
-  /// Check if an exercise type name already exists
-  /// If it does, return the id of the exercise type. Otherwise return null.
-  Future<int?> nameExists(String name) async {
-    final db = await _db.database;
-    final maps = await db.query(
-      _tableName,
-      where: 'name = ?',
-      whereArgs: [name],
-      limit: 1,
-    );
-
-    if (maps.isEmpty) return null;
-    return ExerciseTypeModel.fromMap(maps.first).id;
-  }
-
-  /// Insert a new exercise type into the database
-  Future<int> insert(ExerciseTypeModel exerciseType) async {
+  /// Inserts a new exercise type into the database.
+  ///
+  /// Optionally accepts a [txn] parameter to execute the insert within an existing
+  /// database transaction. If no transaction is provided, the insert runs directly
+  /// against the database.
+  ///
+  /// Returns the auto-generated ID of the newly inserted exercise type.
+  ///
+  /// Throws an [Exception] if the insert fails, including cases where an exercise
+  /// type with the same name already exists (due to the UNIQUE constraint on the
+  /// name column).
+  Future<int> insert(ExerciseTypeModel exerciseType, [Transaction? txn]) async {
+    final DatabaseExecutor executor = txn ?? await _db.database;
     try {
-      final db = await _db.database;
-      return await db.insert(
+      return await executor.insert(
         _tableName,
         exerciseType.toMap(),
         conflictAlgorithm: ConflictAlgorithm.fail, // Prevent duplicate names
@@ -95,42 +103,58 @@ class ExerciseTypeDao {
     }
   }
 
-  Future<int> insertWithTransaction({
-    required ExerciseTypeModel exerciseType,
-    required Transaction txn,
-  }) async {
-    return await txn.insert(
-      _tableName,
-      exerciseType.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.ignore,
-    );
-  }
-
-  /// Update an existing exercise type
-  /// Returns the number of rows affected (should be 1 for success)
-  Future<int> update(ExerciseTypeModel exerciseType) async {
+  /// Updates an existing exercise type in the database.
+  ///
+  /// The [exerciseType] must have a non-null ID.
+  ///
+  /// Optionally accepts a [txn] parameter to execute the update within an existing
+  /// database transaction. If no transaction is provided, the update runs directly
+  /// against the database.
+  ///
+  /// Returns true if a row was updated correctly, and false if no row was updated.
+  ///
+  /// Throws an [ArgumentError] if the exercise type ID is `null`.
+  Future<bool> updateById(
+    ExerciseTypeModel exerciseType, [
+    Transaction? txn,
+  ]) async {
     if (exerciseType.id == null) {
       throw ArgumentError('Cannot update exercise type without an ID');
     }
 
-    final db = await _db.database;
-    return await db.update(
-      _tableName,
-      exerciseType.toMap(),
-      where: 'id = ?',
-      whereArgs: [exerciseType.id],
-    );
+    final DatabaseExecutor executor = txn ?? await _db.database;
+    return await executor.update(
+          _tableName,
+          exerciseType.toMap(),
+          where: 'id = ?',
+          whereArgs: [exerciseType.id],
+        ) ==
+        1;
   }
 
-  /// Delete an exercise type by ID
-  /// Note: This will fail if the exercise type is referenced by any workout exercises
-  /// due to the RESTRICT foreign key constraint
-  Future<int> delete(int id) async {
+  /// Deletes an exercise type from the database by its ID.
+  ///
+  /// Optionally accepts a [txn] parameter to execute the delete within an existing
+  /// database transaction. If no transaction is provided, the delete runs directly
+  /// against the database.
+  ///
+  /// Returns the true if the row was correctly deleted, and false if no row was deleted.
+  ///
+  /// Throws an [Exception] if the exercise type is referenced by any workout exercises,
+  /// due to the RESTRICT foreign key constraint.
+  Future<bool> deleteById(int id, [Transaction? txn]) async {
+    final DatabaseExecutor executor = txn ?? await _db.database;
     try {
-      final db = await _db.database;
-      return await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
+      return await executor.delete(
+            _tableName,
+            where: 'id = ?',
+            whereArgs: [id],
+          ) ==
+          1;
     } catch (e) {
-      throw Exception('Cannot delete exercise type that is in use by workouts');
+      throw Exception(
+        'Cannot delete exercise type that is in use by workouts. \n$e',
+      );
     }
   }
 }
