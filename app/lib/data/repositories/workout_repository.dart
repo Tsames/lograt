@@ -52,7 +52,7 @@ abstract class WorkoutRepository {
 
   Future<int> deleteExercise(int id);
 
-  Future<int> deleteExerciseType(int id);
+  Future<bool> deleteExerciseType(int id);
 
   Future<int> deleteExerciseSet(int id);
 
