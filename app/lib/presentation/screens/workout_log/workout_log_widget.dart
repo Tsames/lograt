@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/presentation/screens/workout_log/record_exercise_table.dart';
 import 'package:lograt/presentation/screens/workout_log/record_exercise_type_widget.dart';
+import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 
 import '../../../data/entities/workout.dart';
@@ -12,9 +14,10 @@ class WorkoutLogWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final workoutLogState = ref.watch(workoutLogProvider(workout));
     return Scaffold(
       appBar: AppBar(
-        title: Text(workout.name),
+        title: Text(workoutLogState.workout.name),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: Icon(Icons.arrow_back_ios),
@@ -24,14 +27,28 @@ class WorkoutLogWidget extends ConsumerWidget {
           preferredSize: Size.fromHeight(16),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
-            child: Text(workout.createdOn.toHumanFriendlyFormat()),
+            child: Text(
+              workoutLogState.workout.createdOn.toHumanFriendlyFormat(),
+            ),
           ),
         ),
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz))],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
-        child: Column(children: [RecordExerciseTypeWidget()]),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+        child: SingleChildScrollView(
+          child: Column(
+            children: workoutLogState.workout.exercises.map((exercise) {
+              return Column(
+                children: [
+                  RecordExerciseTypeWidget(exercise.exerciseType),
+                  RecordExerciseTable(exercise),
+                  SizedBox(height: 20),
+                ],
+              );
+            }).toList(),
+          ),
+        ),
       ),
     );
   }
