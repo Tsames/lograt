@@ -1,28 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier.dart';
+import 'package:lograt/presentation/screens/workout_log/view_model/exercise_types_notifier.dart';
 
 import '../../../data/entities/exercise_type.dart';
 
 class RecordExerciseTypeWidget extends ConsumerWidget {
-  const RecordExerciseTypeWidget({super.key});
+  final ExerciseType? selectedType;
+
+  const RecordExerciseTypeWidget(this.selectedType, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final exerciseTypes = ref.watch(
-      workoutLogProvider.select((state) => state.exerciseTypes),
-    );
-    return DropdownMenu<ExerciseType?>(
-      hintText: "Select an exercise",
-      dropdownMenuEntries: exerciseTypes.map((exerciseType) {
-        return DropdownMenuEntry(value: exerciseType, label: exerciseType.name);
-      }).toList(),
-      inputDecorationTheme: const InputDecorationTheme(
-        border: InputBorder.none,
+    final exerciseTypesState = ref.watch(exerciseTypesProvider);
+    return SizedBox(
+      width: double.infinity,
+      child: DropdownMenu<ExerciseType?>(
+        hintText: "Select an exercise",
+        initialSelection: selectedType,
+        dropdownMenuEntries: exerciseTypesState.exerciseTypes.map((
+          exerciseType,
+        ) {
+          return DropdownMenuEntry(
+            value: exerciseType,
+            label: exerciseType.name,
+          );
+        }).toList(),
+        inputDecorationTheme: const InputDecorationTheme(
+          border: InputBorder.none,
+        ),
+        menuStyle: const MenuStyle(alignment: Alignment.bottomLeft),
+        // Todo: update state based on selection
+        // onSelected: () {},
       ),
-      menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
-      // Todo: update state based on selection
-      // onSelected: () {},
     );
   }
 }
