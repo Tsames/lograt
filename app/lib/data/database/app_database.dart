@@ -45,8 +45,8 @@ class AppDatabase {
       onCreate: (Database db, int version) async {
         await db.execute(_createWorkoutsTableSQL());
         await db.execute(_createExerciseTypesTableSQL());
-        await db.execute(_createWorkoutExercisesTableSQL());
-        await db.execute(_createWorkoutSetsTableSQL());
+        await db.execute(_createExercisesTableSQL());
+        await db.execute(_createSetsTableSQL());
       },
     );
   }
@@ -68,8 +68,8 @@ class AppDatabase {
     return [
       _createWorkoutsTableSQL(),
       _createExerciseTypesTableSQL(),
-      _createWorkoutExercisesTableSQL(),
-      _createWorkoutSetsTableSQL(),
+      _createExercisesTableSQL(),
+      _createSetsTableSQL(),
       _createWorkoutsTableCreatedOnIndexSQL(),
     ];
   }
@@ -99,7 +99,7 @@ class AppDatabase {
     ''';
   }
 
-  String _createWorkoutExercisesTableSQL() {
+  String _createExercisesTableSQL() {
     return '''
       CREATE TABLE $exercisesTableName(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -113,7 +113,7 @@ class AppDatabase {
     ''';
   }
 
-  String _createWorkoutSetsTableSQL() {
+  String _createSetsTableSQL() {
     return '''
     CREATE TABLE $exerciseSetsTableName(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
