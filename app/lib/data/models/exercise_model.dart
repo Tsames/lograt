@@ -38,7 +38,7 @@ class ExerciseModel {
       workoutId: map['workout_id'] as int,
       exerciseTypeId: map['exercise_type_id'] as int,
       order: map['exercise_order'] as int,
-      notes: map['notes'] as String,
+      notes: map['notes'] as String?,
     );
   }
 
