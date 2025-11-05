@@ -69,7 +69,6 @@ class RecordExerciseTable extends ConsumerWidget {
                         label: setType.name,
                       );
                     }).toList(),
-                    trailingIcon: null,
                     showTrailingIcon: false,
                     inputDecorationTheme: const InputDecorationTheme(
                       border: InputBorder.none,
@@ -104,7 +103,6 @@ class RecordExerciseTable extends ConsumerWidget {
                         label: setType.abbreviation,
                       );
                     }).toList(),
-                    trailingIcon: null,
                     showTrailingIcon: false,
                     initialSelection: Units.pounds,
                     inputDecorationTheme: const InputDecorationTheme(
