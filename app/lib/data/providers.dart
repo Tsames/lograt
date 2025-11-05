@@ -2,7 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/data/repositories/workout_repository.dart';
 import 'package:lograt/data/repositories/workout_repository_impl.dart';
 import 'package:lograt/data/usecases/add_workout_usecase.dart';
-import 'package:lograt/data/usecases/get_all_exercise_types_usecase.dart';
+import 'package:lograt/data/usecases/get_full_workout_data_by_id_usecase.dart';
+import 'package:lograt/data/usecases/get_paginated_exercise_types_usecase.dart';
 import 'package:lograt/data/usecases/get_paginated_workouts_sorted_by_creation_date_usecase.dart';
 import 'package:lograt/data/usecases/get_this_weeks_workouts_usecase.dart';
 import 'package:lograt/data/usecases/seed_data_usecase.dart';
@@ -73,12 +74,17 @@ final getThisWeeksWorkoutsUsecaseProvider =
       return GetThisWeeksWorkoutsUsecase(repository);
     });
 
-final getExerciseTypesUsecaseProvider = Provider<GetExerciseTypesUsecase>((
-  ref,
-) {
-  final repository = ref.read(workoutRepositoryProvider);
-  return GetExerciseTypesUsecase(repository);
-});
+final getFullWorkoutDataByIdUsecaseProvider =
+    Provider<GetFullWorkoutDataByIdUsecase>((ref) {
+      final repository = ref.read(workoutRepositoryProvider);
+      return GetFullWorkoutDataByIdUsecase(repository);
+    });
+
+final getExerciseTypesUsecaseProvider =
+    Provider<GetPaginatedExerciseTypesUsecase>((ref) {
+      final repository = ref.read(workoutRepositoryProvider);
+      return GetPaginatedExerciseTypesUsecase(repository);
+    });
 
 final addWorkoutUsecaseProvider = Provider<AddWorkoutUsecase>((ref) {
   final repository = ref.read(workoutRepositoryProvider);
