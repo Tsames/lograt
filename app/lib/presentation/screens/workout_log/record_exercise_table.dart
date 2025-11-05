@@ -13,7 +13,6 @@ class RecordExerciseTable extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    // final ex = ref.watch(workoutLogProvider(workout));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -69,8 +68,6 @@ class RecordExerciseTable extends ConsumerWidget {
                         label: setType.name,
                       );
                     }).toList(),
-                    trailingIcon: null,
-                    showTrailingIcon: false,
                     inputDecorationTheme: const InputDecorationTheme(
                       border: InputBorder.none,
                     ),
@@ -104,8 +101,6 @@ class RecordExerciseTable extends ConsumerWidget {
                         label: setType.abbreviation,
                       );
                     }).toList(),
-                    trailingIcon: null,
-                    showTrailingIcon: false,
                     initialSelection: Units.pounds,
                     inputDecorationTheme: const InputDecorationTheme(
                       border: InputBorder.none,
