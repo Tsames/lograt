@@ -1,3 +1,4 @@
+import '../../util/paginated_results.dart';
 import '../entities/workout.dart';
 import '../repositories/workout_repository.dart';
 
@@ -7,23 +8,15 @@ class GetPaginatedWorkoutsSortedByCreationDateUsecase {
 
   GetPaginatedWorkoutsSortedByCreationDateUsecase(this._repository);
 
-  Future<PaginatedWorkoutResults> call(int? offset) async {
+  Future<PaginatedResults<List<Workout>>> call(int? offset) async {
     final workoutsToReturn = await _repository.getWorkoutSummaries(
       limit: pageSize,
       offset: offset,
     );
-    return PaginatedWorkoutResults(
+    return PaginatedResults<List<Workout>>(
       workoutsToReturn,
       (offset ?? 0) + pageSize,
       workoutsToReturn.length == pageSize,
     );
   }
-}
-
-class PaginatedWorkoutResults {
-  final List<Workout> workouts;
-  final int nextOffset;
-  final bool hasMore;
-
-  const PaginatedWorkoutResults(this.workouts, this.nextOffset, this.hasMore);
 }
