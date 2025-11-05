@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../data/entities/workout.dart';
-import '../../../data/providers.dart';
-import '../../../data/usecases/get_this_weeks_workouts_usecase.dart';
+import '../../../../data/entities/workout.dart';
+import '../../../../data/providers.dart';
+import '../../../../data/usecases/get_this_weeks_workouts_usecase.dart';
 
 class WorkoutsThisWeekTabState {
   final List<Workout> workoutsThisWeek;

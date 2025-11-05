@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/presentation/widgets/workout_list_tile.dart';
 
-import 'workouts_this_week_tab_provider.dart';
+import 'view_model/workouts_this_week_tab_provider.dart';
 
 class WorkoutsThisWeekTabWidget extends ConsumerWidget {
   const WorkoutsThisWeekTabWidget({super.key});
