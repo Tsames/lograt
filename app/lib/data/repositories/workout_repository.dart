@@ -1,3 +1,5 @@
+import 'package:sqflite/sqflite.dart';
+
 import '../entities/exercise.dart';
 import '../entities/exercise_set.dart';
 import '../entities/exercise_type.dart';
@@ -16,7 +18,11 @@ abstract class WorkoutRepository {
 
   Future<List<Exercise>> getExercisesOfType({required int typeId, int limit});
 
-  Future<List<ExerciseType>> getAllExerciseTypes();
+  Future<List<ExerciseType>> getExerciseTypes({
+    int? limit,
+    int? offset,
+    Transaction? txn,
+  });
 
   Future<int> createWorkout(Workout workout);
 

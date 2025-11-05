@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/repositories/workout_repository.dart';
 import 'package:sqflite/sqflite.dart';
@@ -113,13 +114,23 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
         throw WorkoutNotFoundException(workoutId);
       }
 
+      if (kDebugMode) {
+        debugPrint("Found workout: ${workoutModel.toString()}");
+      }
+
       // Get all exercises for the workout
       final exerciseModels = await _exerciseDao.getByWorkoutId(workoutId);
+      if (kDebugMode) {
+        debugPrint("Found exercises: $exerciseModels");
+      }
       if (exerciseModels.isEmpty) {
         return workoutModel.toEntity();
       }
 
       final exerciseEntityFutures = exerciseModels.map((exerciseModel) async {
+        if (kDebugMode) {
+          debugPrint("Iterating for exercise: $exerciseModel");
+        }
         return await _buildExerciseEntity(exerciseModel);
       }).toList();
 
@@ -151,6 +162,9 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
       final exerciseTypeModel = await _exerciseTypeDao.getById(
         exerciseModel.exerciseTypeId!,
       );
+      if (kDebugMode) {
+        debugPrint("\tExercise Type found: $exerciseTypeModel");
+      }
       if (exerciseTypeModel == null) {
         return null;
       }
@@ -159,12 +173,17 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
         exerciseModel.id!,
       );
 
-      final exerciseSetEntity = exerciseSetModels
+      final exerciseSetEntities = exerciseSetModels
           .map((set) => set.toEntity())
           .toList();
+      if (kDebugMode) {
+        for (final exerciseSetEntity in exerciseSetEntities) {
+          debugPrint("\tSet of exercise found: $exerciseSetEntity");
+        }
+      }
       return exerciseModel.toEntity(
         exerciseType: exerciseTypeModel.toEntity(),
-        sets: exerciseSetEntity,
+        sets: exerciseSetEntities,
       );
     } catch (e) {
       return null;
@@ -238,8 +257,16 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
-  Future<List<ExerciseType>> getAllExerciseTypes() async {
-    final exerciseTypeModels = await _exerciseTypeDao.getAll();
+  Future<List<ExerciseType>> getExerciseTypes({
+    int? limit,
+    int? offset,
+    Transaction? txn,
+  }) async {
+    final exerciseTypeModels = await _exerciseTypeDao.getAll(
+      limit: limit,
+      offset: offset,
+      txn: txn,
+    );
     return exerciseTypeModels.map((model) => model.toEntity()).toList();
   }
 
@@ -257,23 +284,29 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
       final db = await _db.database;
       return await db.transaction<void>((txn) async {
         for (final workout in workouts) {
-          final workoutModel = WorkoutModel.fromEntity(workout);
-
           // Pass the transaction to each DAO operation
           final workoutId = await _workoutDao.insertWithTransaction(
-            workoutModel,
+            WorkoutModel.fromEntity(workout),
             txn,
           );
 
           for (final exercise in workout.exercises) {
-            int exerciseTypeId =
-                exercise.exerciseType.id ??
-                await _exerciseTypeDao.insertWithTransaction(
-                  exerciseType: ExerciseTypeModel.fromEntity(
-                    exercise.exerciseType,
-                  ),
-                  txn: txn,
+            int exerciseTypeId;
+
+            if (exercise.exerciseType.id != null) {
+              exerciseTypeId = exercise.exerciseType.id!;
+            } else {
+              final existingExerciseTypeByName = await _exerciseTypeDao
+                  .getByName(exercise.exerciseType.name, txn);
+              if (existingExerciseTypeByName != null) {
+                exerciseTypeId = existingExerciseTypeByName.id!;
+              } else {
+                exerciseTypeId = await _exerciseTypeDao.insert(
+                  ExerciseTypeModel.fromEntity(exercise.exerciseType),
+                  txn,
                 );
+              }
+            }
 
             final exerciseModel = ExerciseModel.fromEntity(
               entity: exercise.copyWith(
@@ -363,7 +396,7 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   @override
   Future<void> updateExerciseType(ExerciseType entity) async {
     final exerciseTypeModel = ExerciseTypeModel.fromEntity(entity);
-    await _exerciseTypeDao.update(exerciseTypeModel);
+    await _exerciseTypeDao.updateById(exerciseTypeModel);
   }
 
   @override
