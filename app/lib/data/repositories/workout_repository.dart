@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -109,23 +108,13 @@ class WorkoutRepository {
         throw WorkoutNotFoundException(workoutId);
       }
 
-      if (kDebugMode) {
-        debugPrint("Found workout: ${workoutModel.toString()}");
-      }
-
       // Get all exercises for the workout
       final exerciseModels = await _exerciseDao.getByWorkoutId(workoutId);
-      if (kDebugMode) {
-        debugPrint("Found exercises: $exerciseModels");
-      }
       if (exerciseModels.isEmpty) {
         return workoutModel.toEntity();
       }
 
       final exerciseEntityFutures = exerciseModels.map((exerciseModel) async {
-        if (kDebugMode) {
-          debugPrint("Iterating for exercise: $exerciseModel");
-        }
         return await _buildExerciseEntity(exerciseModel);
       }).toList();
 
@@ -157,9 +146,6 @@ class WorkoutRepository {
       final exerciseTypeModel = await _exerciseTypeDao.getById(
         exerciseModel.exerciseTypeId!,
       );
-      if (kDebugMode) {
-        debugPrint("\tExercise Type found: $exerciseTypeModel");
-      }
       if (exerciseTypeModel == null) {
         return null;
       }
@@ -171,11 +157,6 @@ class WorkoutRepository {
       final exerciseSetEntities = exerciseSetModels
           .map((set) => set.toEntity())
           .toList();
-      if (kDebugMode) {
-        for (final exerciseSetEntity in exerciseSetEntities) {
-          debugPrint("\tSet of exercise found: $exerciseSetEntity");
-        }
-      }
       return exerciseModel.toEntity(
         exerciseType: exerciseTypeModel.toEntity(),
         sets: exerciseSetEntities,

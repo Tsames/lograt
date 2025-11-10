@@ -15,6 +15,7 @@ class WorkoutLogWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final workoutLogState = ref.watch(workoutLogProvider(workout));
+    final workoutLogNotifier = ref.watch(workoutLogProvider(workout).notifier);
     return Scaffold(
       appBar: AppBar(
         title: Text(workoutLogState.workout.name),
@@ -50,7 +51,7 @@ class WorkoutLogWidget extends ConsumerWidget {
                       child: Column(
                         children: [
                           RecordExerciseTypeWidget(exercise.exerciseType),
-                          RecordExerciseTable(exercise),
+                          RecordExerciseTable(exercise, workoutLogNotifier),
                         ],
                       ),
                     ),

@@ -1,16 +1,12 @@
 import '../entities/workout.dart';
 import '../repositories/workout_repository.dart';
 
-class AddWorkoutUsecase {
+class UpdateOrCreateWorkoutUsecase {
   final WorkoutRepository _repository;
 
-  AddWorkoutUsecase(this._repository);
+  UpdateOrCreateWorkoutUsecase(this._repository);
 
   Future<void> call(Workout workout) async {
-    if (workout.name.trim().isEmpty) {
-      throw ArgumentError('Workout name cannot be empty');
-    }
-
     await _repository.createWorkout(workout);
   }
 }

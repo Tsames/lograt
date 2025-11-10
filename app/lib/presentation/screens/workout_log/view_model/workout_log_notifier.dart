@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/data/entities/exercise.dart';
 import 'package:lograt/data/usecases/get_full_workout_data_by_id_usecase.dart';
 import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier_state.dart';
 
@@ -25,6 +26,69 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
       state = state.copyWith(isLoading: false, workout: fullWorkoutData);
     } catch (stacktrace, error) {
       state = state.copyWith(isLoading: false, error: error.toString());
+      rethrow;
+    }
+  }
+
+  void addSetToExercise(Exercise exercise) {
+    final targetExerciseIndex = state.workout.exercises.indexOf(exercise);
+    if (targetExerciseIndex == -1) return;
+
+    final updatedExercise = state.workout.exercises[targetExerciseIndex]
+        .copyWithNewSet();
+    final newExercises = [...state.workout.exercises]
+      ..[targetExerciseIndex] = updatedExercise;
+
+    state = state.copyWith(
+      workout: state.workout.copyWith(exercises: newExercises),
+    );
+
+    try {
+      // todo: save to database
+    } catch (error) {
+      // todo: handle exceptions
+      rethrow;
+    }
+  }
+
+  void removeLastSetFromExercise(Exercise exercise) {
+    final targetExerciseIndex = state.workout.exercises.indexOf(exercise);
+    if (targetExerciseIndex == -1) return;
+
+    final updatedExercise = state.workout.exercises[targetExerciseIndex]
+        .copyWithLastSetRemoved();
+    final newExercises = [...state.workout.exercises]
+      ..[targetExerciseIndex] = updatedExercise;
+
+    state = state.copyWith(
+      workout: state.workout.copyWith(exercises: newExercises),
+    );
+
+    try {
+      // todo: save to database
+    } catch (error) {
+      // todo: handle exceptions
+      rethrow;
+    }
+  }
+
+  void duplicateLastSetOfExercise(Exercise exercise) {
+    final targetExerciseIndex = state.workout.exercises.indexOf(exercise);
+    if (targetExerciseIndex == -1) return;
+
+    final updatedExercise = state.workout.exercises[targetExerciseIndex]
+        .copyWithLastSetDuplicated();
+    final newExercises = [...state.workout.exercises]
+      ..[targetExerciseIndex] = updatedExercise;
+
+    state = state.copyWith(
+      workout: state.workout.copyWith(exercises: newExercises),
+    );
+
+    try {
+      // todo: save to database
+    } catch (error) {
+      // todo: handle exceptions
       rethrow;
     }
   }
