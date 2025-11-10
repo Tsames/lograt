@@ -25,19 +25,35 @@ class RecordExerciseTable extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.all(4.0),
-                  child: Text("Set Type", style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
+                  child: Text(
+                    "Set Type",
+                    style: theme.textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.all(4.0),
-                  child: Text("Weight", style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
+                  child: Text(
+                    "Weight",
+                    style: theme.textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.all(4.0),
-                  child: Text("Units", style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
+                  child: Text(
+                    "Units",
+                    style: theme.textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.all(4.0),
-                  child: Text("Reps", style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
+                  child: Text(
+                    "Reps",
+                    style: theme.textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ],
             ),
@@ -49,9 +65,14 @@ class RecordExerciseTable extends StatelessWidget {
                     hintText: "--",
                     initialSelection: set.setType,
                     dropdownMenuEntries: SetType.values.map((setType) {
-                      return DropdownMenuEntry(value: setType, label: setType.name);
+                      return DropdownMenuEntry(
+                        value: setType,
+                        label: setType.name,
+                      );
                     }).toList(),
-                    inputDecorationTheme: const InputDecorationTheme(border: InputBorder.none),
+                    inputDecorationTheme: const InputDecorationTheme(
+                      border: InputBorder.none,
+                    ),
                     textStyle: theme.textTheme.bodySmall,
                     textAlign: TextAlign.center,
                     menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
@@ -62,9 +83,13 @@ class RecordExerciseTable extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: TextField(
-                      decoration: const InputDecoration(border: InputBorder.none),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
                       keyboardType: TextInputType.number,
-                      controller: TextEditingController(text: set.reps.toString()),
+                      controller: TextEditingController(
+                        text: set.reps.toString(),
+                      ),
                       style: theme.textTheme.bodySmall,
                       textAlign: TextAlign.center,
                       // Todo: update state based on selection
@@ -75,9 +100,14 @@ class RecordExerciseTable extends StatelessWidget {
                     hintText: "--",
                     initialSelection: set.units,
                     dropdownMenuEntries: Units.values.map((setType) {
-                      return DropdownMenuEntry(value: setType, label: setType.abbreviation);
+                      return DropdownMenuEntry(
+                        value: setType,
+                        label: setType.abbreviation,
+                      );
                     }).toList(),
-                    inputDecorationTheme: const InputDecorationTheme(border: InputBorder.none),
+                    inputDecorationTheme: const InputDecorationTheme(
+                      border: InputBorder.none,
+                    ),
                     textStyle: theme.textTheme.bodySmall,
                     textAlign: TextAlign.center,
                     menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
@@ -88,10 +118,14 @@ class RecordExerciseTable extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: TextField(
-                      decoration: const InputDecoration(border: InputBorder.none),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
                       keyboardType: TextInputType.number,
                       style: theme.textTheme.bodySmall,
-                      controller: TextEditingController(text: set.reps.toString()),
+                      controller: TextEditingController(
+                        text: set.reps.toString(),
+                      ),
                       textAlign: TextAlign.center,
                       // Todo: update state based on selection
                       // onChanged: (value) {},
@@ -106,9 +140,18 @@ class RecordExerciseTable extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            IconButton(onPressed: () => notifier.addSetToExercise(exercise), icon: const Icon(Icons.add)),
-            IconButton(onPressed: () => notifier.removeLastSetFromExercise(exercise), icon: const Icon(Icons.remove)),
-            IconButton(onPressed: () => notifier.duplicateLastSetOfExercise(exercise), icon: const Icon(Icons.copy)),
+            IconButton(
+              onPressed: () => notifier.addSetToExercise(exercise),
+              icon: const Icon(Icons.add),
+            ),
+            IconButton(
+              onPressed: () => notifier.removeLastSetFromExercise(exercise),
+              icon: const Icon(Icons.remove),
+            ),
+            IconButton(
+              onPressed: () => notifier.duplicateLastSetOfExercise(exercise),
+              icon: const Icon(Icons.copy),
+            ),
             //todo: add an undo button to undo the last action the user took
             // IconButton(onPressed: () => {}, icon: const Icon(Icons.undo_rounded)),
           ],

@@ -18,7 +18,9 @@ class RecordExerciseTypeWidget extends ConsumerWidget {
       dropdownMenuEntries: exerciseTypesState.exerciseTypes.map((exerciseType) {
         return DropdownMenuEntry(value: exerciseType, label: exerciseType.name);
       }).toList(),
-      inputDecorationTheme: const InputDecorationTheme(border: InputBorder.none),
+      inputDecorationTheme: const InputDecorationTheme(
+        border: InputBorder.none,
+      ),
       menuStyle: const MenuStyle(alignment: Alignment.bottomLeft),
       // Todo: update state based on selection
       // onSelected: () {},

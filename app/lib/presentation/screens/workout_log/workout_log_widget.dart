@@ -19,13 +19,18 @@ class WorkoutLogWidget extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(workoutLogState.workout.name),
-        leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios)),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back_ios),
+        ),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(16),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
-            child: Text(workoutLogState.workout.createdOn.toHumanFriendlyFormat()),
+            child: Text(
+              workoutLogState.workout.createdOn.toHumanFriendlyFormat(),
+            ),
           ),
         ),
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz))],
@@ -39,7 +44,10 @@ class WorkoutLogWidget extends ConsumerWidget {
                 children: [
                   Card(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: Column(
                         children: [
                           RecordExerciseTypeWidget(exercise.exerciseType),

@@ -20,7 +20,9 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     }
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final fullWorkoutData = await _getFullWorkoutDataByIdUsecase(state.workout.id!);
+      final fullWorkoutData = await _getFullWorkoutDataByIdUsecase(
+        state.workout.id!,
+      );
       state = state.copyWith(isLoading: false, workout: fullWorkoutData);
     } catch (stacktrace, error) {
       state = state.copyWith(isLoading: false, error: error.toString());
@@ -32,10 +34,14 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     final targetExerciseIndex = state.workout.exercises.indexOf(exercise);
     if (targetExerciseIndex == -1) return;
 
-    final updatedExercise = state.workout.exercises[targetExerciseIndex].copyWithNewSet();
-    final newExercises = [...state.workout.exercises]..[targetExerciseIndex] = updatedExercise;
+    final updatedExercise = state.workout.exercises[targetExerciseIndex]
+        .copyWithNewSet();
+    final newExercises = [...state.workout.exercises]
+      ..[targetExerciseIndex] = updatedExercise;
 
-    state = state.copyWith(workout: state.workout.copyWith(exercises: newExercises));
+    state = state.copyWith(
+      workout: state.workout.copyWith(exercises: newExercises),
+    );
 
     try {
       // todo: save to database
@@ -49,10 +55,14 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     final targetExerciseIndex = state.workout.exercises.indexOf(exercise);
     if (targetExerciseIndex == -1) return;
 
-    final updatedExercise = state.workout.exercises[targetExerciseIndex].copyWithLastSetRemoved();
-    final newExercises = [...state.workout.exercises]..[targetExerciseIndex] = updatedExercise;
+    final updatedExercise = state.workout.exercises[targetExerciseIndex]
+        .copyWithLastSetRemoved();
+    final newExercises = [...state.workout.exercises]
+      ..[targetExerciseIndex] = updatedExercise;
 
-    state = state.copyWith(workout: state.workout.copyWith(exercises: newExercises));
+    state = state.copyWith(
+      workout: state.workout.copyWith(exercises: newExercises),
+    );
 
     try {
       // todo: save to database
@@ -66,10 +76,14 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     final targetExerciseIndex = state.workout.exercises.indexOf(exercise);
     if (targetExerciseIndex == -1) return;
 
-    final updatedExercise = state.workout.exercises[targetExerciseIndex].copyWithLastSetDuplicated();
-    final newExercises = [...state.workout.exercises]..[targetExerciseIndex] = updatedExercise;
+    final updatedExercise = state.workout.exercises[targetExerciseIndex]
+        .copyWithLastSetDuplicated();
+    final newExercises = [...state.workout.exercises]
+      ..[targetExerciseIndex] = updatedExercise;
 
-    state = state.copyWith(workout: state.workout.copyWith(exercises: newExercises));
+    state = state.copyWith(
+      workout: state.workout.copyWith(exercises: newExercises),
+    );
 
     try {
       // todo: save to database
@@ -81,7 +95,12 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
 }
 
 final workoutLogProvider = StateNotifierProvider.autoDispose
-    .family<WorkoutLogNotifier, WorkoutLogNotifierState, Workout>((ref, Workout workout) {
-      final getFullWorkoutDataByIdUsecase = ref.read(getFullWorkoutDataByIdUsecaseProvider);
+    .family<WorkoutLogNotifier, WorkoutLogNotifierState, Workout>((
+      ref,
+      Workout workout,
+    ) {
+      final getFullWorkoutDataByIdUsecase = ref.read(
+        getFullWorkoutDataByIdUsecaseProvider,
+      );
       return WorkoutLogNotifier(getFullWorkoutDataByIdUsecase, workout);
     });

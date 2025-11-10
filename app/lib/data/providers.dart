@@ -61,25 +61,29 @@ final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
 
 // --- Usecase providers ---
 
-final getSortedPaginatedWorkoutsUsecaseProvider = Provider<GetPaginatedWorkoutsSortedByCreationDateUsecase>((ref) {
-  final repository = ref.read(workoutRepositoryProvider);
-  return GetPaginatedWorkoutsSortedByCreationDateUsecase(repository);
-});
+final getSortedPaginatedWorkoutsUsecaseProvider =
+    Provider<GetPaginatedWorkoutsSortedByCreationDateUsecase>((ref) {
+      final repository = ref.read(workoutRepositoryProvider);
+      return GetPaginatedWorkoutsSortedByCreationDateUsecase(repository);
+    });
 
-final getThisWeeksWorkoutsUsecaseProvider = Provider<GetThisWeeksWorkoutsUsecase>((ref) {
-  final repository = ref.read(workoutRepositoryProvider);
-  return GetThisWeeksWorkoutsUsecase(repository);
-});
+final getThisWeeksWorkoutsUsecaseProvider =
+    Provider<GetThisWeeksWorkoutsUsecase>((ref) {
+      final repository = ref.read(workoutRepositoryProvider);
+      return GetThisWeeksWorkoutsUsecase(repository);
+    });
 
-final getFullWorkoutDataByIdUsecaseProvider = Provider<GetFullWorkoutDataByIdUsecase>((ref) {
-  final repository = ref.read(workoutRepositoryProvider);
-  return GetFullWorkoutDataByIdUsecase(repository);
-});
+final getFullWorkoutDataByIdUsecaseProvider =
+    Provider<GetFullWorkoutDataByIdUsecase>((ref) {
+      final repository = ref.read(workoutRepositoryProvider);
+      return GetFullWorkoutDataByIdUsecase(repository);
+    });
 
-final getExerciseTypesUsecaseProvider = Provider<GetPaginatedExerciseTypesUsecase>((ref) {
-  final repository = ref.read(workoutRepositoryProvider);
-  return GetPaginatedExerciseTypesUsecase(repository);
-});
+final getExerciseTypesUsecaseProvider =
+    Provider<GetPaginatedExerciseTypesUsecase>((ref) {
+      final repository = ref.read(workoutRepositoryProvider);
+      return GetPaginatedExerciseTypesUsecase(repository);
+    });
 
 final addWorkoutUsecaseProvider = Provider<UpdateOrCreateWorkoutUsecase>((ref) {
   final repository = ref.read(workoutRepositoryProvider);

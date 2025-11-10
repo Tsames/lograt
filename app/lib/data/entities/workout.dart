@@ -11,8 +11,18 @@ class Workout {
 
   Workout.empty() : this("", DateTime.now(), const []);
 
-  Workout copyWith({int? id, String? name, DateTime? createdOn, List<Exercise>? exercises}) {
-    return Workout(id: id ?? this.id, name ?? this.name, createdOn ?? this.createdOn, exercises ?? this.exercises);
+  Workout copyWith({
+    int? id,
+    String? name,
+    DateTime? createdOn,
+    List<Exercise>? exercises,
+  }) {
+    return Workout(
+      id: id ?? this.id,
+      name ?? this.name,
+      createdOn ?? this.createdOn,
+      exercises ?? this.exercises,
+    );
   }
 
   int get exerciseCount => exercises.length;
@@ -20,11 +30,13 @@ class Workout {
   bool get isRecent => DateTime.now().difference(createdOn).inDays < 14;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is Workout && id == other.id;
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Workout && id == other.id;
 
   @override
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => "Workout{ id: ${id ?? 'null'}, name: $name, createdOn: ${createdOn.toIso8601String()} }";
+  String toString() =>
+      "Workout{ id: ${id ?? 'null'}, name: $name, createdOn: ${createdOn.toIso8601String()} }";
 }
