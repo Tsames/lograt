@@ -1,3 +1,5 @@
+import 'package:lograt/data/entities/set_type.dart';
+
 import 'exercise_set.dart';
 import 'exercise_type.dart';
 
@@ -34,6 +36,46 @@ class Exercise {
       order: order ?? this.order,
       sets: sets ?? this.sets,
       notes: notes ?? this.notes,
+    );
+  }
+
+  Exercise copyWithNewSet() {
+    if (sets.isEmpty) {
+      return copyWith(sets: [ExerciseSet(order: 0, setType: SetType.warmup)]);
+    }
+    final lastSet = sets.last;
+    return copyWith(
+      sets: [
+        ...sets,
+        ExerciseSet(
+          order: lastSet.order + 1,
+          setType: lastSet.setType,
+          units: lastSet.units,
+        ),
+      ],
+    );
+  }
+
+  Exercise copyWithLastSetRemoved() {
+    if (sets.isEmpty) return this;
+    return copyWith(sets: sets.sublist(0, sets.length - 1));
+  }
+
+  Exercise copyWithLastSetDuplicated() {
+    if (sets.isEmpty) return this;
+    final lastSet = sets.last;
+    return copyWith(
+      sets: [
+        ...sets,
+        ExerciseSet(
+          order: lastSet.order + 1,
+          setType: lastSet.setType,
+          weight: lastSet.weight,
+          units: lastSet.units,
+          reps: lastSet.reps,
+          restTime: lastSet.restTime,
+        ),
+      ],
     );
   }
 
