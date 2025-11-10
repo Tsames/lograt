@@ -35,7 +35,6 @@ class ExerciseDao {
       _tableName,
       where: 'workout_id = ?',
       whereArgs: [workoutId],
-      orderBy: 'order_index ASC',
     );
 
     return maps.map((map) => ExerciseModel.fromMap(map)).toList();

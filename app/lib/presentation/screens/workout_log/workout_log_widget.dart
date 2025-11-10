@@ -35,14 +35,26 @@ class WorkoutLogWidget extends ConsumerWidget {
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz))],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: SingleChildScrollView(
           child: Column(
             children: workoutLogState.workout.exercises.map((exercise) {
               return Column(
                 children: [
-                  RecordExerciseTypeWidget(exercise.exerciseType),
-                  RecordExerciseTable(exercise),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      child: Column(
+                        children: [
+                          RecordExerciseTypeWidget(exercise.exerciseType),
+                          RecordExerciseTable(exercise),
+                        ],
+                      ),
+                    ),
+                  ),
                   SizedBox(height: 20),
                 ],
               );

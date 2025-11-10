@@ -74,6 +74,7 @@ class RecordExerciseTable extends ConsumerWidget {
                     textStyle: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                     menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
+                    showTrailingIcon: false,
                     // Todo: update state based on selection
                     // onSelected: () {},
                   ),
@@ -108,6 +109,7 @@ class RecordExerciseTable extends ConsumerWidget {
                     textStyle: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                     menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
+                    showTrailingIcon: false,
                     // Todo: update state based on selection
                     // onSelected: () {},
                   ),
@@ -132,12 +134,20 @@ class RecordExerciseTable extends ConsumerWidget {
             }),
           ],
         ),
-
         const SizedBox(height: 8),
-        TextButton.icon(
-          onPressed: () {},
-          icon: const Icon(Icons.add),
-          label: const Text('Add Set'),
+        Row(
+          children: [
+            TextButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.add),
+              label: const Text('Add Set'),
+            ),
+            TextButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.remove),
+              label: const Text('Delete last set'),
+            ),
+          ],
         ),
       ],
     );
