@@ -1,4 +1,4 @@
-import '../repositories/workout_repository_impl.dart';
+import '../repositories/workout_repository.dart';
 
 class SeedDataUsecase {
   final WorkoutRepository _repository;

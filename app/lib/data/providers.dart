@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/data/repositories/workout_repository_impl.dart';
+import 'package:lograt/data/repositories/workout_repository.dart';
 import 'package:lograt/data/usecases/add_workout_usecase.dart';
 import 'package:lograt/data/usecases/get_full_workout_data_by_id_usecase.dart';
 import 'package:lograt/data/usecases/get_paginated_exercise_types_usecase.dart';
