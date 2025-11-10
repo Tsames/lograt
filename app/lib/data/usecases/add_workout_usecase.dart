@@ -1,5 +1,5 @@
 import '../entities/workout.dart';
-import '../repositories/workout_repository.dart';
+import '../repositories/workout_repository_impl.dart';
 
 class AddWorkoutUsecase {
   final WorkoutRepository _repository;

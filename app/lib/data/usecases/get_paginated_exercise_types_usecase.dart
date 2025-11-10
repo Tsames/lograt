@@ -1,6 +1,6 @@
 import '../../util/paginated_results.dart';
 import '../entities/exercise_type.dart';
-import '../repositories/workout_repository.dart';
+import '../repositories/workout_repository_impl.dart';
 
 class GetPaginatedExerciseTypesUsecase {
   static const pageSize = 50;

@@ -1,7 +1,7 @@
 import 'package:lograt/util/extensions/beginning_of_the_week.dart';
 
 import '../entities/workout.dart';
-import '../repositories/workout_repository.dart';
+import '../repositories/workout_repository_impl.dart';
 
 class GetThisWeeksWorkoutsUsecase {
   final WorkoutRepository _repository;

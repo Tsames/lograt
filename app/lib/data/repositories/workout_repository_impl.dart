@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:lograt/data/database/app_database.dart';
-import 'package:lograt/data/repositories/workout_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../dao/exercise_dao.dart';
@@ -18,14 +17,14 @@ import '../models/exercise_set_model.dart';
 import '../models/exercise_type_model.dart';
 import '../models/workout_model.dart';
 
-class WorkoutRepositoryImpl implements WorkoutRepository {
+class WorkoutRepository {
   final AppDatabase _db;
   final WorkoutDao _workoutDao;
   final ExerciseDao _exerciseDao;
   final ExerciseTypeDao _exerciseTypeDao;
   final ExerciseSetDao _exerciseSetDao;
 
-  WorkoutRepositoryImpl({
+  WorkoutRepository({
     required AppDatabase databaseConnection,
     required WorkoutDao workoutDao,
     required ExerciseDao exerciseDao,
@@ -39,7 +38,6 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
 
   /// Get a [Workout] without its corresponding exercises.
   /// Returns null if the workout does not exist in the database.
-  @override
   Future<Workout?> getWorkoutSummary(int workoutId) async {
     try {
       final workoutModel = await _workoutDao.getById(workoutId);
@@ -56,7 +54,6 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
 
   /// Get a list of all of [Workout]s with creation dates after the given [dateTimeThresholdInMilliseconds]
   /// ordered by creation date descending.
-  @override
   Future<List<Workout>> getWorkoutSummariesAfterTime(
     int dateTimeThresholdInMilliseconds,
   ) async {
@@ -81,7 +78,6 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
 
   /// Get a list of length [limit] of [Workout]s without their corresponding exercises
   /// ordered by creation date descending.
-  @override
   Future<List<Workout>> getWorkoutSummaries({int? limit, int? offset}) async {
     try {
       final workoutModels = await _workoutDao.getWorkoutSummaries(
@@ -105,7 +101,6 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
 
   /// Get a [Workout] including all its associated exercises and their associated sets by [workoutId].
   /// Main method for retrieving data necessary for the workout details and log page.
-  @override
   Future<Workout> getFullWorkoutDetails(int workoutId) async {
     try {
       // Get the workout in question
@@ -190,7 +185,6 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
     }
   }
 
-  @override
   Future<List<Exercise>> getExercisesOfType({
     required int typeId,
     int limit = 20,
@@ -256,7 +250,6 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
     }
   }
 
-  @override
   Future<List<ExerciseType>> getExerciseTypes({
     int? limit,
     int? offset,
@@ -270,13 +263,11 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
     return exerciseTypeModels.map((model) => model.toEntity()).toList();
   }
 
-  @override
   Future<int> createWorkout(Workout workout) async {
     final workoutModel = WorkoutModel.fromEntity(workout);
     return await _workoutDao.insert(workoutModel);
   }
 
-  @override
   Future<void> createWorkouts(List<Workout> workouts) async {
     if (workouts.isEmpty) return;
 
@@ -345,7 +336,6 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
     }
   }
 
-  @override
   Future<int> createExercise({
     required Exercise exercise,
     required int workoutId,
@@ -357,13 +347,11 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
     return await _exerciseDao.insert(exerciseModel);
   }
 
-  @override
   Future<int> createExerciseType(ExerciseType type) async {
     final typeModel = ExerciseTypeModel.fromEntity(type);
     return await _exerciseTypeDao.insert(typeModel);
   }
 
-  @override
   Future<int> createExerciseSet({
     required ExerciseSet set,
     required int exerciseId,
@@ -375,13 +363,11 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
     return await _exerciseSetDao.insert(setModel);
   }
 
-  @override
   Future<void> updateWorkout(Workout entity) async {
     final workoutModel = WorkoutModel.fromEntity(entity);
     await _workoutDao.update(workoutModel);
   }
 
-  @override
   Future<void> updateExercise({
     required Exercise entity,
     required int workoutId,
@@ -393,13 +379,11 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
     await _exerciseDao.update(exerciseModel);
   }
 
-  @override
   Future<void> updateExerciseType(ExerciseType entity) async {
     final exerciseTypeModel = ExerciseTypeModel.fromEntity(entity);
     await _exerciseTypeDao.updateById(exerciseTypeModel);
   }
 
-  @override
   Future<void> updateExerciseSet({
     required ExerciseSet entity,
     required int exerciseId,
@@ -411,32 +395,26 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
     await _exerciseSetDao.update(exerciseSetModel);
   }
 
-  @override
   Future<int> deleteWorkout(int id) async {
     return await _workoutDao.delete(id);
   }
 
-  @override
   Future<int> deleteExercise(int id) async {
     return await _exerciseDao.delete(id);
   }
 
-  @override
   Future<bool> deleteExerciseType(int id) async {
     return await _exerciseTypeDao.deleteById(id);
   }
 
-  @override
   Future<int> deleteExerciseSet(int id) async {
     return await _exerciseSetDao.delete(id);
   }
 
-  @override
   Future<void> clearWorkouts() async {
     await _workoutDao.clearTable();
   }
 
-  @override
   Future<void> seedWorkouts() async {
     await createWorkouts(SeedData.sampleWorkouts);
   }

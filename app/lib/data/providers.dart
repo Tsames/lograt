@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/data/repositories/workout_repository.dart';
 import 'package:lograt/data/repositories/workout_repository_impl.dart';
 import 'package:lograt/data/usecases/add_workout_usecase.dart';
 import 'package:lograt/data/usecases/get_full_workout_data_by_id_usecase.dart';
@@ -51,7 +50,7 @@ final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
   final exerciseTypeDao = ref.read(exerciseTypeDaoProvider);
   final exerciseSetDao = ref.read(exerciseSetDaoProvider);
 
-  return WorkoutRepositoryImpl(
+  return WorkoutRepository(
     databaseConnection: database,
     workoutDao: workoutDao,
     exerciseDao: exerciseDao,

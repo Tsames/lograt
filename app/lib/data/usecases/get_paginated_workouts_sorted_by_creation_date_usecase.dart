@@ -1,6 +1,6 @@
 import '../../util/paginated_results.dart';
 import '../entities/workout.dart';
-import '../repositories/workout_repository.dart';
+import '../repositories/workout_repository_impl.dart';
 
 class GetPaginatedWorkoutsSortedByCreationDateUsecase {
   static const pageSize = 25;
