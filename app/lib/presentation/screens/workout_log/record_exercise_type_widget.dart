@@ -12,26 +12,16 @@ class RecordExerciseTypeWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final exerciseTypesState = ref.watch(exerciseTypesProvider);
-    return SizedBox(
-      width: double.infinity,
-      child: DropdownMenu<ExerciseType?>(
-        hintText: "Select an exercise",
-        initialSelection: selectedType,
-        dropdownMenuEntries: exerciseTypesState.exerciseTypes.map((
-          exerciseType,
-        ) {
-          return DropdownMenuEntry(
-            value: exerciseType,
-            label: exerciseType.name,
-          );
-        }).toList(),
-        inputDecorationTheme: const InputDecorationTheme(
-          border: InputBorder.none,
-        ),
-        menuStyle: const MenuStyle(alignment: Alignment.bottomLeft),
-        // Todo: update state based on selection
-        // onSelected: () {},
-      ),
+    return DropdownMenu<ExerciseType?>(
+      hintText: "Select an exercise",
+      initialSelection: selectedType,
+      dropdownMenuEntries: exerciseTypesState.exerciseTypes.map((exerciseType) {
+        return DropdownMenuEntry(value: exerciseType, label: exerciseType.name);
+      }).toList(),
+      inputDecorationTheme: const InputDecorationTheme(border: InputBorder.none),
+      menuStyle: const MenuStyle(alignment: Alignment.bottomLeft),
+      // Todo: update state based on selection
+      // onSelected: () {},
     );
   }
 }

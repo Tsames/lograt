@@ -8,8 +8,7 @@ class ExerciseSet {
   final int reps;
   final double weight; // 0 for body weight exercises
   final Units units;
-  final Duration?
-  restTime; // Rest time before this set, this value will sometimes be null before the first set
+  final Duration? restTime; // Rest time before this set, this value will sometimes be null before the first set
   final SetType setType;
   final String? notes;
 
@@ -59,8 +58,7 @@ class ExerciseSet {
           notes == other.notes;
 
   @override
-  int get hashCode =>
-      Object.hash(order, reps, weight, units, restTime, setType, notes);
+  int get hashCode => Object.hash(order, reps, weight, units, restTime, setType, notes);
 
   @override
   String toString() =>

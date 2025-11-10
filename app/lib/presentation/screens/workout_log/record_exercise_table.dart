@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/data/entities/exercise.dart';
+import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier.dart';
 
 import '../../../data/entities/set_type.dart';
 import '../../../data/entities/units.dart';
 
-class RecordExerciseTable extends ConsumerWidget {
+class RecordExerciseTable extends StatelessWidget {
   final Exercise exercise;
+  final WorkoutLogNotifier notifier;
 
-  const RecordExerciseTable(this.exercise, {super.key});
+  const RecordExerciseTable(this.exercise, this.notifier, {super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,35 +25,19 @@ class RecordExerciseTable extends ConsumerWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.all(4.0),
-                  child: Text(
-                    "Set Type",
-                    style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Text("Set Type", style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
                 ),
                 Padding(
                   padding: EdgeInsets.all(4.0),
-                  child: Text(
-                    "Weight",
-                    style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Text("Weight", style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
                 ),
                 Padding(
                   padding: EdgeInsets.all(4.0),
-                  child: Text(
-                    "Units",
-                    style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Text("Units", style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
                 ),
                 Padding(
                   padding: EdgeInsets.all(4.0),
-                  child: Text(
-                    "Reps",
-                    style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Text("Reps", style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
                 ),
               ],
             ),
@@ -62,16 +47,12 @@ class RecordExerciseTable extends ConsumerWidget {
                 children: [
                   DropdownMenu<SetType>(
                     hintText: "--",
+                    initialSelection: set.setType,
                     dropdownMenuEntries: SetType.values.map((setType) {
-                      return DropdownMenuEntry(
-                        value: setType,
-                        label: setType.name,
-                      );
+                      return DropdownMenuEntry(value: setType, label: setType.name);
                     }).toList(),
-                    inputDecorationTheme: const InputDecorationTheme(
-                      border: InputBorder.none,
-                    ),
-                    textStyle: theme.textTheme.bodyMedium,
+                    inputDecorationTheme: const InputDecorationTheme(border: InputBorder.none),
+                    textStyle: theme.textTheme.bodySmall,
                     textAlign: TextAlign.center,
                     menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
                     showTrailingIcon: false,
@@ -81,14 +62,10 @@ class RecordExerciseTable extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: TextField(
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                      ),
+                      decoration: const InputDecoration(border: InputBorder.none),
                       keyboardType: TextInputType.number,
-                      controller: TextEditingController(
-                        text: set.reps.toString(),
-                      ),
-                      style: theme.textTheme.bodyMedium,
+                      controller: TextEditingController(text: set.reps.toString()),
+                      style: theme.textTheme.bodySmall,
                       textAlign: TextAlign.center,
                       // Todo: update state based on selection
                       // onChanged: (value) {},
@@ -96,17 +73,12 @@ class RecordExerciseTable extends ConsumerWidget {
                   ),
                   DropdownMenu<Units>(
                     hintText: "--",
+                    initialSelection: set.units,
                     dropdownMenuEntries: Units.values.map((setType) {
-                      return DropdownMenuEntry(
-                        value: setType,
-                        label: setType.abbreviation,
-                      );
+                      return DropdownMenuEntry(value: setType, label: setType.abbreviation);
                     }).toList(),
-                    initialSelection: Units.pounds,
-                    inputDecorationTheme: const InputDecorationTheme(
-                      border: InputBorder.none,
-                    ),
-                    textStyle: theme.textTheme.bodyMedium,
+                    inputDecorationTheme: const InputDecorationTheme(border: InputBorder.none),
+                    textStyle: theme.textTheme.bodySmall,
                     textAlign: TextAlign.center,
                     menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
                     showTrailingIcon: false,
@@ -116,14 +88,10 @@ class RecordExerciseTable extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: TextField(
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                      ),
+                      decoration: const InputDecoration(border: InputBorder.none),
                       keyboardType: TextInputType.number,
-                      style: theme.textTheme.bodyMedium,
-                      controller: TextEditingController(
-                        text: set.reps.toString(),
-                      ),
+                      style: theme.textTheme.bodySmall,
+                      controller: TextEditingController(text: set.reps.toString()),
                       textAlign: TextAlign.center,
                       // Todo: update state based on selection
                       // onChanged: (value) {},
@@ -136,17 +104,13 @@ class RecordExerciseTable extends ConsumerWidget {
         ),
         const SizedBox(height: 8),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            TextButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.add),
-              label: const Text('Add Set'),
-            ),
-            TextButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.remove),
-              label: const Text('Delete last set'),
-            ),
+            IconButton(onPressed: () => notifier.addSetToExercise(exercise), icon: const Icon(Icons.add)),
+            IconButton(onPressed: () => notifier.removeLastSetFromExercise(exercise), icon: const Icon(Icons.remove)),
+            IconButton(onPressed: () => notifier.duplicateLastSetOfExercise(exercise), icon: const Icon(Icons.copy)),
+            //todo: add an undo button to undo the last action the user took
+            // IconButton(onPressed: () => {}, icon: const Icon(Icons.undo_rounded)),
           ],
         ),
       ],
