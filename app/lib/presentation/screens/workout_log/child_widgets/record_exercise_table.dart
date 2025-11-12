@@ -1,19 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:lograt/data/entities/exercise.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier.dart';
 
-import '../../../data/entities/set_type.dart';
-import '../../../data/entities/units.dart';
+import '../../../../data/entities/set_type.dart';
+import '../../../../data/entities/units.dart';
+import '../../../../data/entities/workout.dart';
 
-class RecordExerciseTable extends StatelessWidget {
-  final Exercise exercise;
-  final WorkoutLogNotifier notifier;
+class ExerciseTable extends ConsumerWidget {
+  final Workout workout;
+  final String exerciseId;
 
-  const RecordExerciseTable(this.exercise, this.notifier, {super.key});
+  const ExerciseTable(this.workout, this.exerciseId, {super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    print("Building RecordExerciseTable for Exercise ${exerciseId}");
+
+    final sets = ref.watch(
+      workoutLogProvider(workout).select(
+        (state) =>
+            state.workout.exercises.firstWhere((e) => e.id == exerciseId).sets,
+      ),
+    );
+    final workoutLogNotifier = ref.read(workoutLogProvider(workout).notifier);
     final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -57,7 +68,7 @@ class RecordExerciseTable extends StatelessWidget {
                 ),
               ],
             ),
-            ...exercise.sets.asMap().entries.map((entry) {
+            ...sets.asMap().entries.map((entry) {
               final set = entry.value;
               return TableRow(
                 children: [
@@ -78,7 +89,12 @@ class RecordExerciseTable extends StatelessWidget {
                     menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
                     showTrailingIcon: false,
                     // Todo: update state based on selection
-                    // onSelected: () {},
+                    onSelected: (SetType? valueChanged) {
+                      workoutLogNotifier.updateSet(
+                        set.copyWith(setType: valueChanged),
+                        exerciseId,
+                      );
+                    },
                   ),
                   Padding(
                     padding: const EdgeInsets.all(4.0),
@@ -88,12 +104,22 @@ class RecordExerciseTable extends StatelessWidget {
                       ),
                       keyboardType: TextInputType.number,
                       controller: TextEditingController(
-                        text: set.reps.toString(),
+                        text: set.weight != null ? set.weight.toString() : "-",
                       ),
                       style: theme.textTheme.bodySmall,
                       textAlign: TextAlign.center,
                       // Todo: update state based on selection
-                      // onChanged: (value) {},
+                      onChanged: (String valueChanged) {
+                        workoutLogNotifier.updateSet(
+                          set.copyWith(
+                            weight: switch (valueChanged) {
+                              "" => null,
+                              _ => double.parse(valueChanged),
+                            },
+                          ),
+                          exerciseId,
+                        );
+                      },
                     ),
                   ),
                   DropdownMenu<Units>(
@@ -113,7 +139,12 @@ class RecordExerciseTable extends StatelessWidget {
                     menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
                     showTrailingIcon: false,
                     // Todo: update state based on selection
-                    // onSelected: () {},
+                    onSelected: (Units? valueChanged) {
+                      workoutLogNotifier.updateSet(
+                        set.copyWith(units: valueChanged),
+                        exerciseId,
+                      );
+                    },
                   ),
                   Padding(
                     padding: const EdgeInsets.all(4.0),
@@ -124,11 +155,21 @@ class RecordExerciseTable extends StatelessWidget {
                       keyboardType: TextInputType.number,
                       style: theme.textTheme.bodySmall,
                       controller: TextEditingController(
-                        text: set.reps.toString(),
+                        text: set.reps != null ? set.reps.toString() : "-",
                       ),
                       textAlign: TextAlign.center,
                       // Todo: update state based on selection
-                      // onChanged: (value) {},
+                      onChanged: (String valueChanged) {
+                        workoutLogNotifier.updateSet(
+                          set.copyWith(
+                            reps: switch (valueChanged) {
+                              "" => null,
+                              _ => int.parse(valueChanged),
+                            },
+                          ),
+                          exerciseId,
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -140,17 +181,25 @@ class RecordExerciseTable extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
+            // Todo: make this button toggle an interface for notes on and off
+            // Todo: make it animated!
             IconButton(
-              onPressed: () => notifier.addSetToExercise(exercise),
-              icon: const Icon(Icons.add),
+              onPressed: () {},
+              icon: const Icon(Icons.mode_comment_rounded, size: 18),
             ),
             IconButton(
-              onPressed: () => notifier.removeLastSetFromExercise(exercise),
-              icon: const Icon(Icons.remove),
+              onPressed: () => workoutLogNotifier.addSetToExercise(exerciseId),
+              icon: const Icon(Icons.add, size: 18),
             ),
             IconButton(
-              onPressed: () => notifier.duplicateLastSetOfExercise(exercise),
-              icon: const Icon(Icons.copy),
+              onPressed: () =>
+                  workoutLogNotifier.removeLastSetFromExercise(exerciseId),
+              icon: const Icon(Icons.remove, size: 18),
+            ),
+            IconButton(
+              onPressed: () =>
+                  workoutLogNotifier.duplicateLastSetOfExercise(exerciseId),
+              icon: const Icon(Icons.copy, size: 18),
             ),
             //todo: add an undo button to undo the last action the user took
             // IconButton(onPressed: () => {}, icon: const Icon(Icons.undo_rounded)),

@@ -1,6 +1,7 @@
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/data/entities/exercise.dart';
 import 'package:lograt/data/usecases/get_full_workout_data_by_id_usecase.dart';
+import 'package:lograt/data/usecases/update_or_create_workout_usecase.dart';
 import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier_state.dart';
 
 import '../../../../data/entities/exercise_set.dart';
@@ -11,10 +12,18 @@ import '../../../../data/providers.dart';
 
 class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
   final GetFullWorkoutDataByIdUsecase _getFullWorkoutDataByIdUsecase;
+  final UpdateOrCreateWorkoutDataUsecase _updateOrCreateWorkoutUsecase;
 
-  WorkoutLogNotifier(this._getFullWorkoutDataByIdUsecase, Workout workout)
-    : super(WorkoutLogNotifierState(workout: workout)) {
-    loadFullWorkoutData();
+  WorkoutLogNotifier(
+    this._getFullWorkoutDataByIdUsecase,
+    this._updateOrCreateWorkoutUsecase,
+    Workout? workout,
+  ) : super(WorkoutLogNotifierState(workout: workout ?? Workout())) {
+    if (workout != null) {
+      loadFullWorkoutData();
+    } else {
+      _updateOrCreateWorkoutUsecase.createWorkout(state.workout);
+    }
   }
 
   Future<void> loadFullWorkoutData() async {
@@ -30,8 +39,18 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     }
   }
 
-  void addSetToExercise(Exercise exercise) {
-    final targetExerciseIndex = state.workout.exercises.indexOf(exercise);
+  void updateSet(ExerciseSet set, String exerciseId) async {
+    try {
+      await _updateOrCreateWorkoutUsecase.updateSet(set, exerciseId);
+    } catch (e) {
+      state = state.copyWith(error: "An error occurred while editing a set.");
+    }
+  }
+
+  void addSetToExercise(String exerciseId) {
+    final targetExerciseIndex = state.workout.exercises.indexWhere(
+      (e) => e.id == exerciseId,
+    );
     if (targetExerciseIndex == -1) {
       state = state.copyWith(
         error: "Cannot add a set to an exercise outside of this workout.",
@@ -53,26 +72,35 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
       ),
     };
 
-    // Create a copy of the list of exercises for this workout but with the new set added to the target exercise
-    final newExercises = [...state.workout.exercises]
-      ..[targetExerciseIndex] = targetExercise.copyWith(
-        sets: [...targetExercise.sets, newSet],
-      );
+    // Copy the existing exercise, but with a new list for the sets (triggering a rebuild of the record_exercise widget)
+    final copyOfTargetExercise = targetExercise.copyWith(
+      sets: [...targetExercise.sets, newSet],
+    );
 
+    /*
+      Optimistic update
+      Copy the existing exercises list (avoiding triggering a rebuild of the workout_log widget)
+      Replace the target exercise with the copy that was just created above
+    */
     state = state.copyWith(
-      workout: state.workout.copyWith(exercises: newExercises),
+      workout: state.workout.copyWith(
+        exercises: state.workout.exercises
+          ..[targetExerciseIndex] = copyOfTargetExercise,
+      ),
     );
 
     try {
-      // todo: save to database
+      _updateOrCreateWorkoutUsecase.createSet(newSet, exerciseId);
     } catch (error) {
       // todo: handle exceptions
       rethrow;
     }
   }
 
-  void duplicateLastSetOfExercise(Exercise exercise) {
-    final targetExerciseIndex = state.workout.exercises.indexOf(exercise);
+  void duplicateLastSetOfExercise(String exerciseId) {
+    final targetExerciseIndex = state.workout.exercises.indexWhere(
+      (e) => e.id == exerciseId,
+    );
     if (targetExerciseIndex == -1) {
       state = state.copyWith(
         error: "Cannot duplicate a set of an exercise outside of this workout.",
@@ -94,25 +122,34 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
       restTime: lastSetOfTargetExercise.restTime,
     );
 
-    // Create a copy of the list of exercises for this workout but with the new set added to the target exercise
-    final newExercises = [...state.workout.exercises]
-      ..[targetExerciseIndex] = targetExercise.copyWith(
-        sets: [...targetExercise.sets, newSet],
-      );
+    // Copy the existing exercise, but with a new list for the sets (triggering a rebuild of the record_exercise widget)
+    final copyOfTargetExercise = targetExercise.copyWith(
+      sets: [...targetExercise.sets, newSet],
+    );
 
+    /*
+      Optimistic update
+      Copy the existing exercises list (avoiding triggering a rebuild of the workout_log widget)
+      Replace the target exercise with the copy that was just created above
+    */
     state = state.copyWith(
-      workout: state.workout.copyWith(exercises: newExercises),
+      workout: state.workout.copyWith(
+        exercises: state.workout.exercises
+          ..[targetExerciseIndex] = copyOfTargetExercise,
+      ),
     );
     try {
-      // todo: save to database
+      _updateOrCreateWorkoutUsecase.createSet(newSet, exerciseId);
     } catch (error) {
       // todo: handle exceptions
       rethrow;
     }
   }
 
-  void removeLastSetFromExercise(Exercise exercise) {
-    final targetExerciseIndex = state.workout.exercises.indexOf(exercise);
+  void removeLastSetFromExercise(String exerciseId) {
+    final targetExerciseIndex = state.workout.exercises.indexWhere(
+      (e) => e.id == exerciseId,
+    );
     if (targetExerciseIndex == -1) {
       state = state.copyWith(
         error: "Cannot remove a set of an exercise outside of this workout.",
@@ -125,17 +162,27 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     // Do nothing if there are no sets
     if (lastSetOfTargetExercise == null) return;
 
-    // Create a copy of the list of exercises for this workout but without the last set of the target exercise
-    final newExercises = [...state.workout.exercises]
-      ..[targetExerciseIndex] = targetExercise.copyWith(
-        sets: [...targetExercise.sets]..removeLast(),
-      );
+    // Copy the existing exercise, but with a new list for the sets (triggering a rebuild of the record_exercise widget)
+    final copyOfTargetExercise = targetExercise.copyWith(
+      sets: [...targetExercise.sets]..removeLast(),
+    );
 
+    /*
+      Optimistic update
+      Copy the existing exercises list (avoiding triggering a rebuild of the workout_log widget)
+      Replace the target exercise with the copy that was just created above
+    */
     state = state.copyWith(
-      workout: state.workout.copyWith(exercises: newExercises),
+      workout: state.workout.copyWith(
+        exercises: state.workout.exercises
+          ..[targetExerciseIndex] = copyOfTargetExercise,
+      ),
     );
     try {
-      // todo: save to database
+      _updateOrCreateWorkoutUsecase.removeSet(
+        lastSetOfTargetExercise,
+        exerciseId,
+      );
     } catch (error) {
       // todo: handle exceptions
       rethrow;
@@ -151,5 +198,12 @@ final workoutLogProvider = StateNotifierProvider.autoDispose
       final getFullWorkoutDataByIdUsecase = ref.read(
         getFullWorkoutDataByIdUsecaseProvider,
       );
-      return WorkoutLogNotifier(getFullWorkoutDataByIdUsecase, workout);
+      final updateOrCreateWorkoutUsecase = ref.read(
+        updateOrCreateWorkoutUsecaseProvider,
+      );
+      return WorkoutLogNotifier(
+        getFullWorkoutDataByIdUsecase,
+        updateOrCreateWorkoutUsecase,
+        workout,
+      );
     });

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/presentation/screens/workout_log/record_exercise_table.dart';
-import 'package:lograt/presentation/screens/workout_log/record_exercise_type_widget.dart';
+import 'package:lograt/presentation/screens/workout_log/child_widgets/exercise_type_text_button.dart';
+import 'package:lograt/presentation/screens/workout_log/child_widgets/record_exercise_table.dart';
 import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 
@@ -14,11 +14,13 @@ class WorkoutLogWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final workoutLogState = ref.watch(workoutLogProvider(workout));
-    final workoutLogNotifier = ref.watch(workoutLogProvider(workout).notifier);
+    print("Building WorkoutLogWidget for Workout ${workout.id}");
+    final exercises = ref.watch(
+      workoutLogProvider(workout).select((state) => state.workout.exercises),
+    );
     return Scaffold(
       appBar: AppBar(
-        title: Text(workoutLogState.workout.title ?? "New Workout"),
+        title: Text(workout.title ?? "New Workout"),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: Icon(Icons.arrow_back_ios),
@@ -28,37 +30,34 @@ class WorkoutLogWidget extends ConsumerWidget {
           preferredSize: Size.fromHeight(16),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
-            child: Text(workoutLogState.workout.date.toHumanFriendlyFormat()),
+            child: Text(workout.date.toHumanFriendlyFormat()),
           ),
         ),
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz))],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        child: SingleChildScrollView(
-          child: Column(
-            children: workoutLogState.workout.exercises.map((exercise) {
-              return Column(
-                children: [
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      child: Column(
-                        children: [
-                          RecordExerciseTypeWidget(exercise.exerciseType),
-                          RecordExerciseTable(exercise, workoutLogNotifier),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                ],
-              );
-            }).toList(),
-          ),
+        child: ListView.separated(
+          itemCount: exercises.length,
+          separatorBuilder: (BuildContext context, int index) =>
+              const SizedBox(height: 20),
+          itemBuilder: (BuildContext context, int index) {
+            final exerciseId = exercises[index].id;
+            return Card(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Column(
+                  children: [
+                    ExerciseTypeTextButton(workout, exerciseId),
+                    ExerciseTable(workout, exerciseId),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

@@ -85,10 +85,11 @@ final getExerciseTypesUsecaseProvider =
       return GetPaginatedExerciseTypesUsecase(repository);
     });
 
-final addWorkoutUsecaseProvider = Provider<UpdateOrCreateWorkoutUsecase>((ref) {
-  final repository = ref.read(workoutRepositoryProvider);
-  return UpdateOrCreateWorkoutUsecase(repository);
-});
+final updateOrCreateWorkoutUsecaseProvider =
+    Provider<UpdateOrCreateWorkoutDataUsecase>((ref) {
+      final repository = ref.read(workoutRepositoryProvider);
+      return UpdateOrCreateWorkoutDataUsecase(repository);
+    });
 
 final seedDataUsecaseProvider = Provider<SeedDataUsecase>((ref) {
   final repository = ref.read(workoutRepositoryProvider);
