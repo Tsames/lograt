@@ -51,6 +51,20 @@ class WorkoutRepository {
     }
   }
 
+  Future<ExerciseSet?> getExerciseSet(int setId) async {
+    try {
+      final setModel = await _exerciseSetDao.getById(setId);
+
+      return setModel?.toEntity();
+    } on DatabaseException catch (e) {
+      throw WorkoutDataException('Failed to load recent workout summaries: $e');
+    } catch (e) {
+      throw WorkoutDataException(
+        'Unexpected error loading recent workout summaries: $e',
+      );
+    }
+  }
+
   /// Get a list of all of [Workout]s with creation dates after the given [dateTimeThresholdInMilliseconds]
   /// ordered by creation date descending.
   Future<List<Workout>> getWorkoutSummariesAfterTime(
@@ -166,71 +180,6 @@ class WorkoutRepository {
     }
   }
 
-  Future<List<Exercise>> getExercisesOfType({
-    required int typeId,
-    int limit = 20,
-  }) async {
-    try {
-      // Verify type exists
-      final exerciseType = await _exerciseTypeDao.getById(typeId);
-      if (exerciseType == null) {
-        throw WorkoutDataException('ExerciseType with ID $typeId not found.');
-      }
-
-      // Get all exercises of that type
-      final exerciseModels = await _exerciseDao.getByExerciseTypeId(
-        exerciseTypeId: typeId,
-        limit: limit,
-      );
-
-      // If there are no exercises of that type, then return an empty list
-      if (exerciseModels.isEmpty) return <Exercise>[];
-
-      final exerciseIds = exerciseModels
-          .where((exercise) => exercise.id != null)
-          .map((exercise) => exercise.id!)
-          .toList();
-
-      // Get all sets for all our exercises
-      final allSets = await _exerciseSetDao.getBatchByExerciseIds(exerciseIds);
-
-      // Create a map from exercise id to associated sets
-      final setsByExerciseId = <int, List<ExerciseSetModel>>{};
-      for (final set in allSets) {
-        if (set.exerciseId != null) {
-          setsByExerciseId.putIfAbsent(set.exerciseId!, () => []).add(set);
-        }
-      }
-
-      // Create a List of Exercise entities with the help of our map
-      final completeExerciseEntities = exerciseModels
-          .where((exercise) => exercise.id != null)
-          .map((exercise) {
-            final exerciseId = exercise.id!;
-            final sets = setsByExerciseId[exerciseId] ?? <ExerciseSetModel>[];
-            final entitySets = sets.map((set) => set.toEntity()).toList();
-
-            return exercise.toEntity(
-              exerciseType: exerciseType.toEntity(),
-              sets: entitySets,
-            );
-          })
-          .toList();
-
-      return completeExerciseEntities;
-    } on WorkoutDataException {
-      rethrow;
-    } on DatabaseException catch (e) {
-      throw WorkoutDataException(
-        'Failed to load exercises of type $typeId: $e',
-      );
-    } catch (e) {
-      throw WorkoutDataException(
-        'Unexpected error loading exercises of type $typeId: $e',
-      );
-    }
-  }
-
   Future<List<ExerciseType>> getExerciseTypes({
     int? limit,
     int? offset,
@@ -302,10 +251,7 @@ class WorkoutRepository {
                     ),
                   )
                   .toList();
-              await _exerciseSetDao.batchInsertWithTransaction(
-                sets: setModels,
-                txn: txn,
-              );
+              await _exerciseSetDao.batchInsert(setModels, txn);
             }
           }
         }
@@ -388,7 +334,7 @@ class WorkoutRepository {
     return await _exerciseTypeDao.deleteById(id);
   }
 
-  Future<int> deleteExerciseSet(int id) async {
+  Future<bool> deleteExerciseSet(int id) async {
     return await _exerciseSetDao.delete(id);
   }
 

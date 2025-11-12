@@ -119,7 +119,9 @@ class ExerciseTypeDao {
     Transaction? txn,
   ]) async {
     if (exerciseType.id == null) {
-      throw ArgumentError('Cannot update exercise type without an ID');
+      throw ArgumentError(
+        'Cannot update exercise type without an ID: ${exerciseType.toString()}',
+      );
     }
 
     final DatabaseExecutor executor = txn ?? await _db.database;
