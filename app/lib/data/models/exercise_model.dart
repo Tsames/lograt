@@ -1,3 +1,5 @@
+import 'package:lograt/util/uuidv7.dart';
+
 import '../entities/exercise.dart';
 import '../entities/exercise_set.dart';
 import '../entities/exercise_type.dart';
@@ -16,6 +18,19 @@ class ExerciseModel {
     this.exerciseTypeId,
     this.notes,
   });
+
+  ExerciseModel.forTest({
+    required String workoutId,
+    int? order,
+    String? exerciseTypeId,
+    String? notes,
+  }) : this(
+         id: uuidV7(),
+         order: order ?? 0,
+         workoutId: workoutId,
+         exerciseTypeId: exerciseTypeId,
+         notes: notes,
+       );
 
   ExerciseModel.fromEntity(Exercise entity, String workoutId)
     : this(
@@ -42,7 +57,7 @@ class ExerciseModel {
   static ExerciseModel? fromMap(Map<String, dynamic> map) {
     final id = map['id'];
     if (id == null || id is! String) return null;
-    final order = map['order'];
+    final order = map['exercise_order'];
     if (order == null || order is! int) return null;
     final workoutId = map['workout_id'];
     if (workoutId == null || workoutId is! String) return null;
@@ -62,7 +77,7 @@ class ExerciseModel {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'order': order,
+      'exercise_order': order,
       'workout_id': workoutId,
       'exercise_type_id': exerciseTypeId,
       'notes': notes,

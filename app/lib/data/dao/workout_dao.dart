@@ -11,7 +11,7 @@ class WorkoutDao {
 
   /// Get a workout by its ID
   /// Returns null if no workout with the given ID exists
-  Future<WorkoutModel?> getById(int id) async {
+  Future<WorkoutModel?> getById(String id) async {
     final database = await _db.database;
     final maps = await database.query(
       _tableName,
@@ -38,7 +38,7 @@ class WorkoutDao {
       offset: offset,
     );
 
-    return maps.map((map) => WorkoutModel.fromMap(map)).toList();
+    return maps.map((map) => WorkoutModel.fromMap(map)).nonNulls.toList();
   }
 
   /// Get a list of the workouts that were created after the given datetime in milliseconds
@@ -55,23 +55,23 @@ class WorkoutDao {
       orderBy: 'createdOn DESC',
     );
 
-    return maps.map((map) => WorkoutModel.fromMap(map)).toList();
+    return maps.map((map) => WorkoutModel.fromMap(map)).nonNulls.toList();
   }
 
-  Future<int> insert(WorkoutModel workout) async {
+  Future<void> insert(WorkoutModel workout) async {
     final db = await _db.database;
-    return await db.insert(
+    await db.insert(
       _tableName,
       workout.toMap(),
       conflictAlgorithm: ConflictAlgorithm.fail,
     );
   }
 
-  Future<int> insertWithTransaction(
+  Future<void> insertWithTransaction(
     WorkoutModel workout,
     Transaction txn,
   ) async {
-    return await txn.insert(_tableName, workout.toMap());
+    await txn.insert(_tableName, workout.toMap());
   }
 
   Future<int> update(WorkoutModel workout) async {
@@ -84,7 +84,7 @@ class WorkoutDao {
     );
   }
 
-  Future<int> delete(int id) async {
+  Future<int> delete(String id) async {
     final db = await _db.database;
     return await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
   }

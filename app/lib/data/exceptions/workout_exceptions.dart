@@ -1,6 +1,6 @@
 abstract class WorkoutException implements Exception {
   final String message;
-  final int? workoutId;
+  final String? workoutId;
 
   const WorkoutException(this.message, [this.workoutId]);
 
@@ -10,7 +10,7 @@ abstract class WorkoutException implements Exception {
 
 /// Thrown when trying to access a workout that doesn't exist
 class WorkoutNotFoundException extends WorkoutException {
-  WorkoutNotFoundException(int workoutId)
+  WorkoutNotFoundException(String workoutId)
     : super('Workout with ID $workoutId was not found', workoutId);
 
   @override

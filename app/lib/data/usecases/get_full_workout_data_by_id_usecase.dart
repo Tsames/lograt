@@ -6,7 +6,7 @@ class GetFullWorkoutDataByIdUsecase {
 
   GetFullWorkoutDataByIdUsecase(this._repository);
 
-  Future<Workout> call(int id) async {
+  Future<Workout> call(String id) async {
     return await _repository.getFullWorkoutDetails(id);
   }
 }

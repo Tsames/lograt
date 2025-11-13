@@ -13,31 +13,31 @@ void main() {
   group('ExerciseTypeDao Read Operations Tests', () {
     late AppDatabase testDatabase;
     late ExerciseTypeDao exerciseTypeDao;
-    late ExerciseTypeModel sampleExerciseType;
 
-    late int existingExerciseTypeId;
+    late ExerciseTypeModel testExerciseType;
 
     setUp(() async {
       testDatabase = AppDatabase.inMemory();
       exerciseTypeDao = ExerciseTypeDao(testDatabase);
 
-      sampleExerciseType = ExerciseTypeModel(
+      testExerciseType = ExerciseTypeModel.forTest(
         name: 'Bench Press',
         description: 'Standard flat bench barbell press',
       );
-      existingExerciseTypeId = await exerciseTypeDao.insert(sampleExerciseType);
+
+      await exerciseTypeDao.insert(testExerciseType);
     });
 
     tearDown(() async {
       await testDatabase.close();
     });
 
-    test('should retrieve exercise type by ID as ExerciseTypeModel', () async {
-      final retrieved = await exerciseTypeDao.getById(existingExerciseTypeId);
+    test('should retrieve exercise type by ID correctly', () async {
+      final retrieved = await exerciseTypeDao.getById(testExerciseType.id);
 
       expect(retrieved, isNotNull);
       expect(retrieved, isA<ExerciseTypeModel>());
-      expect(retrieved!.id, equals(existingExerciseTypeId));
+      expect(retrieved!.id, equals(testExerciseType.id));
       expect(retrieved.name, equals('Bench Press'));
       expect(
         retrieved.description,
@@ -45,17 +45,17 @@ void main() {
       );
     });
 
-    test('should retrieve exercise type by name', () async {
+    test('should retrieve exercise type by name correctly', () async {
       final retrieved = await exerciseTypeDao.getByName('Bench Press');
 
       expect(retrieved, isNotNull);
       expect(retrieved, isA<ExerciseTypeModel>());
-      expect(retrieved!.id, equals(existingExerciseTypeId));
+      expect(retrieved!.id, equals(testExerciseType.id));
       expect(retrieved.name, equals('Bench Press'));
     });
 
     test('should return null when exercise type does not exist', () async {
-      final nonExistentById = await exerciseTypeDao.getById(99999);
+      final nonExistentById = await exerciseTypeDao.getById("99999");
       final nonExistentByName = await exerciseTypeDao.getByName(
         'Non-existent Exercise',
       );
@@ -66,11 +66,11 @@ void main() {
     });
 
     test('should retrieve all exercise types ordered by name', () async {
-      final squatType = ExerciseTypeModel(
+      final squatType = ExerciseTypeModel.forTest(
         name: 'Squat',
         description: 'Leg exercise',
       );
-      final deadliftType = ExerciseTypeModel(
+      final deadliftType = ExerciseTypeModel.forTest(
         name: 'Deadlift',
         description: 'Full body exercise',
       );
@@ -89,10 +89,7 @@ void main() {
     });
 
     test('should return empty list when no exercise types exist', () async {
-      await testDatabase.close();
-      testDatabase = AppDatabase.inMemory();
-      exerciseTypeDao = ExerciseTypeDao(testDatabase);
-
+      await exerciseTypeDao.deleteById(testExerciseType.id);
       final allTypes = await exerciseTypeDao.getAll();
 
       expect(allTypes, isEmpty);

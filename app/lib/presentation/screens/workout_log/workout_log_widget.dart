@@ -18,7 +18,7 @@ class WorkoutLogWidget extends ConsumerWidget {
     final workoutLogNotifier = ref.watch(workoutLogProvider(workout).notifier);
     return Scaffold(
       appBar: AppBar(
-        title: Text(workoutLogState.workout.name),
+        title: Text(workoutLogState.workout.title ?? "New Workout"),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: Icon(Icons.arrow_back_ios),
@@ -28,9 +28,7 @@ class WorkoutLogWidget extends ConsumerWidget {
           preferredSize: Size.fromHeight(16),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
-            child: Text(
-              workoutLogState.workout.createdOn.toHumanFriendlyFormat(),
-            ),
+            child: Text(workoutLogState.workout.date.toHumanFriendlyFormat()),
           ),
         ),
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz))],

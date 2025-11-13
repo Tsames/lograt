@@ -24,10 +24,11 @@ void main() {
     late ExerciseDao exerciseDao;
     late ExerciseTypeDao exerciseTypeDao;
     late WorkoutDao workoutDao;
-    late int testExerciseId;
 
-    late int existingExerciseSetId;
-    late ExerciseSetModel existingExerciseSet;
+    late WorkoutModel testWorkout;
+    late ExerciseTypeModel testExerciseType;
+    late ExerciseModel testExercise;
+    late ExerciseSetModel testExerciseSet;
 
     setUp(() async {
       testDatabase = AppDatabase.inMemory();
@@ -37,39 +38,33 @@ void main() {
       workoutDao = WorkoutDao(testDatabase);
 
       // Create prerequisite data that exercise sets depend on
-      final testWorkout = WorkoutModel('Test Workout', DateTime.now());
-      final testWorkoutId = await workoutDao.insert(testWorkout);
+      testWorkout = WorkoutModel.forTest(title: 'Test Workout');
+      await workoutDao.insert(testWorkout);
 
-      final testExerciseType = ExerciseTypeModel(
+      testExerciseType = ExerciseTypeModel.forTest(
         name: 'Bench Press',
         description: 'Chest exercise',
       );
-      final testExerciseTypeId = await exerciseTypeDao.insert(testExerciseType);
+      await exerciseTypeDao.insert(testExerciseType);
 
-      final testExercise = ExerciseModel(
-        workoutId: testWorkoutId,
-        exerciseTypeId: testExerciseTypeId,
+      testExercise = ExerciseModel.forTest(
+        workoutId: testWorkout.id,
         order: 1,
+        exerciseTypeId: testExerciseType.id,
         notes: 'Test exercise for sets',
       );
-      testExerciseId = await exerciseDao.insert(testExercise);
+      await exerciseDao.insert(testExercise);
 
-      // Create sample exercise set data
-      final sampleExerciseSet = ExerciseSetModel(
-        exerciseId: testExerciseId,
+      testExerciseSet = ExerciseSetModel.forTest(
+        exerciseId: testExercise.id,
         order: 1,
-        reps: 10,
+        setType: SetType.working.name,
         weight: 135,
         units: Units.pounds.name,
+        reps: 10,
         restTimeSeconds: 60,
-        setType: SetType.working.name,
-        notes: "New PR!",
       );
-
-      existingExerciseSetId = await exerciseSetDao.insert(sampleExerciseSet);
-      existingExerciseSet = (await exerciseSetDao.getById(
-        existingExerciseSetId,
-      ))!;
+      await exerciseSetDao.insert(testExerciseSet);
     });
 
     tearDown(() async {
@@ -78,11 +73,11 @@ void main() {
 
     test('should update existing exercise set successfully', () async {
       // Modify the exercise set data
-      final updatedExerciseSet = existingExerciseSet.copyWith(
-        reps: 12,
-        weight: 145,
-        restTimeSeconds: 90,
+      final updatedExerciseSet = testExerciseSet.copyWith(
         setType: SetType.failure.name,
+        weight: 145,
+        reps: 12,
+        restTimeSeconds: 90,
       );
 
       // Update the exercise set in the database
@@ -92,15 +87,20 @@ void main() {
       expect(rowIsUpdated, equals(true));
 
       // Verify the changes were actually saved
-      final retrieved = await exerciseSetDao.getById(existingExerciseSetId);
+      final retrieved = await exerciseSetDao.getById(testExerciseSet.id);
       expect(retrieved!.reps, equals(12));
       expect(retrieved.weight, equals(145));
       expect(retrieved.restTimeSeconds, 90);
-      expect(SetType.fromString(retrieved.setType), SetType.failure);
+      expect(
+        retrieved.setType != null
+            ? SetType.fromString(retrieved.setType!)
+            : null,
+        SetType.failure,
+      );
 
       // Verify unchanged fields remain the same
-      expect(retrieved.exerciseId, equals(existingExerciseSet.exerciseId));
-      expect(retrieved.order, equals(existingExerciseSet.order));
+      expect(retrieved.exerciseId, equals(testExerciseSet.exerciseId));
+      expect(retrieved.order, equals(testExerciseSet.order));
     });
 
     test(
@@ -108,13 +108,13 @@ void main() {
       () async {
         // Create an exercise set with an ID that doesn't exist
         final nonExistentExerciseSet = ExerciseSetModel(
-          databaseId: 99999,
-          exerciseId: testExerciseId,
+          id: "99999",
           order: 1,
-          reps: 10,
+          exerciseId: testExercise.id,
+          setType: SetType.working.name,
           weight: 135,
           units: Units.pounds.name,
-          setType: SetType.working.name,
+          reps: 10,
         );
 
         // Try to update the non-existent exercise set
@@ -124,27 +124,6 @@ void main() {
 
         // Should indicate no rows were affected
         expect(rowIsUpdated, equals(false));
-      },
-    );
-
-    test(
-      'should throw ArgumentError when trying to update exercise set without ID',
-      () async {
-        // Create an exercise set without an ID
-        final setWithoutId = ExerciseSetModel(
-          exerciseId: testExerciseId,
-          order: 1,
-          reps: 10,
-          weight: 135,
-          units: Units.pounds.name,
-          setType: SetType.working.name,
-        );
-
-        // Should throw ArgumentError
-        expect(
-          () async => await exerciseSetDao.update(setWithoutId),
-          throwsA(isA<ArgumentError>()),
-        );
       },
     );
   });

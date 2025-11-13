@@ -24,8 +24,11 @@ void main() {
     late ExerciseDao exerciseDao;
     late ExerciseTypeDao exerciseTypeDao;
     late WorkoutDao workoutDao;
-    late ExerciseSetModel sampleExerciseSet;
-    late int testExerciseId;
+
+    late WorkoutModel testWorkout;
+    late ExerciseTypeModel testExerciseType;
+    late ExerciseModel testExercise;
+    late ExerciseSetModel testExerciseSet;
 
     setUp(() async {
       testDatabase = AppDatabase.inMemory();
@@ -35,33 +38,31 @@ void main() {
       workoutDao = WorkoutDao(testDatabase);
 
       // Create prerequisite data that exercise sets depend on
-      final testWorkout = WorkoutModel('Test Workout', DateTime.now());
-      final testWorkoutId = await workoutDao.insert(testWorkout);
+      testWorkout = WorkoutModel.forTest(title: 'Test Workout');
+      await workoutDao.insert(testWorkout);
 
-      final testExerciseType = ExerciseTypeModel(
+      testExerciseType = ExerciseTypeModel.forTest(
         name: 'Bench Press',
         description: 'Chest exercise',
       );
-      final testExerciseTypeId = await exerciseTypeDao.insert(testExerciseType);
+      await exerciseTypeDao.insert(testExerciseType);
 
-      final testExercise = ExerciseModel(
-        workoutId: testWorkoutId,
-        exerciseTypeId: testExerciseTypeId,
+      testExercise = ExerciseModel.forTest(
+        workoutId: testWorkout.id,
         order: 1,
+        exerciseTypeId: testExerciseType.id,
         notes: 'Test exercise for sets',
       );
-      testExerciseId = await exerciseDao.insert(testExercise);
+      await exerciseDao.insert(testExercise);
 
-      // Create sample exercise set data
-      sampleExerciseSet = ExerciseSetModel(
-        exerciseId: testExerciseId,
+      testExerciseSet = ExerciseSetModel.forTest(
+        exerciseId: testExercise.id,
         order: 1,
-        reps: 10,
+        setType: SetType.working.name,
         weight: 135,
         units: Units.pounds.name,
+        reps: 10,
         restTimeSeconds: 60,
-        setType: SetType.working.name,
-        notes: "New PR!",
       );
     });
 
@@ -69,53 +70,56 @@ void main() {
       await testDatabase.close();
     });
 
-    test('should insert a new exercise set and return a valid ID', () async {
+    test('should insert a new exercise set correctly', () async {
       // Insert the exercise set into the database
-      final insertedId = await exerciseSetDao.insert(sampleExerciseSet);
+      await exerciseSetDao.insert(testExerciseSet);
 
-      // Verify the operation succeeded and returned a meaningful ID
-      expect(insertedId, isA<int>());
-      expect(insertedId, greaterThan(0));
-
-      // Additional verification: ensure the exercise set was actually stored
-      final retrieved = await exerciseSetDao.getById(insertedId);
+      // Verify the operation succeeded
+      final retrieved = await exerciseSetDao.getById(testExerciseSet.id);
       expect(retrieved, isNotNull);
-      expect(retrieved!.exerciseId, equals(testExerciseId));
+      expect(retrieved!.exerciseId, equals(testExercise.id));
       expect(retrieved.order, equals(1));
-      expect(retrieved.reps, equals(10));
+      expect(
+        retrieved.setType != null
+            ? SetType.fromString(retrieved.setType!)
+            : null,
+        SetType.working,
+      );
       expect(retrieved.weight, equals(135));
-      expect(Units.fromString(retrieved.units), Units.pounds);
+      expect(
+        retrieved.units != null ? Units.fromString(retrieved.units!) : null,
+        Units.pounds,
+      );
+      expect(retrieved.reps, equals(10));
       expect(retrieved.restTimeSeconds, 60);
-      expect(SetType.fromString(retrieved.setType), SetType.working);
-      expect(retrieved.notes, "New PR!");
     });
 
     test('should handle batch insert with transaction correctly', () async {
       // Create multiple sets for batch insertion
       final sets = [
-        ExerciseSetModel(
-          exerciseId: testExerciseId,
+        ExerciseSetModel.forTest(
+          exerciseId: testExercise.id,
           order: 1,
-          reps: 12,
+          setType: SetType.working.name,
           weight: 135,
           units: Units.pounds.name,
-          setType: SetType.working.name,
+          reps: 12,
         ),
-        ExerciseSetModel(
-          exerciseId: testExerciseId,
+        ExerciseSetModel.forTest(
+          exerciseId: testExercise.id,
           order: 2,
-          reps: 10,
+          setType: SetType.working.name,
           weight: 145,
           units: Units.pounds.name,
-          setType: SetType.working.name,
+          reps: 10,
         ),
-        ExerciseSetModel(
-          exerciseId: testExerciseId,
+        ExerciseSetModel.forTest(
+          exerciseId: testExercise.id,
           order: 3,
-          reps: 8,
+          setType: SetType.working.name,
           weight: 155,
           units: Units.pounds.name,
-          setType: SetType.working.name,
+          reps: 8,
         ),
       ];
 
@@ -126,7 +130,7 @@ void main() {
       });
 
       // All sets should be inserted correctly
-      final allSets = await exerciseSetDao.getByExerciseId(testExerciseId);
+      final allSets = await exerciseSetDao.getByExerciseId(testExercise.id);
       expect(allSets.length, equals(3));
 
       // Verify each set was inserted correctly
@@ -146,7 +150,7 @@ void main() {
       });
 
       // Should complete without error
-      final allSets = await exerciseSetDao.getByExerciseId(testExerciseId);
+      final allSets = await exerciseSetDao.getByExerciseId(testExercise.id);
       expect(allSets, isEmpty);
     });
   });

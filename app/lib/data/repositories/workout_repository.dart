@@ -37,7 +37,7 @@ class WorkoutRepository {
 
   /// Get a [Workout] without its corresponding exercises.
   /// Returns null if the workout does not exist in the database.
-  Future<Workout?> getWorkoutSummary(int workoutId) async {
+  Future<Workout?> getWorkoutSummary(String workoutId) async {
     try {
       final workoutModel = await _workoutDao.getById(workoutId);
 
@@ -51,7 +51,7 @@ class WorkoutRepository {
     }
   }
 
-  Future<ExerciseSet?> getExerciseSet(int setId) async {
+  Future<ExerciseSet?> getExerciseSet(String setId) async {
     try {
       final setModel = await _exerciseSetDao.getById(setId);
 
@@ -114,7 +114,7 @@ class WorkoutRepository {
 
   /// Get a [Workout] including all its associated exercises and their associated sets by [workoutId].
   /// Main method for retrieving data necessary for the workout details and log page.
-  Future<Workout> getFullWorkoutDetails(int workoutId) async {
+  Future<Workout> getFullWorkoutDetails(String workoutId) async {
     try {
       // Get the workout in question
       final workoutModel = await _workoutDao.getById(workoutId);
@@ -129,12 +129,27 @@ class WorkoutRepository {
       }
 
       final exerciseEntityFutures = exerciseModels.map((exerciseModel) async {
-        return await _buildExerciseEntity(exerciseModel);
+        final exerciseTypeModel = switch (exerciseModel.exerciseTypeId) {
+          null => null,
+          _ => await _exerciseTypeDao.getById(exerciseModel.exerciseTypeId!),
+        };
+
+        final exerciseSetModels = await _exerciseSetDao.getByExerciseId(
+          exerciseModel.id,
+        );
+        final exerciseSetEntities = exerciseSetModels
+            .map((set) => set.toEntity())
+            .toList();
+
+        return exerciseModel.toEntity(
+          exerciseTypeModel != null ? exerciseTypeModel.toEntity() : null,
+          exerciseSetEntities,
+        );
       }).toList();
 
       final exerciseEntities = await Future.wait(exerciseEntityFutures);
 
-      final validExercises = exerciseEntities.whereType<Exercise>().toList();
+      final validExercises = exerciseEntities.nonNulls.toList();
 
       return workoutModel.toEntity(validExercises);
     } on WorkoutNotFoundException {
@@ -147,36 +162,6 @@ class WorkoutRepository {
       throw WorkoutDataException(
         'Unexpected error loading workout $workoutId: $e',
       );
-    }
-  }
-
-  /// Helper method to [getFullWorkoutDetails] that builds an [Exercise] with all its associated sets from an [ExerciseModel].
-  /// Returns null if an error is encountered or no [ExerciseType] can be found in the database.
-  Future<Exercise?> _buildExerciseEntity(ExerciseModel exerciseModel) async {
-    try {
-      if (exerciseModel.exerciseTypeId == null) {
-        return null;
-      }
-      final exerciseTypeModel = await _exerciseTypeDao.getById(
-        exerciseModel.exerciseTypeId!,
-      );
-      if (exerciseTypeModel == null) {
-        return null;
-      }
-
-      final exerciseSetModels = await _exerciseSetDao.getByExerciseId(
-        exerciseModel.id!,
-      );
-
-      final exerciseSetEntities = exerciseSetModels
-          .map((set) => set.toEntity())
-          .toList();
-      return exerciseModel.toEntity(
-        exerciseType: exerciseTypeModel.toEntity(),
-        sets: exerciseSetEntities,
-      );
-    } catch (e) {
-      return null;
     }
   }
 
@@ -193,61 +178,53 @@ class WorkoutRepository {
     return exerciseTypeModels.map((model) => model.toEntity()).toList();
   }
 
-  Future<int> createWorkout(Workout workout) async {
+  Future<void> createWorkout(Workout workout) async {
     final workoutModel = WorkoutModel.fromEntity(workout);
-    return await _workoutDao.insert(workoutModel);
+    await _workoutDao.insert(workoutModel);
   }
 
-  Future<void> createWorkouts(List<Workout> workouts) async {
+  Future<void> batchCreateWorkouts(List<Workout> workouts) async {
     if (workouts.isEmpty) return;
 
     try {
       final db = await _db.database;
+      // Pass the transaction to each DAO operation
       return await db.transaction<void>((txn) async {
         for (final workout in workouts) {
-          // Pass the transaction to each DAO operation
-          final workoutId = await _workoutDao.insertWithTransaction(
+          // Create Workout
+          await _workoutDao.insertWithTransaction(
             WorkoutModel.fromEntity(workout),
             txn,
           );
 
           for (final exercise in workout.exercises) {
-            int exerciseTypeId;
+            // Create exercise
+            await _exerciseDao.insertWithTransaction(
+              exercise: ExerciseModel.fromEntity(exercise, workout.id),
+              txn: txn,
+            );
 
-            if (exercise.exerciseType.id != null) {
-              exerciseTypeId = exercise.exerciseType.id!;
-            } else {
-              final existingExerciseTypeByName = await _exerciseTypeDao
-                  .getByName(exercise.exerciseType.name, txn);
-              if (existingExerciseTypeByName != null) {
-                exerciseTypeId = existingExerciseTypeByName.id!;
-              } else {
-                exerciseTypeId = await _exerciseTypeDao.insert(
-                  ExerciseTypeModel.fromEntity(exercise.exerciseType),
+            // If the exercise has an exercise type, check if it already exists in the database, if it doesn't create it
+            if (exercise.exerciseType != null) {
+              final existingExerciseTypeById = await _exerciseTypeDao.getById(
+                exercise.exerciseType!.id,
+                txn,
+              );
+              if (existingExerciseTypeById == null) {
+                await _exerciseTypeDao.insert(
+                  ExerciseTypeModel.fromEntity(exercise.exerciseType!),
                   txn,
                 );
               }
             }
 
-            final exerciseModel = ExerciseModel.fromEntity(
-              entity: exercise.copyWith(
-                exerciseType: exercise.exerciseType.copyWith(
-                  id: exerciseTypeId,
-                ),
-              ),
-              workoutId: workoutId,
-            );
-            final exerciseId = await _exerciseDao.insertWithTransaction(
-              exercise: exerciseModel,
-              txn: txn,
-            );
-
+            // Create Sets
             if (exercise.sets.isNotEmpty) {
               final setModels = exercise.sets
                   .map(
                     (set) => ExerciseSetModel.fromEntity(
                       entity: set,
-                      exerciseId: exerciseId,
+                      exerciseId: exercise.id,
                     ),
                   )
                   .toList();
@@ -265,12 +242,9 @@ class WorkoutRepository {
 
   Future<int> createExercise({
     required Exercise exercise,
-    required int workoutId,
+    required String workoutId,
   }) async {
-    final exerciseModel = ExerciseModel.fromEntity(
-      entity: exercise,
-      workoutId: workoutId,
-    );
+    final exerciseModel = ExerciseModel.fromEntity(exercise, workoutId);
     return await _exerciseDao.insert(exerciseModel);
   }
 
@@ -281,7 +255,7 @@ class WorkoutRepository {
 
   Future<int> createExerciseSet({
     required ExerciseSet set,
-    required int exerciseId,
+    required String exerciseId,
   }) async {
     final setModel = ExerciseSetModel.fromEntity(
       entity: set,
@@ -297,12 +271,9 @@ class WorkoutRepository {
 
   Future<void> updateExercise({
     required Exercise entity,
-    required int workoutId,
+    required String workoutId,
   }) async {
-    final exerciseModel = ExerciseModel.fromEntity(
-      entity: entity,
-      workoutId: workoutId,
-    );
+    final exerciseModel = ExerciseModel.fromEntity(entity, workoutId);
     await _exerciseDao.update(exerciseModel);
   }
 
@@ -313,7 +284,7 @@ class WorkoutRepository {
 
   Future<void> updateExerciseSet({
     required ExerciseSet entity,
-    required int exerciseId,
+    required String exerciseId,
   }) async {
     final exerciseSetModel = ExerciseSetModel.fromEntity(
       entity: entity,
@@ -322,19 +293,19 @@ class WorkoutRepository {
     await _exerciseSetDao.update(exerciseSetModel);
   }
 
-  Future<int> deleteWorkout(int id) async {
+  Future<int> deleteWorkout(String id) async {
     return await _workoutDao.delete(id);
   }
 
-  Future<int> deleteExercise(int id) async {
+  Future<int> deleteExercise(String id) async {
     return await _exerciseDao.delete(id);
   }
 
-  Future<bool> deleteExerciseType(int id) async {
+  Future<bool> deleteExerciseType(String id) async {
     return await _exerciseTypeDao.deleteById(id);
   }
 
-  Future<bool> deleteExerciseSet(int id) async {
+  Future<bool> deleteExerciseSet(String id) async {
     return await _exerciseSetDao.delete(id);
   }
 
@@ -343,6 +314,6 @@ class WorkoutRepository {
   }
 
   Future<void> seedWorkouts() async {
-    await createWorkouts(SeedData.sampleWorkouts);
+    await batchCreateWorkouts(SeedData.sampleWorkouts);
   }
 }

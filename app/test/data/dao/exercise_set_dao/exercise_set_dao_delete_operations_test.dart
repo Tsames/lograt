@@ -24,9 +24,11 @@ void main() {
     late ExerciseDao exerciseDao;
     late ExerciseTypeDao exerciseTypeDao;
     late WorkoutDao workoutDao;
-    late int testExerciseId;
 
-    late int existingExerciseSetId;
+    late WorkoutModel testWorkout;
+    late ExerciseTypeModel testExerciseType;
+    late ExerciseModel testExercise;
+    late ExerciseSetModel testExerciseSet;
 
     setUp(() async {
       testDatabase = AppDatabase.inMemory();
@@ -36,36 +38,33 @@ void main() {
       workoutDao = WorkoutDao(testDatabase);
 
       // Create prerequisite data that exercise sets depend on
-      final testWorkout = WorkoutModel('Test Workout', DateTime.now());
-      final testWorkoutId = await workoutDao.insert(testWorkout);
+      testWorkout = WorkoutModel.forTest(title: 'Test Workout');
+      await workoutDao.insert(testWorkout);
 
-      final testExerciseType = ExerciseTypeModel(
+      testExerciseType = ExerciseTypeModel.forTest(
         name: 'Bench Press',
         description: 'Chest exercise',
       );
-      final testExerciseTypeId = await exerciseTypeDao.insert(testExerciseType);
+      await exerciseTypeDao.insert(testExerciseType);
 
-      final testExercise = ExerciseModel(
-        workoutId: testWorkoutId,
-        exerciseTypeId: testExerciseTypeId,
+      testExercise = ExerciseModel.forTest(
+        workoutId: testWorkout.id,
         order: 1,
+        exerciseTypeId: testExerciseType.id,
         notes: 'Test exercise for sets',
       );
-      testExerciseId = await exerciseDao.insert(testExercise);
+      await exerciseDao.insert(testExercise);
 
-      // Create sample exercise set data
-      final sampleExerciseSet = ExerciseSetModel(
-        exerciseId: testExerciseId,
+      testExerciseSet = ExerciseSetModel.forTest(
+        exerciseId: testExercise.id,
         order: 1,
-        reps: 10,
+        setType: SetType.working.name,
         weight: 135,
         units: Units.pounds.name,
+        reps: 10,
         restTimeSeconds: 60,
-        setType: SetType.working.name,
-        notes: "New PR!",
       );
-
-      existingExerciseSetId = await exerciseSetDao.insert(sampleExerciseSet);
+      await exerciseSetDao.insert(testExerciseSet);
     });
 
     tearDown(() async {
@@ -74,13 +73,13 @@ void main() {
 
     test('should delete existing exercise set successfully', () async {
       // Delete the exercise set
-      final setIsDeleted = await exerciseSetDao.delete(existingExerciseSetId);
+      final setIsDeleted = await exerciseSetDao.delete(testExerciseSet.id);
 
       // Should indicate one row was deleted
       expect(setIsDeleted, equals(true));
 
       // Verify the exercise set no longer exists
-      final retrieved = await exerciseSetDao.getById(existingExerciseSetId);
+      final retrieved = await exerciseSetDao.getById(testExerciseSet.id);
       expect(retrieved, isNull);
     });
 
@@ -88,7 +87,7 @@ void main() {
       'should return false when trying to delete non-existent exercise set',
       () async {
         // Try to delete an exercise set that doesn't exist
-        final setIsDeleted = await exerciseSetDao.delete(99999);
+        final setIsDeleted = await exerciseSetDao.delete("99999");
 
         // Should indicate no rows were affected
         expect(setIsDeleted, equals(false));
@@ -98,41 +97,41 @@ void main() {
     test('should delete all exercise sets for a specific exercise', () async {
       // Add multiple sets to the exercise
       await exerciseSetDao.insert(
-        ExerciseSetModel(
-          exerciseId: testExerciseId,
+        ExerciseSetModel.forTest(
+          exerciseId: testExercise.id,
           order: 2,
-          reps: 8,
+          setType: SetType.working.name,
           weight: 145,
           units: Units.pounds.name,
-          setType: SetType.working.name,
+          reps: 8,
         ),
       );
 
       await exerciseSetDao.insert(
-        ExerciseSetModel(
-          exerciseId: testExerciseId,
+        ExerciseSetModel.forTest(
+          exerciseId: testExercise.id,
           order: 3,
-          reps: 6,
+          setType: SetType.working.name,
           weight: 155,
           units: Units.pounds.name,
-          setType: SetType.working.name,
+          reps: 6,
         ),
       );
 
       // Verify we have sets before deletion
-      final beforeSets = await exerciseSetDao.getByExerciseId(testExerciseId);
+      final beforeSets = await exerciseSetDao.getByExerciseId(testExercise.id);
       expect(beforeSets.length, equals(3));
 
       // Delete all sets for the exercise
       final rowsDeleted = await exerciseSetDao.deleteByExerciseId(
-        testExerciseId,
+        testExercise.id,
       );
 
       // Should delete all sets for the exercise
       expect(rowsDeleted, equals(3));
 
       // Verify no sets remain for this exercise
-      final afterSets = await exerciseSetDao.getByExerciseId(testExerciseId);
+      final afterSets = await exerciseSetDao.getByExerciseId(testExercise.id);
       expect(afterSets, isEmpty);
     });
 
@@ -140,17 +139,18 @@ void main() {
       'should return 0 when trying to delete sets from exercise with no sets',
       () async {
         // Create a new exercise with no sets
-        final newExercise = ExerciseModel(
-          workoutId: testExerciseId,
-          exerciseTypeId: testExerciseId,
+        final newExercise = ExerciseModel.forTest(
+          workoutId: testWorkout.id,
           order: 2,
+          exerciseTypeId: testExercise.id,
           notes: 'Exercise with no sets',
         );
-        final newExerciseId = await exerciseDao.insert(newExercise);
+
+        await exerciseDao.insert(newExercise);
 
         // Try to delete sets from the exercise with no sets
         final rowsDeleted = await exerciseSetDao.deleteByExerciseId(
-          newExerciseId,
+          newExercise.id,
         );
 
         // Should indicate no rows were affected
