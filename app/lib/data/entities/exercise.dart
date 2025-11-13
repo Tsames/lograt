@@ -4,32 +4,34 @@ import 'exercise_set.dart';
 import 'exercise_type.dart';
 
 class Exercise {
-  final String id; // UUIDv7 generated primary key
-  final ExerciseType? exerciseType; // What exercise this is
-  final int order; // 1st exercise, 2nd exercise, etc.
+  final String id;
+  final int order;
   final List<ExerciseSet> sets;
+  final ExerciseType? exerciseType;
   final String? notes;
 
   Exercise({
     String? id,
+    int? order,
+    List<ExerciseSet>? sets,
     this.exerciseType,
-    this.order = 0,
-    this.sets = const <ExerciseSet>[],
     this.notes,
-  }) : id = id ?? uuidV7();
+  }) : id = id ?? uuidV7(),
+       order = order ?? 0,
+       sets = sets ?? const <ExerciseSet>[];
 
   Exercise copyWith({
     String? id,
-    ExerciseType? exerciseType,
     int? order,
     List<ExerciseSet>? sets,
+    ExerciseType? exerciseType,
     String? notes,
   }) {
     return Exercise(
       id: id ?? this.id,
-      exerciseType: exerciseType ?? this.exerciseType,
       order: order ?? this.order,
       sets: sets ?? this.sets,
+      exerciseType: exerciseType ?? this.exerciseType,
       notes: notes ?? this.notes,
     );
   }
@@ -45,5 +47,5 @@ class Exercise {
 
   @override
   String toString() =>
-      'Exercise(id: $id, name: ${exerciseType?.name ?? 'null'}, order: $order, sets: $sets, notes: $notes)';
+      'Exercise(id: $id, order: $order, sets: $sets, exerciseType: ${exerciseType?.toString()}, notes: $notes)';
 }

@@ -1,49 +1,76 @@
+import 'package:lograt/util/extensions/human_friendly_date_format.dart';
+
 import '../entities/exercise.dart';
 import '../entities/workout.dart';
 
-/// Data model for workouts table
-/// This handles the SQLite representation and conversion to/from domain entities
 class WorkoutModel {
-  final int? id;
-  final String name;
-  final DateTime createdOn;
+  final String id;
+  final DateTime date;
+  final String? title;
+  final String? notes;
 
-  WorkoutModel(this.name, this.createdOn, {this.id});
+  const WorkoutModel({
+    required this.id,
+    required this.date,
+    this.title,
+    this.notes,
+  });
 
-  factory WorkoutModel.fromEntity(Workout workout) {
-    return WorkoutModel(id: workout.id, workout.name, workout.createdOn);
-  }
+  WorkoutModel.fromEntity(Workout workout)
+    : this(
+        id: workout.id,
+        date: workout.date,
+        title: workout.title,
+        notes: workout.notes,
+      );
 
-  factory WorkoutModel.fromMap(Map<String, dynamic> map) {
-    return WorkoutModel(
-      id: map['id'] as int?,
-      map['name'] as String,
-      DateTime.fromMillisecondsSinceEpoch(map['createdOn']),
+  Workout toEntity([List<Exercise> exercises = const []]) {
+    return Workout(
+      id: id,
+      date: date,
+      exercises: exercises,
+      title: title,
+      notes: notes,
     );
   }
 
-  Workout toEntity([List<Exercise> exercises = const []]) {
-    return Workout(id: id, name, createdOn, exercises);
+  static WorkoutModel? fromMap(Map<String, dynamic> map) {
+    final id = map['id'];
+    if (id == null || id is! String) return null;
+    final date = map['date'];
+    if (date == null || date is! int) return null;
+    final title = map['title'];
+    if (title != null && title is! String) return null;
+    final notes = map['notes'];
+    if (notes != null && notes is! String) return null;
+    return WorkoutModel(
+      id: id,
+      date: DateTime.fromMillisecondsSinceEpoch(date),
+      title: title,
+      notes: notes,
+    );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'name': name,
-      'createdOn': createdOn.millisecondsSinceEpoch,
+      'date': date.millisecondsSinceEpoch,
+      'title': title,
+      'notes': notes,
     };
   }
 
   WorkoutModel copyWith({
-    int? id,
-    String? name,
-    DateTime? createdOn,
-    List<Exercise>? exercises,
+    String? id,
+    DateTime? date,
+    String? title,
+    String? notes,
   }) {
     return WorkoutModel(
       id: id ?? this.id,
-      name ?? this.name,
-      createdOn ?? this.createdOn,
+      date: date ?? this.date,
+      title: title ?? this.title,
+      notes: notes ?? this.notes,
     );
   }
 
@@ -58,5 +85,5 @@ class WorkoutModel {
 
   @override
   String toString() =>
-      'WorkoutModel{ id: ${id ?? 'null'}, name: $name, createdOn: ${createdOn.toIso8601String()} }';
+      'WorkoutModel(id: $id, date: ${date.toHumanFriendlyFormat()}, title: $title, notes: $notes)';
 }

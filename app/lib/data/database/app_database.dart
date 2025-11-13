@@ -70,7 +70,6 @@ class AppDatabase {
       _createExerciseTypesTableSQL(),
       _createExercisesTableSQL(),
       _createSetsTableSQL(),
-      _createWorkoutsTableCreatedOnIndexSQL(),
     ];
   }
 
@@ -82,9 +81,10 @@ class AppDatabase {
   String _createWorkoutsTableSQL() {
     return '''
       CREATE TABLE $workoutsTableName(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        createdOn INTEGER NOT NULL
+        id TEXT PRIMARY KEY,
+        date INTEGER NOT NULL,
+        title TEXT,
+        notes TEXT
       )
     ''';
   }
@@ -92,7 +92,7 @@ class AppDatabase {
   String _createExerciseTypesTableSQL() {
     return '''
       CREATE TABLE $exerciseTypesTableName(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT PRIMARY KEY,
         name TEXT NOT NULL UNIQUE,
         description TEXT
       )
@@ -101,38 +101,31 @@ class AppDatabase {
 
   String _createExercisesTableSQL() {
     return '''
-      CREATE TABLE $exercisesTableName(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        workout_id INTEGER NOT NULL,
-        exercise_type_id INTEGER NOT NULL,
-        exercise_order INTEGER NOT NULL,
-        notes TEXT,
-        FOREIGN KEY (workout_id) REFERENCES $workoutsTableName(id) ON DELETE CASCADE,
-        FOREIGN KEY (exercise_type_id) REFERENCES $exerciseTypesTableName(id) ON DELETE RESTRICT
-      )
-    ''';
+    CREATE TABLE $exercisesTableName(
+      id TEXT PRIMARY KEY,
+      order INTEGER NOT NULL,
+      workout_id TEXT NOT NULL,
+      exercise_type_id TEXT,
+      notes TEXT,
+      FOREIGN KEY (workout_id) REFERENCES $workoutsTableName(id) ON DELETE CASCADE,
+      FOREIGN KEY (exercise_type_id) REFERENCES $exerciseTypesTableName(id) ON DELETE RESTRICT
+    )
+  ''';
   }
 
   String _createSetsTableSQL() {
     return '''
     CREATE TABLE $exerciseSetsTableName(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      exercise_id INTEGER NOT NULL,
-      set_order INTEGER NOT NULL,
-      reps INTEGER NOT NULL,
+      id TEXT PRIMARY KEY,
+      order INTEGER NOT NULL,
+      exercise_id TEXT NOT NULL,
+      set_type TEXT,
       weight REAL,
       units TEXT,
+      reps INTEGER,
       rest_time_seconds INTEGER,
-      set_type TEXT,
-      notes TEXT,
       FOREIGN KEY (exercise_id) REFERENCES $exercisesTableName(id) ON DELETE CASCADE
     )
-    ''';
-  }
-
-  String _createWorkoutsTableCreatedOnIndexSQL() {
-    return '''
-    CREATE INDEX idx_workouts_created_on ON $workoutsTableName(createdOn)
     ''';
   }
 }

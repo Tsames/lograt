@@ -1,35 +1,37 @@
+import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 import 'package:lograt/util/uuidv7.dart';
 
 import 'exercise.dart';
 
 class Workout {
-  final String id; // UUIDv7 generated primary key
-  final String? name;
+  final String id;
   final DateTime date;
   final List<Exercise> exercises;
+  final String? title;
   final String? notes;
 
   Workout({
     String? id,
-    this.name,
     DateTime? date,
-    this.exercises = const <Exercise>[],
+    List<Exercise>? exercises,
+    this.title,
     this.notes,
   }) : id = id ?? uuidV7(),
-       date = date ?? DateTime.now();
+       date = date ?? DateTime.now(),
+       exercises = exercises ?? const <Exercise>[];
 
   Workout copyWith({
     String? id,
-    String? name,
     DateTime? date,
     List<Exercise>? exercises,
+    String? title,
     String? notes,
   }) {
     return Workout(
       id: id ?? this.id,
-      name: name ?? this.name,
       date: date ?? this.date,
       exercises: exercises ?? this.exercises,
+      title: title ?? this.title,
       notes: notes ?? this.notes,
     );
   }
@@ -45,5 +47,5 @@ class Workout {
 
   @override
   String toString() =>
-      "Workout(id: $id, name: $name, date: ${date.toIso8601String()}, exercises: $exercises, notes: $notes)";
+      "Workout(id: $id, date: ${date.toHumanFriendlyFormat()}, exercises: $exercises, title: $title, notes: $notes)";
 }
