@@ -1,68 +1,57 @@
 import 'package:lograt/data/entities/set_type.dart';
 import 'package:lograt/data/entities/units.dart';
+import 'package:lograt/util/uuidv7.dart';
 
-/// Represents a single set within an exercise
 class ExerciseSet {
-  final int? databaseId; // SQLite generated primary key
+  final String id; // UUIDv7 generated primary key
   final int order; // 1st set, 2nd set, etc. within this exercise
-  final int reps;
-  final double weight; // 0 for body weight exercises
-  final Units units;
-  final Duration?
-  restTime; // Rest time before this set, this value will sometimes be null before the first set
-  final SetType setType;
-  final String? notes;
+  final SetType? setType;
+  final double? weight;
+  final Units? units;
+  final int? reps;
+  final Duration? restTime;
 
-  const ExerciseSet({
-    this.databaseId,
-    required this.order,
-    this.reps = 0,
-    this.weight = 0,
-    this.units = Units.pounds,
+  ExerciseSet({
+    String? id,
+    this.order = 0,
+    this.reps,
+    this.weight,
+    this.units,
     this.restTime,
-    this.setType = SetType.working,
+    this.setType,
     this.notes,
-  });
+  }) : id = id ?? uuidV7();
 
   ExerciseSet copyWith({
-    int? databaseId,
+    String? id,
     int? order,
-    int? reps,
+    SetType? setType,
     double? weight,
     Units? units,
+    int? reps,
     Duration? restTime,
-    SetType? setType,
-    String? notes,
   }) {
     return ExerciseSet(
-      databaseId: databaseId ?? this.databaseId,
+      id: id ?? this.id,
       order: order ?? this.order,
-      reps: reps ?? this.reps,
+      setType: setType ?? this.setType,
       weight: weight ?? this.weight,
       units: units ?? this.units,
+      reps: reps ?? this.reps,
       restTime: restTime ?? this.restTime,
-      setType: setType ?? this.setType,
-      notes: notes ?? this.notes,
     );
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ExerciseSet &&
-          order == other.order &&
-          reps == other.reps &&
-          weight == other.weight &&
-          units == other.units &&
-          restTime == other.restTime &&
-          setType == other.setType &&
-          notes == other.notes;
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is ExerciseSet && other.id == id;
+  }
 
   @override
-  int get hashCode =>
-      Object.hash(order, reps, weight, units, restTime, setType, notes);
+  int get hashCode => id.hashCode;
 
   @override
   String toString() =>
-      'ExerciseSet{ id: ${databaseId ?? 'null'}, order: $order, weight: $weight, units: ${units.name}, reps: $reps }';
+      'ExerciseSet(id: $id, order: $order, setType: ${setType.toString()}, weight: $weight, units: ${units.toString()}, reps: $reps, restTime: ${restTime.toString()})';
 }
