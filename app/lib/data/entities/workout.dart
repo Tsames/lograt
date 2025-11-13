@@ -1,42 +1,49 @@
+import 'package:lograt/util/uuidv7.dart';
+
 import 'exercise.dart';
 
-/// Represents a specific workout
 class Workout {
-  final int? id; //SQLite generated primary key
-  final String name;
-  final DateTime createdOn;
+  final String id; // UUIDv7 generated primary key
+  final String? name;
+  final DateTime date;
   final List<Exercise> exercises;
+  final String? notes;
 
-  const Workout(this.name, this.createdOn, this.exercises, {this.id});
-
-  Workout.empty() : this("", DateTime.now(), const []);
+  Workout({
+    String? id,
+    this.name,
+    DateTime? date,
+    this.exercises = const <Exercise>[],
+    this.notes,
+  }) : id = id ?? uuidV7(),
+       date = date ?? DateTime.now();
 
   Workout copyWith({
-    int? id,
+    String? id,
     String? name,
-    DateTime? createdOn,
+    DateTime? date,
     List<Exercise>? exercises,
+    String? notes,
   }) {
     return Workout(
       id: id ?? this.id,
-      name ?? this.name,
-      createdOn ?? this.createdOn,
-      exercises ?? this.exercises,
+      name: name ?? this.name,
+      date: date ?? this.date,
+      exercises: exercises ?? this.exercises,
+      notes: notes ?? this.notes,
     );
   }
 
-  int get exerciseCount => exercises.length;
-
-  bool get isRecent => DateTime.now().difference(createdOn).inDays < 14;
-
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) || other is Workout && id == other.id;
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Workout && id == other.id;
+  }
 
   @override
   int get hashCode => id.hashCode;
 
   @override
   String toString() =>
-      "Workout{ id: ${id ?? 'null'}, name: $name, createdOn: ${createdOn.toIso8601String()} }";
+      "Workout(id: $id, name: $name, date: ${date.toIso8601String()}, exercises: $exercises, notes: $notes)";
 }

@@ -1,12 +1,14 @@
-/// Represents a specific type of exercise such as 'Push ups' or 'Squats'
+import '../../util/uuidv7.dart';
+
 class ExerciseType {
-  final int? id; // SQLite generated primary key
+  final String id; // UUIDv7 generated primary key
   final String name; // Name of the exercise
   final String? description;
 
-  const ExerciseType({required this.id, required this.name, this.description});
+  ExerciseType({String? id, required this.name, this.description})
+    : id = id ?? uuidV7();
 
-  ExerciseType copyWith({int? id, String? name, String? description}) {
+  ExerciseType copyWith({String? id, String? name, String? description}) {
     return ExerciseType(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -15,15 +17,15 @@ class ExerciseType {
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ExerciseType &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is ExerciseType && id == other.id;
+  }
 
   @override
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => 'ExerciseType{ id: ${id ?? 'null'}, name: $name }';
+  String toString() =>
+      'ExerciseType(id: $id, name: $name, description: $description)';
 }
