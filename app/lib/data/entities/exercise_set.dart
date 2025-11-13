@@ -3,8 +3,8 @@ import 'package:lograt/data/entities/units.dart';
 import 'package:lograt/util/uuidv7.dart';
 
 class ExerciseSet {
-  final String id; // UUIDv7 generated primary key
-  final int order; // 1st set, 2nd set, etc. within this exercise
+  final String id;
+  final int order;
   final SetType? setType;
   final double? weight;
   final Units? units;
@@ -19,7 +19,6 @@ class ExerciseSet {
     this.units,
     this.restTime,
     this.setType,
-    this.notes,
   }) : id = id ?? uuidV7();
 
   ExerciseSet copyWith({
@@ -53,5 +52,5 @@ class ExerciseSet {
 
   @override
   String toString() =>
-      'ExerciseSet(id: $id, order: $order, setType: ${setType.toString()}, weight: $weight, units: ${units.toString()}, reps: $reps, restTime: ${restTime.toString()})';
+      'ExerciseSet(id: $id, order: $order, setType: ${setType?.toString()}, weight: $weight, units: ${units.toString()}, reps: $reps, restTime: ${restTime.toString()})';
 }

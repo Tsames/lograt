@@ -1,8 +1,8 @@
 import '../../util/uuidv7.dart';
 
 class ExerciseType {
-  final String id; // UUIDv7 generated primary key
-  final String name; // Name of the exercise
+  final String id;
+  final String name;
   final String? description;
 
   ExerciseType({String? id, required this.name, this.description})

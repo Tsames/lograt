@@ -1,31 +1,38 @@
 import '../entities/exercise_type.dart';
 
-/// Data model for exercise_types table
-/// This handles the SQLite representation and conversion to/from domain entities
 class ExerciseTypeModel {
-  final int? id;
+  final String id;
   final String name;
   final String? description;
 
-  const ExerciseTypeModel({this.id, required this.name, this.description});
+  const ExerciseTypeModel({
+    required this.id,
+    required this.name,
+    this.description,
+  });
 
-  factory ExerciseTypeModel.fromEntity(ExerciseType entity) {
-    return ExerciseTypeModel(
-      id: entity.id,
-      name: entity.name,
-      description: entity.description,
-    );
+  ExerciseTypeModel.fromEntity(ExerciseType entity)
+    : this(id: entity.id, name: entity.name, description: entity.description);
+
+  ExerciseType toEntity() {
+    return ExerciseType(id: id, name: name, description: description);
   }
 
-  factory ExerciseTypeModel.fromMap(Map<String, dynamic> map) {
-    return ExerciseTypeModel(
-      id: map['id'] as int?,
-      name: map['name'] as String,
-      description: map['description'] as String?,
-    );
+  static ExerciseTypeModel? fromMap(Map<String, dynamic> map) {
+    final id = map['id'];
+    if (id == null || id is! String) return null;
+    final name = map['name'];
+    if (name == null || name is! String) return null;
+    final description = map['description'];
+    if (description is! String && description != null) return null;
+    return ExerciseTypeModel(id: id, name: name, description: description);
   }
 
-  ExerciseTypeModel copyWith({int? id, String? name, String? description}) {
+  Map<String, dynamic> toMap() {
+    return {'id': id, 'name': name, 'description': description};
+  }
+
+  ExerciseTypeModel copyWith({String? id, String? name, String? description}) {
     return ExerciseTypeModel(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -33,24 +40,16 @@ class ExerciseTypeModel {
     );
   }
 
-  ExerciseType toEntity() {
-    return ExerciseType(id: id, name: name, description: description);
-  }
-
-  Map<String, dynamic> toMap() {
-    return {if (id != null) 'id': id, 'name': name, 'description': description};
-  }
-
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ExerciseTypeModel &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is ExerciseTypeModel && id == other.id;
+  }
 
   @override
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => 'ExerciseTypeModel{ id: ${id ?? 'null'}, name: $name }';
+  String toString() =>
+      'ExerciseTypeModel(id: $id, name: $name, description: $description)';
 }
