@@ -1,5 +1,4 @@
-import 'package:lograt/util/extensions/beginning_of_the_week.dart';
-
+import '../../util/extensions/beginning_of_the_week.dart';
 import '../entities/exercise.dart';
 import '../entities/exercise_set.dart';
 import '../entities/exercise_type.dart';
@@ -13,162 +12,114 @@ class SeedData {
   static final List<Workout> sampleWorkouts = [
     // ------------- THIS WEEK -------------
     Workout(
-      'Push Day - Heavy',
-      beginningOfTheWeek.add(const Duration(days: 1)),
-      [
+      date: beginningOfTheWeek.add(const Duration(days: 1)),
+      title: 'Push Day - Heavy',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Bench Press'),
+          exerciseType: ExerciseType(name: 'Bench Press'),
           order: 1,
           sets: [
-            const ExerciseSet(
+            ExerciseSet(
               order: 1,
               reps: 12,
               weight: 135,
               units: Units.pounds,
               setType: SetType.warmup,
             ),
-            const ExerciseSet(
+            ExerciseSet(
               order: 2,
               reps: 10,
               weight: 185,
               units: Units.pounds,
               setType: SetType.working,
-              restTime: Duration(minutes: 2),
+              restTime: const Duration(minutes: 2),
             ),
-            const ExerciseSet(
+            ExerciseSet(
               order: 3,
               reps: 8,
               weight: 205,
               units: Units.pounds,
               setType: SetType.working,
-              restTime: Duration(minutes: 2, seconds: 30),
+              restTime: const Duration(minutes: 2, seconds: 30),
             ),
-            const ExerciseSet(
+            ExerciseSet(
               order: 4,
               reps: 12,
               weight: 135,
               units: Units.pounds,
               setType: SetType.dropSet,
-              restTime: Duration(minutes: 2),
-              notes: 'Drop set to failure',
+              restTime: const Duration(minutes: 2),
             ),
           ],
           notes: 'Felt strong today',
         ),
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Overhead Press'),
+          exerciseType: ExerciseType(name: 'Overhead Press'),
           order: 2,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 10,
-              weight: 95,
-              units: Units.pounds,
-            ),
-            const ExerciseSet(
-              order: 2,
-              reps: 8,
-              weight: 115,
-              units: Units.pounds,
-            ),
-            const ExerciseSet(
-              order: 3,
-              reps: 6,
-              weight: 125,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 10, weight: 95, units: Units.pounds),
+            ExerciseSet(order: 2, reps: 8, weight: 115, units: Units.pounds),
+            ExerciseSet(order: 3, reps: 6, weight: 125, units: Units.pounds),
           ],
         ),
       ],
     ),
 
     Workout(
-      'Calisthenics Session',
-      beginningOfTheWeek.add(const Duration(days: 3)),
-      [
+      date: beginningOfTheWeek.add(const Duration(days: 3)),
+      title: 'Calisthenics Session',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(
-            id: null,
+          exerciseType: ExerciseType(
             name: 'Pull-ups',
             description: 'Bodyweight upper body exercise',
           ),
           order: 1,
           sets: [
-            const ExerciseSet(order: 1, reps: 10, weight: 0),
-            const ExerciseSet(order: 2, reps: 8, weight: 0),
-            const ExerciseSet(
-              order: 3,
-              reps: 6,
-              weight: 0,
-              setType: SetType.failure,
-            ),
+            ExerciseSet(order: 1, reps: 10, weight: 0),
+            ExerciseSet(order: 2, reps: 8, weight: 0),
+            ExerciseSet(order: 3, reps: 6, weight: 0, setType: SetType.failure),
           ],
         ),
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Push-ups'),
+          exerciseType: ExerciseType(name: 'Push-ups'),
           order: 2,
           sets: [
-            const ExerciseSet(order: 1, reps: 25, weight: 0),
-            const ExerciseSet(order: 2, reps: 20, weight: 0),
-            const ExerciseSet(order: 3, reps: 15, weight: 0),
+            ExerciseSet(order: 1, reps: 25, weight: 0),
+            ExerciseSet(order: 2, reps: 20, weight: 0),
+            ExerciseSet(order: 3, reps: 15, weight: 0),
           ],
         ),
       ],
     ),
 
-    Workout('Leg Day', beginningOfTheWeek.add(const Duration(days: 5)), [
-      Exercise(
-        exerciseType: const ExerciseType(id: null, name: 'Squat'),
-        order: 1,
-        sets: [
-          const ExerciseSet(
-            order: 1,
-            reps: 5,
-            weight: 100,
-            units: Units.kilograms,
-          ),
-          const ExerciseSet(
-            order: 2,
-            reps: 5,
-            weight: 120,
-            units: Units.kilograms,
-          ),
-          const ExerciseSet(
-            order: 3,
-            reps: 5,
-            weight: 140,
-            units: Units.kilograms,
-          ),
-          const ExerciseSet(
-            order: 4,
-            reps: 3,
-            weight: 150,
-            units: Units.kilograms,
-          ),
-        ],
-      ),
-    ]),
-
     Workout(
-      'Back and Biceps',
-      beginningOfTheWeek.add(const Duration(days: 6)),
-      [
+      date: beginningOfTheWeek.add(const Duration(days: 5)),
+      title: 'Leg Day',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Deadlift'),
+          exerciseType: ExerciseType(name: 'Squat'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 8,
-              weight: 185,
-              units: Units.pounds,
-            ),
-            const ExerciseSet(
-              order: 2,
-              reps: 8,
-              weight: 225,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 5, weight: 100, units: Units.kilograms),
+            ExerciseSet(order: 2, reps: 5, weight: 120, units: Units.kilograms),
+            ExerciseSet(order: 3, reps: 5, weight: 140, units: Units.kilograms),
+            ExerciseSet(order: 4, reps: 3, weight: 150, units: Units.kilograms),
+          ],
+        ),
+      ],
+    ),
+
+    Workout(
+      date: beginningOfTheWeek.add(const Duration(days: 6)),
+      title: 'Back and Biceps',
+      exercises: [
+        Exercise(
+          exerciseType: ExerciseType(name: 'Deadlift'),
+          order: 1,
+          sets: [
+            ExerciseSet(order: 1, reps: 8, weight: 185, units: Units.pounds),
+            ExerciseSet(order: 2, reps: 8, weight: 225, units: Units.pounds),
           ],
         ),
       ],
@@ -176,118 +127,66 @@ class SeedData {
 
     // ------------- EARLIER THIS MONTH - 5 workouts -------------
     Workout(
-      'Deadlift Focus',
-      beginningOfTheWeek.subtract(const Duration(days: 10)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 10)),
+      title: 'Deadlift Focus',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(
-            id: null,
+          exerciseType: ExerciseType(
             name: 'Deadlift',
             description: 'Compound posterior chain movement',
           ),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 5,
-              weight: 225,
-              units: Units.pounds,
-            ),
-            const ExerciseSet(
-              order: 2,
-              reps: 5,
-              weight: 275,
-              units: Units.pounds,
-            ),
-            const ExerciseSet(
-              order: 3,
-              reps: 3,
-              weight: 315,
-              units: Units.pounds,
-            ),
-            const ExerciseSet(
-              order: 4,
-              reps: 1,
-              weight: 365,
-              units: Units.pounds,
-              notes: 'New PR!',
-            ),
+            ExerciseSet(order: 1, reps: 5, weight: 225, units: Units.pounds),
+            ExerciseSet(order: 2, reps: 5, weight: 275, units: Units.pounds),
+            ExerciseSet(order: 3, reps: 3, weight: 315, units: Units.pounds),
+            ExerciseSet(order: 4, reps: 1, weight: 365, units: Units.pounds),
           ],
         ),
       ],
     ),
 
     Workout(
-      'Upper Body',
-      beginningOfTheWeek.subtract(const Duration(days: 12)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 12)),
+      title: 'Upper Body',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Bench Press'),
+          exerciseType: ExerciseType(name: 'Bench Press'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 10,
-              weight: 175,
-              units: Units.pounds,
-            ),
-            const ExerciseSet(
-              order: 2,
-              reps: 8,
-              weight: 185,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 10, weight: 175, units: Units.pounds),
+            ExerciseSet(order: 2, reps: 8, weight: 185, units: Units.pounds),
           ],
         ),
       ],
     ),
 
     Workout(
-      'Arm Superset',
-      beginningOfTheWeek.subtract(const Duration(days: 15)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 15)),
+      title: 'Arm Superset',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Bicep Curl'),
+          exerciseType: ExerciseType(name: 'Bicep Curl'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 12,
-              weight: 30,
-              units: Units.pounds,
-            ),
-            const ExerciseSet(
-              order: 2,
-              reps: 10,
-              weight: 35,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 12, weight: 30, units: Units.pounds),
+            ExerciseSet(order: 2, reps: 10, weight: 35, units: Units.pounds),
           ],
           notes: 'Superset with triceps',
         ),
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Triceps Extension'),
+          exerciseType: ExerciseType(name: 'Triceps Extension'),
           order: 2,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 12,
-              weight: 40,
-              units: Units.pounds,
-            ),
-            const ExerciseSet(
-              order: 2,
-              reps: 10,
-              weight: 45,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 12, weight: 40, units: Units.pounds),
+            ExerciseSet(order: 2, reps: 10, weight: 45, units: Units.pounds),
           ],
         ),
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Bicep Curl'),
+          exerciseType: ExerciseType(name: 'Bicep Curl'),
           order: 3,
           sets: [
-            const ExerciseSet(
+            ExerciseSet(
               order: 1,
               reps: 15,
               weight: 25,
@@ -301,26 +200,26 @@ class SeedData {
     ),
 
     Workout(
-      'HIT Circuit',
-      beginningOfTheWeek.subtract(const Duration(days: 18)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 18)),
+      title: 'HIT Circuit',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Kettlebell Swing'),
+          exerciseType: ExerciseType(name: 'Kettlebell Swing'),
           order: 1,
           sets: [
-            const ExerciseSet(
+            ExerciseSet(
               order: 1,
               reps: 20,
               weight: 24,
               units: Units.kilograms,
-              restTime: Duration(seconds: 30),
+              restTime: const Duration(seconds: 30),
             ),
-            const ExerciseSet(
+            ExerciseSet(
               order: 2,
               reps: 20,
               weight: 24,
               units: Units.kilograms,
-              restTime: Duration(seconds: 30),
+              restTime: const Duration(seconds: 30),
             ),
           ],
         ),
@@ -328,325 +227,263 @@ class SeedData {
     ),
 
     Workout(
-      'Lower Body',
-      beginningOfTheWeek.subtract(const Duration(days: 22)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 22)),
+      title: 'Lower Body',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Squat'),
+          exerciseType: ExerciseType(name: 'Squat'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 10,
-              weight: 135,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 10, weight: 135, units: Units.pounds),
           ],
         ),
       ],
     ),
 
     // ------------- LAST MONTH -------------
-    Workout('Push Day', beginningOfTheWeek.subtract(const Duration(days: 32)), [
-      Exercise(
-        exerciseType: const ExerciseType(id: null, name: 'Bench Press'),
-        order: 1,
-        sets: [
-          const ExerciseSet(
-            order: 1,
-            reps: 10,
-            weight: 185,
-            units: Units.pounds,
-          ),
-        ],
-      ),
-    ]),
-
-    Workout('Pull Day', beginningOfTheWeek.subtract(const Duration(days: 35)), [
-      Exercise(
-        exerciseType: const ExerciseType(id: null, name: 'Pull-ups'),
-        order: 1,
-        sets: [
-          const ExerciseSet(order: 1, reps: 12, weight: 0),
-          const ExerciseSet(order: 2, reps: 10, weight: 0),
-        ],
-      ),
-    ]),
-
-    Workout('Legs', beginningOfTheWeek.subtract(const Duration(days: 38)), [
-      Exercise(
-        exerciseType: const ExerciseType(id: null, name: 'Squat'),
-        order: 1,
-        sets: [
-          const ExerciseSet(
-            order: 1,
-            reps: 5,
-            weight: 135,
-            units: Units.kilograms,
-          ),
-        ],
-      ),
-    ]),
-
     Workout(
-      'Upper Body',
-      beginningOfTheWeek.subtract(const Duration(days: 42)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 32)),
+      title: 'Push Day',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Overhead Press'),
+          exerciseType: ExerciseType(name: 'Bench Press'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 8,
-              weight: 95,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 10, weight: 185, units: Units.pounds),
           ],
         ),
       ],
     ),
 
     Workout(
-      'Full Body',
-      beginningOfTheWeek.subtract(const Duration(days: 45)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 35)),
+      title: 'Pull Day',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Deadlift'),
+          exerciseType: ExerciseType(name: 'Pull-ups'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 5,
-              weight: 225,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 12, weight: 0),
+            ExerciseSet(order: 2, reps: 10, weight: 0),
           ],
         ),
       ],
     ),
 
     Workout(
-      'Cardio and Core',
-      beginningOfTheWeek.subtract(const Duration(days: 48)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 38)),
+      title: 'Legs',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Plank'),
+          exerciseType: ExerciseType(name: 'Squat'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 60,
-              weight: 0,
-              notes: '60 seconds',
-            ),
+            ExerciseSet(order: 1, reps: 5, weight: 135, units: Units.kilograms),
           ],
         ),
       ],
     ),
-
-    Workout('Arms', beginningOfTheWeek.subtract(const Duration(days: 51)), [
-      Exercise(
-        exerciseType: const ExerciseType(id: null, name: 'Bicep Curl'),
-        order: 1,
-        sets: [
-          const ExerciseSet(
-            order: 1,
-            reps: 12,
-            weight: 30,
-            units: Units.pounds,
-          ),
-        ],
-      ),
-    ]),
 
     Workout(
-      'Chest and Triceps',
-      beginningOfTheWeek.subtract(const Duration(days: 54)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 42)),
+      title: 'Upper Body',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Bench Press'),
+          exerciseType: ExerciseType(name: 'Overhead Press'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 10,
-              weight: 175,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 8, weight: 95, units: Units.pounds),
           ],
         ),
       ],
     ),
 
-    Workout('Back Day', beginningOfTheWeek.subtract(const Duration(days: 58)), [
-      Exercise(
-        exerciseType: const ExerciseType(id: null, name: 'Pull-ups'),
-        order: 1,
-        sets: [const ExerciseSet(order: 1, reps: 8, weight: 0)],
-      ),
-    ]),
+    Workout(
+      date: beginningOfTheWeek.subtract(const Duration(days: 45)),
+      title: 'Full Body',
+      exercises: [
+        Exercise(
+          exerciseType: ExerciseType(name: 'Deadlift'),
+          order: 1,
+          sets: [
+            ExerciseSet(order: 1, reps: 5, weight: 225, units: Units.pounds),
+          ],
+        ),
+      ],
+    ),
+
+    Workout(
+      date: beginningOfTheWeek.subtract(const Duration(days: 48)),
+      title: 'Cardio and Core',
+      exercises: [
+        Exercise(
+          exerciseType: ExerciseType(name: 'Plank'),
+          order: 1,
+          sets: [ExerciseSet(order: 1, reps: 60, weight: 0)],
+        ),
+      ],
+    ),
+
+    Workout(
+      date: beginningOfTheWeek.subtract(const Duration(days: 51)),
+      title: 'Arms',
+      exercises: [
+        Exercise(
+          exerciseType: ExerciseType(name: 'Bicep Curl'),
+          order: 1,
+          sets: [
+            ExerciseSet(order: 1, reps: 12, weight: 30, units: Units.pounds),
+          ],
+        ),
+      ],
+    ),
+
+    Workout(
+      date: beginningOfTheWeek.subtract(const Duration(days: 54)),
+      title: 'Chest and Triceps',
+      exercises: [
+        Exercise(
+          exerciseType: ExerciseType(name: 'Bench Press'),
+          order: 1,
+          sets: [
+            ExerciseSet(order: 1, reps: 10, weight: 175, units: Units.pounds),
+          ],
+        ),
+      ],
+    ),
+
+    Workout(
+      date: beginningOfTheWeek.subtract(const Duration(days: 58)),
+      title: 'Back Day',
+      exercises: [
+        Exercise(
+          exerciseType: ExerciseType(name: 'Pull-ups'),
+          order: 1,
+          sets: [ExerciseSet(order: 1, reps: 8, weight: 0)],
+        ),
+      ],
+    ),
 
     // ------------- MONTHS 2-3 AGO -------------
     Workout(
-      'Heavy Squat Day',
-      beginningOfTheWeek.subtract(const Duration(days: 65)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 65)),
+      title: 'Heavy Squat Day',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Squat'),
+          exerciseType: ExerciseType(name: 'Squat'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 5,
-              weight: 140,
-              units: Units.kilograms,
-            ),
+            ExerciseSet(order: 1, reps: 5, weight: 140, units: Units.kilograms),
           ],
         ),
       ],
     ),
 
     Workout(
-      'Bench Press Focus',
-      beginningOfTheWeek.subtract(const Duration(days: 68)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 68)),
+      title: 'Bench Press Focus',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Bench Press'),
+          exerciseType: ExerciseType(name: 'Bench Press'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 8,
-              weight: 185,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 8, weight: 185, units: Units.pounds),
           ],
         ),
       ],
     ),
 
     Workout(
-      'Deadlift Day',
-      beginningOfTheWeek.subtract(const Duration(days: 72)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 72)),
+      title: 'Deadlift Day',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Deadlift'),
+          exerciseType: ExerciseType(name: 'Deadlift'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 5,
-              weight: 275,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 5, weight: 275, units: Units.pounds),
           ],
         ),
       ],
     ),
 
     Workout(
-      'Upper Body Power',
-      beginningOfTheWeek.subtract(const Duration(days: 75)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 75)),
+      title: 'Upper Body Power',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Overhead Press'),
+          exerciseType: ExerciseType(name: 'Overhead Press'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 10,
-              weight: 85,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 10, weight: 85, units: Units.pounds),
           ],
         ),
       ],
     ),
 
     Workout(
-      'Leg Focus',
-      beginningOfTheWeek.subtract(const Duration(days: 78)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 78)),
+      title: 'Leg Focus',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Squat'),
+          exerciseType: ExerciseType(name: 'Squat'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 8,
-              weight: 115,
-              units: Units.kilograms,
-            ),
+            ExerciseSet(order: 1, reps: 8, weight: 115, units: Units.kilograms),
           ],
         ),
       ],
     ),
 
     Workout(
-      'Push Workout',
-      beginningOfTheWeek.subtract(const Duration(days: 82)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 82)),
+      title: 'Push Workout',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Bench Press'),
+          exerciseType: ExerciseType(name: 'Bench Press'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 10,
-              weight: 165,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 10, weight: 165, units: Units.pounds),
           ],
         ),
       ],
     ),
 
     Workout(
-      'Pull Workout',
-      beginningOfTheWeek.subtract(const Duration(days: 85)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 85)),
+      title: 'Pull Workout',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Pull-ups'),
+          exerciseType: ExerciseType(name: 'Pull-ups'),
           order: 1,
-          sets: [const ExerciseSet(order: 1, reps: 10, weight: 0)],
+          sets: [ExerciseSet(order: 1, reps: 10, weight: 0)],
         ),
       ],
     ),
 
     Workout(
-      'Lower Body Strength',
-      beginningOfTheWeek.subtract(const Duration(days: 88)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 88)),
+      title: 'Lower Body Strength',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Deadlift'),
+          exerciseType: ExerciseType(name: 'Deadlift'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 5,
-              weight: 250,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 5, weight: 250, units: Units.pounds),
           ],
         ),
       ],
     ),
 
     Workout(
-      'Ancient History',
-      beginningOfTheWeek.subtract(const Duration(days: 92)),
-      [
+      date: beginningOfTheWeek.subtract(const Duration(days: 92)),
+      title: 'Ancient History',
+      exercises: [
         Exercise(
-          exerciseType: const ExerciseType(id: null, name: 'Bench Press'),
+          exerciseType: ExerciseType(name: 'Bench Press'),
           order: 1,
           sets: [
-            const ExerciseSet(
-              order: 1,
-              reps: 10,
-              weight: 135,
-              units: Units.pounds,
-            ),
+            ExerciseSet(order: 1, reps: 10, weight: 135, units: Units.pounds),
           ],
         ),
       ],

@@ -103,7 +103,7 @@ class AppDatabase {
     return '''
     CREATE TABLE $exercisesTableName(
       id TEXT PRIMARY KEY,
-      order INTEGER NOT NULL,
+      exercise_order INTEGER NOT NULL,
       workout_id TEXT NOT NULL,
       exercise_type_id TEXT,
       notes TEXT,
@@ -117,7 +117,7 @@ class AppDatabase {
     return '''
     CREATE TABLE $exerciseSetsTableName(
       id TEXT PRIMARY KEY,
-      order INTEGER NOT NULL,
+      set_order INTEGER NOT NULL,
       exercise_id TEXT NOT NULL,
       set_type TEXT,
       weight REAL,

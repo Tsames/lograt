@@ -13,19 +13,19 @@ void main() {
   group('ExerciseTypeDao Delete Operations Tests', () {
     late AppDatabase testDatabase;
     late ExerciseTypeDao exerciseTypeDao;
-    late ExerciseTypeModel sampleExerciseType;
 
-    late int existingExerciseTypeId;
+    late ExerciseTypeModel testExerciseType;
 
     setUp(() async {
       testDatabase = AppDatabase.inMemory();
       exerciseTypeDao = ExerciseTypeDao(testDatabase);
 
-      sampleExerciseType = ExerciseTypeModel(
+      testExerciseType = ExerciseTypeModel.forTest(
         name: 'Bench Press',
         description: 'Standard flat bench barbell press',
       );
-      existingExerciseTypeId = await exerciseTypeDao.insert(sampleExerciseType);
+
+      await exerciseTypeDao.insert(testExerciseType);
     });
 
     tearDown(() async {
@@ -33,20 +33,22 @@ void main() {
     });
 
     test('should delete existing exercise type successfully', () async {
-      final correctlyDeletedRecord = await exerciseTypeDao.deleteById(
-        existingExerciseTypeId,
+      final rowIsDeleted = await exerciseTypeDao.deleteById(
+        testExerciseType.id,
       );
 
-      expect(correctlyDeletedRecord, equals(true));
+      expect(rowIsDeleted, equals(true));
 
-      final retrieved = await exerciseTypeDao.getById(existingExerciseTypeId);
+      final retrieved = await exerciseTypeDao.getById(testExerciseType.id);
       expect(retrieved, isNull);
     });
 
     test(
       'should return false when trying to delete non-existent exercise type',
       () async {
-        final correctlyDeletedRecord = await exerciseTypeDao.deleteById(99999);
+        final correctlyDeletedRecord = await exerciseTypeDao.deleteById(
+          "99999",
+        );
 
         expect(correctlyDeletedRecord, equals(false));
       },

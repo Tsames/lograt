@@ -5,25 +5,23 @@ import '../../data/entities/workout.dart';
 import '../screens/workout_log/workout_log_widget.dart';
 
 class WorkoutListTile extends StatelessWidget {
-  final Workout workoutData;
+  final Workout workout;
 
-  const WorkoutListTile(this.workoutData, {super.key});
+  const WorkoutListTile(this.workout, {super.key});
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return ListTile(
-      title: Text(workoutData.name, style: textTheme.bodyLarge),
+      title: Text(workout.title ?? "New Workout", style: textTheme.bodyLarge),
       subtitle: Text(
-        workoutData.createdOn.toHumanFriendlyFormat(),
+        workout.date.toHumanFriendlyFormat(),
         style: textTheme.labelSmall,
       ),
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => WorkoutLogWidget(workoutData),
-          ),
+          MaterialPageRoute(builder: (context) => WorkoutLogWidget(workout)),
         );
       },
     );

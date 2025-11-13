@@ -24,9 +24,11 @@ void main() {
     late ExerciseDao exerciseDao;
     late ExerciseTypeDao exerciseTypeDao;
     late WorkoutDao workoutDao;
-    late int testExerciseId;
 
-    late int existingExerciseSetId;
+    late WorkoutModel testWorkout;
+    late ExerciseTypeModel testExerciseType;
+    late ExerciseModel testExercise;
+    late ExerciseSetModel testExerciseSet;
 
     setUp(() async {
       testDatabase = AppDatabase.inMemory();
@@ -36,61 +38,65 @@ void main() {
       workoutDao = WorkoutDao(testDatabase);
 
       // Create prerequisite data that exercise sets depend on
-      final testWorkout = WorkoutModel('Test Workout', DateTime.now());
-      final testWorkoutId = await workoutDao.insert(testWorkout);
+      testWorkout = WorkoutModel.forTest(title: 'Test Workout');
+      await workoutDao.insert(testWorkout);
 
-      final testExerciseType = ExerciseTypeModel(
+      testExerciseType = ExerciseTypeModel.forTest(
         name: 'Bench Press',
         description: 'Chest exercise',
       );
-      final testExerciseTypeId = await exerciseTypeDao.insert(testExerciseType);
+      await exerciseTypeDao.insert(testExerciseType);
 
-      final testExercise = ExerciseModel(
-        workoutId: testWorkoutId,
-        exerciseTypeId: testExerciseTypeId,
+      testExercise = ExerciseModel.forTest(
+        workoutId: testWorkout.id,
         order: 1,
+        exerciseTypeId: testExerciseType.id,
         notes: 'Test exercise for sets',
       );
-      testExerciseId = await exerciseDao.insert(testExercise);
+      await exerciseDao.insert(testExercise);
 
-      // Create sample exercise set data
-      final sampleExerciseSet = ExerciseSetModel(
-        exerciseId: testExerciseId,
+      testExerciseSet = ExerciseSetModel.forTest(
+        exerciseId: testExercise.id,
         order: 1,
-        reps: 10,
+        setType: SetType.working.name,
         weight: 135,
         units: Units.pounds.name,
+        reps: 10,
         restTimeSeconds: 60,
-        setType: SetType.working.name,
-        notes: "New PR!",
       );
-
-      existingExerciseSetId = await exerciseSetDao.insert(sampleExerciseSet);
+      await exerciseSetDao.insert(testExerciseSet);
     });
 
     tearDown(() async {
       await testDatabase.close();
     });
 
-    test('should retrieve exercise set by ID as ExerciseSetModel', () async {
+    test('should retrieve exercise set by ID correctly', () async {
       // Retrieve the exercise set we just created
-      final retrieved = await exerciseSetDao.getById(existingExerciseSetId);
+      final retrieved = await exerciseSetDao.getById(testExerciseSet.id);
 
       // Should get back the same data we inserted
       expect(retrieved, isNotNull);
-      expect(retrieved, isA<ExerciseSetModel>());
-      expect(retrieved!.databaseId, equals(existingExerciseSetId));
-      expect(retrieved.exerciseId, equals(testExerciseId));
+      expect(retrieved!.exerciseId, equals(testExercise.id));
       expect(retrieved.order, equals(1));
-      expect(retrieved.reps, equals(10));
+      expect(
+        retrieved.setType != null
+            ? SetType.fromString(retrieved.setType!)
+            : null,
+        SetType.working,
+      );
       expect(retrieved.weight, equals(135));
+      expect(
+        retrieved.units != null ? Units.fromString(retrieved.units!) : null,
+        Units.pounds,
+      );
+      expect(retrieved.reps, equals(10));
       expect(retrieved.restTimeSeconds, 60);
-      expect(SetType.fromString(retrieved.setType), SetType.working);
     });
 
     test('should return null when exercise set does not exist', () async {
       // Try to retrieve an exercise set that definitely doesn't exist
-      final nonExistentSet = await exerciseSetDao.getById(99999);
+      final nonExistentSet = await exerciseSetDao.getById("99999");
 
       // Should handle missing data gracefully
       expect(nonExistentSet, isNull);
@@ -100,22 +106,22 @@ void main() {
       'should retrieve all exercise sets for an exercise ordered correctly',
       () async {
         // Add multiple sets to the same exercise with different orders
-        final set2 = ExerciseSetModel(
-          exerciseId: testExerciseId,
+        final set2 = ExerciseSetModel.forTest(
+          exerciseId: testExercise.id,
           order: 2,
-          reps: 8,
+          setType: SetType.working.name,
           weight: 145,
           units: Units.pounds.name,
-          setType: SetType.working.name,
+          reps: 8,
         );
 
-        final set3 = ExerciseSetModel(
-          exerciseId: testExerciseId,
+        final set3 = ExerciseSetModel.forTest(
+          exerciseId: testExercise.id,
           order: 3,
-          reps: 6,
+          setType: SetType.working.name,
           weight: 155,
           units: Units.pounds.name,
-          setType: SetType.working.name,
+          reps: 6,
         );
 
         await exerciseSetDao.insert(set3);
@@ -123,7 +129,7 @@ void main() {
 
         // Get all sets for the exercise
         final exerciseSets = await exerciseSetDao.getByExerciseId(
-          testExerciseId,
+          testExercise.id,
         );
 
         // Should return all sets ordered by order DESC
@@ -142,16 +148,17 @@ void main() {
 
     test('should return empty list when exercise has no sets', () async {
       // Create a new exercise with no sets
-      final newExercise = ExerciseModel(
-        workoutId: testExerciseId, // Reusing IDs for simplicity
-        exerciseTypeId: testExerciseId,
+      final newExercise = ExerciseModel.forTest(
+        workoutId: testExercise.id,
         order: 2,
+        exerciseTypeId: testExercise.id,
         notes: 'Exercise with no sets',
       );
-      final newExerciseId = await exerciseDao.insert(newExercise);
+
+      await exerciseDao.insert(newExercise);
 
       // Try to get sets for the exercise with no sets
-      final sets = await exerciseSetDao.getByExerciseId(newExerciseId);
+      final sets = await exerciseSetDao.getByExerciseId(newExercise.id);
 
       // Should return empty list, not null
       expect(sets, isEmpty);

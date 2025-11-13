@@ -13,13 +13,14 @@ void main() {
   group('ExerciseTypeDao Insert Operations Tests', () {
     late AppDatabase testDatabase;
     late ExerciseTypeDao exerciseTypeDao;
-    late ExerciseTypeModel sampleExerciseType;
+
+    late ExerciseTypeModel testExerciseType;
 
     setUp(() async {
       testDatabase = AppDatabase.inMemory();
       exerciseTypeDao = ExerciseTypeDao(testDatabase);
 
-      sampleExerciseType = ExerciseTypeModel(
+      testExerciseType = ExerciseTypeModel.forTest(
         name: 'Bench Press',
         description: 'Standard flat bench barbell press',
       );
@@ -29,58 +30,49 @@ void main() {
       await testDatabase.close();
     });
 
-    test('should insert a new exercise type and return a valid ID', () async {
-      final insertedId = await exerciseTypeDao.insert(sampleExerciseType);
+    test('should insert a new exercise type correctly', () async {
+      await exerciseTypeDao.insert(testExerciseType);
 
-      expect(insertedId, isA<int>());
-      expect(insertedId, greaterThan(0));
-
-      final retrieved = await exerciseTypeDao.getById(insertedId);
+      final retrieved = await exerciseTypeDao.getById(testExerciseType.id);
       expect(retrieved, isNotNull);
-      expect(retrieved!.name, equals('Bench Press'));
-      expect(
-        retrieved.description,
-        equals('Standard flat bench barbell press'),
-      );
+      expect(retrieved!.name, equals(testExerciseType.name));
+      expect(retrieved.description, equals(testExerciseType.description));
     });
 
     test('should handle inserting exercise type with minimal data', () async {
-      final minimalExerciseType = ExerciseTypeModel(
+      final minimalExerciseType = ExerciseTypeModel.forTest(
         name: 'Push-ups',
-        description: null, // Testing null description
+        description: null,
       );
 
-      final insertedId = await exerciseTypeDao.insert(minimalExerciseType);
+      await exerciseTypeDao.insert(minimalExerciseType);
 
-      expect(insertedId, greaterThan(0));
-
-      final retrieved = await exerciseTypeDao.getById(insertedId);
+      final retrieved = await exerciseTypeDao.getById(minimalExerciseType.id);
+      expect(retrieved, isNotNull);
       expect(retrieved!.name, equals('Push-ups'));
       expect(retrieved.description, isNull);
     });
 
     test('should handle transaction-based insert correctly', () async {
       final database = await testDatabase.database;
-      late int insertedId;
 
       await database.transaction((txn) async {
-        insertedId = await exerciseTypeDao.insert(sampleExerciseType, txn);
+        await exerciseTypeDao.insert(testExerciseType, txn);
       });
 
-      expect(insertedId, greaterThan(0));
-
-      final retrieved = await exerciseTypeDao.getById(insertedId);
+      final retrieved = await exerciseTypeDao.getById(testExerciseType.id);
       expect(retrieved, isNotNull);
-      expect(retrieved!.name, equals(sampleExerciseType.name));
+      expect(retrieved!.name, equals(testExerciseType.name));
+      expect(retrieved.description, equals(testExerciseType.description));
     });
 
     test(
       'should throw exception when trying to insert duplicate name',
       () async {
-        await exerciseTypeDao.insert(sampleExerciseType);
+        await exerciseTypeDao.insert(testExerciseType);
 
-        final duplicateExerciseType = ExerciseTypeModel(
-          name: 'Bench Press', // Same name as sampleExerciseType
+        final duplicateExerciseType = ExerciseTypeModel.forTest(
+          name: 'Bench Press', // Same name
           description: 'Different description',
         );
 

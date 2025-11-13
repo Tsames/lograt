@@ -17,7 +17,7 @@ class ExerciseTypeDao {
   ///
   /// Returns the [ExerciseTypeModel] if found, or `null` if no exercise type
   /// with the given [id] exists.
-  Future<ExerciseTypeModel?> getById(int id, [Transaction? txn]) async {
+  Future<ExerciseTypeModel?> getById(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
 
     final maps = await executor.query(
@@ -75,7 +75,7 @@ class ExerciseTypeDao {
       offset: offset,
     );
 
-    return maps.map((map) => ExerciseTypeModel.fromMap(map)).toList();
+    return maps.map((map) => ExerciseTypeModel.fromMap(map)).nonNulls.toList();
   }
 
   /// Inserts a new exercise type into the database.
@@ -118,12 +118,6 @@ class ExerciseTypeDao {
     ExerciseTypeModel exerciseType, [
     Transaction? txn,
   ]) async {
-    if (exerciseType.id == null) {
-      throw ArgumentError(
-        'Cannot update exercise type without an ID: ${exerciseType.toString()}',
-      );
-    }
-
     final DatabaseExecutor executor = txn ?? await _db.database;
     return await executor.update(
           _tableName,
@@ -144,7 +138,7 @@ class ExerciseTypeDao {
   ///
   /// Throws an [Exception] if the exercise type is referenced by any workout exercises,
   /// due to the RESTRICT foreign key constraint.
-  Future<bool> deleteById(int id, [Transaction? txn]) async {
+  Future<bool> deleteById(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     try {
       return await executor.delete(

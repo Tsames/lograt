@@ -13,24 +13,19 @@ void main() {
   group('ExerciseTypeDao Update Operations Tests', () {
     late AppDatabase testDatabase;
     late ExerciseTypeDao exerciseTypeDao;
-    late ExerciseTypeModel sampleExerciseType;
 
-    late int existingExerciseTypeId;
-    late ExerciseTypeModel existingExerciseType;
+    late ExerciseTypeModel testExerciseType;
 
     setUp(() async {
       testDatabase = AppDatabase.inMemory();
       exerciseTypeDao = ExerciseTypeDao(testDatabase);
 
-      sampleExerciseType = ExerciseTypeModel(
+      testExerciseType = ExerciseTypeModel.forTest(
         name: 'Bench Press',
         description: 'Standard flat bench barbell press',
       );
-      existingExerciseTypeId = await exerciseTypeDao.insert(sampleExerciseType);
 
-      existingExerciseType = (await exerciseTypeDao.getById(
-        existingExerciseTypeId,
-      ))!;
+      await exerciseTypeDao.insert(testExerciseType);
     });
 
     tearDown(() async {
@@ -38,7 +33,7 @@ void main() {
     });
 
     test('should update existing exercise type successfully', () async {
-      final updatedExerciseType = existingExerciseType.copyWith(
+      final updatedExerciseType = testExerciseType.copyWith(
         name: 'Incline Bench Press',
         description: 'Bench press performed on an inclined bench',
       );
@@ -49,7 +44,7 @@ void main() {
 
       expect(correctlyUpdated, equals(true));
 
-      final retrieved = await exerciseTypeDao.getById(existingExerciseTypeId);
+      final retrieved = await exerciseTypeDao.getById(testExerciseType.id);
       expect(retrieved!.name, equals('Incline Bench Press'));
       expect(
         retrieved.description,
@@ -61,7 +56,7 @@ void main() {
       'should return false when trying to update non-existent exercise type',
       () async {
         final nonExistentExerciseType = ExerciseTypeModel(
-          id: 99999,
+          id: "99999",
           name: 'Ghost Exercise',
           description: 'This exercise type does not exist in the database',
         );
@@ -71,21 +66,6 @@ void main() {
         );
 
         expect(correctlyUpdated, equals(false));
-      },
-    );
-
-    test(
-      'should throw ArgumentError when trying to update exercise type without ID',
-      () async {
-        final exerciseTypeWithoutId = ExerciseTypeModel(
-          name: 'Test Exercise',
-          description: 'Exercise without ID',
-        );
-
-        expect(
-          () async => await exerciseTypeDao.updateById(exerciseTypeWithoutId),
-          throwsA(isA<ArgumentError>()),
-        );
       },
     );
   });

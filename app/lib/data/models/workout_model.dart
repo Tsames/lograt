@@ -1,5 +1,6 @@
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 
+import '../../util/uuidv7.dart';
 import '../entities/exercise.dart';
 import '../entities/workout.dart';
 
@@ -15,6 +16,9 @@ class WorkoutModel {
     this.title,
     this.notes,
   });
+
+  WorkoutModel.forTest({String? title, String? notes})
+    : this(id: uuidV7(), date: DateTime.now(), title: title, notes: notes);
 
   WorkoutModel.fromEntity(Workout workout)
     : this(

@@ -18,7 +18,7 @@ class ExerciseSetDao {
   ///
   /// Returns the [ExerciseSetModel] if found, or `null` if no exercise set
   /// with the given [id] exists.
-  Future<ExerciseSetModel?> getById(int id, [Transaction? txn]) async {
+  Future<ExerciseSetModel?> getById(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
 
     final maps = await executor.query(
@@ -39,7 +39,7 @@ class ExerciseSetDao {
   ///
   /// Returns an empty `List<ExerciseSetModel>` if none with the given [id] exists.
   Future<List<ExerciseSetModel>> getByExerciseId(
-    int exerciseId, [
+    String exerciseId, [
     Transaction? txn,
   ]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
@@ -50,7 +50,7 @@ class ExerciseSetDao {
       orderBy: 'set_order ASC',
     );
 
-    return maps.map((map) => ExerciseSetModel.fromMap(map)).toList();
+    return maps.map((map) => ExerciseSetModel.fromMap(map)).nonNulls.toList();
   }
 
   /// Inserts a new exercise set into the database.
@@ -100,18 +100,12 @@ class ExerciseSetDao {
   ///
   /// Throws an [ArgumentError] if the exercise type ID is `null`.
   Future<bool> update(ExerciseSetModel set, [Transaction? txn]) async {
-    if (set.databaseId == null) {
-      throw ArgumentError(
-        'Cannot update exercise without an ID: ${set.toString()}',
-      );
-    }
-
     final DatabaseExecutor executor = txn ?? await _db.database;
     return await executor.update(
           _tableName,
           set.toMap(),
           where: 'id = ?',
-          whereArgs: [set.databaseId],
+          whereArgs: [set.id],
         ) ==
         1;
   }
@@ -126,7 +120,7 @@ class ExerciseSetDao {
   ///
   /// Throws an [Exception] if the exercise set is referenced by any workout exercises,
   /// due to the RESTRICT foreign key constraint.
-  Future<bool> delete(int setId, [Transaction? txn]) async {
+  Future<bool> delete(String setId, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     try {
       return await executor.delete(
@@ -149,7 +143,7 @@ class ExerciseSetDao {
   /// against the database.
   ///
   /// Returns the number of rows that were deleted.
-  Future<int> deleteByExerciseId(int exerciseId, [Transaction? txn]) async {
+  Future<int> deleteByExerciseId(String exerciseId, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     return await executor.delete(
       _tableName,

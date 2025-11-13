@@ -1,8 +1,6 @@
 import 'package:lograt/data/database/app_database.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../entities/exercise.dart';
-import '../entities/exercise_type.dart';
 import '../models/exercise_model.dart';
 
 /// Data Access Object operations for an Exercise
@@ -15,7 +13,7 @@ class ExerciseDao {
 
   /// Get an exercise by its ID
   /// Returns null if no exercise with the given ID exists
-  Future<ExerciseModel?> getById(int id) async {
+  Future<ExerciseModel?> getById(String id) async {
     final database = await _db.database;
     final maps = await database.query(
       _tableName,
@@ -29,7 +27,7 @@ class ExerciseDao {
 
   /// Get all exercises for a specific workout, ordered by their sequence
   /// Does not include ExerciseType data
-  Future<List<ExerciseModel>> getByWorkoutId(int workoutId) async {
+  Future<List<ExerciseModel>> getByWorkoutId(String workoutId) async {
     final database = await _db.database;
     final maps = await database.query(
       _tableName,
@@ -37,58 +35,58 @@ class ExerciseDao {
       whereArgs: [workoutId],
     );
 
-    return maps.map((map) => ExerciseModel.fromMap(map)).toList();
+    return maps.map((map) => ExerciseModel.fromMap(map)).nonNulls.toList();
   }
 
-  /// Get exercises with their exercise type information joined
-  /// This returns nearly complete Exercise domain entities
-  /// The returned Exercise domain entities have no set data.
-  /// Separate calls using the [ExerciseSetDao] should be made to complete the Exercise entity's data
-  Future<List<Exercise>> getExercisesWithTypesByWorkoutId(int workoutId) async {
-    // Use a JOIN query to get exercise and exercise type data in one query
-    // This is more efficient than making separate queries for each exercise
-    final database = await _db.database;
-    final maps = await database.rawQuery(
-      '''
-      SELECT 
-        we.id,
-        we.workout_id,
-        we.exercise_type_id,
-        we.exercise_order,
-        we.notes,
-        et.name as exercise_type_name,
-        et.description as exercise_type_description
-      FROM $_tableName we
-      JOIN exercise_types et ON we.exercise_type_id = et.id
-      WHERE we.workout_id = ?
-      ORDER BY we.exercise_order ASC
-    ''',
-      [workoutId],
-    );
-
-    return maps.map((map) {
-      // Reconstruct the ExerciseType from the joined data
-      final exerciseType = ExerciseType(
-        id: map['exercise_type_id'] as int,
-        name: map['exercise_type_name'] as String,
-        description: map['exercise_type_description'] as String?,
-      );
-
-      // Create the Exercise domain entity with the complete exercise type
-      return Exercise(
-        id: map['id'] as int,
-        exerciseType: exerciseType,
-        order: map['order_index'] as int,
-        sets: [],
-        // ExerciseSet data needs to be gathered using a separate DAO
-        notes: map['notes'] as String?,
-      );
-    }).toList();
-  }
+  // /// Get exercises with their exercise type information joined
+  // /// This returns nearly complete Exercise domain entities
+  // /// The returned Exercise domain entities have no set data.
+  // /// Separate calls using the [ExerciseSetDao] should be made to complete the Exercise entity's data
+  // Future<List<Exercise>> getExercisesWithTypesByWorkoutId(String workoutId) async {
+  //   // Use a JOIN query to get exercise and exercise type data in one query
+  //   // This is more efficient than making separate queries for each exercise
+  //   final database = await _db.database;
+  //   final maps = await database.rawQuery(
+  //     '''
+  //     SELECT
+  //       we.id,
+  //       we.workout_id,
+  //       we.exercise_type_id,
+  //       we.exercise_order,
+  //       we.notes,
+  //       et.name as exercise_type_name,
+  //       et.description as exercise_type_description
+  //     FROM $_tableName we
+  //     JOIN exercise_types et ON we.exercise_type_id = et.id
+  //     WHERE we.workout_id = ?
+  //     ORDER BY we.exercise_order ASC
+  //   ''',
+  //     [workoutId],
+  //   );
+  //
+  //   return maps.map((map) {
+  //     // Reconstruct the ExerciseType from the joined data
+  //     final exerciseType = ExerciseType(
+  //       id: map['exercise_type_id'] as int,
+  //       name: map['exercise_type_name'] as String,
+  //       description: map['exercise_type_description'] as String?,
+  //     );
+  //
+  //     // Create the Exercise domain entity with the complete exercise type
+  //     return Exercise(
+  //       id: map['id'] as int,
+  //       exerciseType: exerciseType,
+  //       order: map['order_index'] as int,
+  //       sets: [],
+  //       // ExerciseSet data needs to be gathered using a separate DAO
+  //       notes: map['notes'] as String?,
+  //     );
+  //   }).toList();
+  // }
 
   /// Get all exercises that use a specific exercise type
   Future<List<ExerciseModel>> getByExerciseTypeId({
-    required int exerciseTypeId,
+    required String exerciseTypeId,
     required int limit,
   }) async {
     final database = await _db.database;
@@ -100,11 +98,11 @@ class ExerciseDao {
       limit: limit,
     );
 
-    return maps.map((map) => ExerciseModel.fromMap(map)).toList();
+    return maps.map((map) => ExerciseModel.fromMap(map)).nonNulls.toList();
   }
 
   /// Get the count of exercises in a specific workout
-  Future<int> getCountByWorkoutId(int workoutId) async {
+  Future<int> getCountByWorkoutId(String workoutId) async {
     final database = await _db.database;
     final result = await database.rawQuery(
       '''
@@ -139,10 +137,6 @@ class ExerciseDao {
   /// Update an existing exercise
   /// Returns the number of rows affected (should be 1 for success)
   Future<int> update(ExerciseModel exercise) async {
-    if (exercise.id == null) {
-      throw ArgumentError('Cannot update exercise without an ID');
-    }
-
     final database = await _db.database;
     return await database.update(
       _tableName,
@@ -153,7 +147,7 @@ class ExerciseDao {
   }
 
   /// Delete an exercise from a workout
-  Future<int> delete(int exerciseId) async {
+  Future<int> delete(String exerciseId) async {
     final exerciseToDelete = await getById(exerciseId);
     if (exerciseToDelete == null) return 0;
 
@@ -167,7 +161,7 @@ class ExerciseDao {
 
   /// Delete all exercises for a specific workout
   /// This is typically called when a workout is deleted
-  Future<int> deleteByWorkoutId(int workoutId) async {
+  Future<int> deleteByWorkoutId(String workoutId) async {
     final database = await _db.database;
     return await database.delete(
       _tableName,

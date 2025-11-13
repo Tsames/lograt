@@ -1,3 +1,4 @@
+import '../../util/uuidv7.dart';
 import '../entities/exercise_type.dart';
 
 class ExerciseTypeModel {
@@ -10,6 +11,9 @@ class ExerciseTypeModel {
     required this.name,
     this.description,
   });
+
+  ExerciseTypeModel.forTest({required String name, String? description})
+    : this(id: uuidV7(), name: name, description: description);
 
   ExerciseTypeModel.fromEntity(ExerciseType entity)
     : this(id: entity.id, name: entity.name, description: entity.description);

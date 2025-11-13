@@ -1,3 +1,4 @@
+import '../../util/uuidv7.dart';
 import '../entities/exercise_set.dart';
 import '../entities/set_type.dart';
 import '../entities/units.dart';
@@ -22,6 +23,25 @@ class ExerciseSetModel {
     this.reps,
     this.restTimeSeconds,
   });
+
+  ExerciseSetModel.forTest({
+    required String exerciseId,
+    int? order,
+    String? setType,
+    double? weight,
+    String? units,
+    int? reps,
+    int? restTimeSeconds,
+  }) : this(
+         id: uuidV7(),
+         order: order ?? 0,
+         exerciseId: exerciseId,
+         setType: setType,
+         weight: weight,
+         units: units,
+         reps: reps,
+         restTimeSeconds: restTimeSeconds,
+       );
 
   ExerciseSetModel.fromEntity({
     required ExerciseSet entity,
@@ -54,7 +74,7 @@ class ExerciseSetModel {
   static ExerciseSetModel? fromMap(Map<String, dynamic> map) {
     final id = map['id'];
     if (id == null || id is! String) return null;
-    final order = map['order'];
+    final order = map['set_order'];
     if (order == null || order is! int) return null;
     final exerciseId = map['exercise_id'];
     if (exerciseId == null || exerciseId is! String) return null;
@@ -83,7 +103,7 @@ class ExerciseSetModel {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'order': order,
+      'set_order': order,
       'exercise_id': exerciseId,
       'set_type': setType,
       'weight': weight,

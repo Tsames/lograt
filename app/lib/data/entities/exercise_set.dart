@@ -14,11 +14,11 @@ class ExerciseSet {
   ExerciseSet({
     String? id,
     this.order = 0,
-    this.reps,
+    this.setType,
     this.weight,
     this.units,
+    this.reps,
     this.restTime,
-    this.setType,
   }) : id = id ?? uuidV7();
 
   ExerciseSet copyWith({
