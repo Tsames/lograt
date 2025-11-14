@@ -206,8 +206,8 @@ class WorkoutRepository {
 
             // If the exercise has an exercise type, check if it already exists in the database, if it doesn't create it
             if (exercise.exerciseType != null) {
-              final existingExerciseTypeById = await _exerciseTypeDao.getById(
-                exercise.exerciseType!.id,
+              final existingExerciseTypeById = await _exerciseTypeDao.getByName(
+                exercise.exerciseType!.name,
                 txn,
               );
               if (existingExerciseTypeById == null) {
@@ -310,6 +310,9 @@ class WorkoutRepository {
   }
 
   Future<void> clearWorkouts() async {
+    await _exerciseSetDao.clearTable();
+    await _exerciseDao.clearTable();
+    await _exerciseTypeDao.clearTable();
     await _workoutDao.clearTable();
   }
 

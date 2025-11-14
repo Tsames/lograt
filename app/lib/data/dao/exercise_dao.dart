@@ -169,4 +169,9 @@ class ExerciseDao {
       whereArgs: [workoutId],
     );
   }
+
+  Future<void> clearTable() async {
+    final db = await _db.database;
+    await db.delete(_tableName);
+  }
 }

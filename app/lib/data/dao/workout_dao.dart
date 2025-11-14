@@ -33,7 +33,7 @@ class WorkoutDao {
 
     final maps = await db.query(
       _tableName,
-      orderBy: 'createdOn DESC',
+      orderBy: 'date DESC',
       limit: limit,
       offset: offset,
     );
@@ -50,9 +50,9 @@ class WorkoutDao {
 
     final maps = await db.query(
       _tableName,
-      where: 'createdOn >= ?',
+      where: 'date >= ?',
       whereArgs: [dateThresholdInMilliseconds],
-      orderBy: 'createdOn DESC',
+      orderBy: 'date DESC',
     );
 
     return maps.map((map) => WorkoutModel.fromMap(map)).nonNulls.toList();

@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/data/providers.dart';
-import 'package:lograt/presentation/screens/workout_log/view_model/exercise_types_notifier_state.dart';
+import 'package:lograt/presentation/widgets/select_exercise_type_bottom_sheet/exercise_types_notifier_state.dart';
 
-import '../../../../data/usecases/get_paginated_exercise_types_usecase.dart';
+import '../../../data/usecases/get_paginated_exercise_types_usecase.dart';
 
 class ExerciseTypesNotifier extends StateNotifier<ExerciseTypesNotifierState> {
   final GetPaginatedExerciseTypesUsecase _getExerciseTypesUsecase;
