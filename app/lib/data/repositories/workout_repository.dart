@@ -198,12 +198,6 @@ class WorkoutRepository {
           );
 
           for (final exercise in workout.exercises) {
-            // Create exercise
-            await _exerciseDao.insertWithTransaction(
-              exercise: ExerciseModel.fromEntity(exercise, workout.id),
-              txn: txn,
-            );
-
             // If the exercise has an exercise type, check if it already exists in the database, if it doesn't create it
             if (exercise.exerciseType != null) {
               final existingExerciseTypeById = await _exerciseTypeDao.getByName(
@@ -217,6 +211,12 @@ class WorkoutRepository {
                 );
               }
             }
+
+            // Create exercise
+            await _exerciseDao.insertWithTransaction(
+              exercise: ExerciseModel.fromEntity(exercise, workout.id),
+              txn: txn,
+            );
 
             // Create Sets
             if (exercise.sets.isNotEmpty) {
@@ -307,6 +307,16 @@ class WorkoutRepository {
 
   Future<bool> deleteExerciseSet(String id) async {
     return await _exerciseSetDao.delete(id);
+  }
+
+  Future<int> count(String table) async {
+    try {
+      final db = await _db.database;
+      final result = await db.rawQuery('SELECT COUNT(*) as count FROM $table');
+      return result.first['count'] as int;
+    } on DatabaseException catch (e) {
+      throw WorkoutDataException('Failed to count $table: $e');
+    }
   }
 
   Future<void> clearWorkouts() async {
