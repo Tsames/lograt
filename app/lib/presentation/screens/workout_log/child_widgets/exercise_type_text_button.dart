@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/presentation/screens/workout_log/child_widgets/select_exercise_type_bottom_sheet.dart';
 
 import '../../../../data/entities/workout.dart';
 import '../view_model/workout_log_notifier.dart';
@@ -20,11 +21,15 @@ class ExerciseTypeTextButton extends ConsumerWidget {
       ),
     );
 
-    // final workoutLogNotifier = ref.read(workoutLogProvider(workout).notifier);
-    // final theme = Theme.of(context);
-
     return TextButton(
-      onPressed: () {},
+      onPressed: () {
+        showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return SelectExerciseTypeBottomSheet(workout, exerciseType);
+          },
+        );
+      },
       child: Text(switch (exerciseType) {
         null => "Select an Exercise",
         _ => exerciseType.name,

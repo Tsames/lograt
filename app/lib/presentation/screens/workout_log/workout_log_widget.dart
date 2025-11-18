@@ -14,7 +14,6 @@ class WorkoutLogWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print("Building WorkoutLogWidget for Workout ${workout.id}");
     final exercises = ref.watch(
       workoutLogProvider(workout).select((state) => state.workout.exercises),
     );
