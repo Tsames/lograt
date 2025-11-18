@@ -13,6 +13,7 @@ class ExerciseTypeTextButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final exerciseType = ref.watch(
       workoutLogProvider(workout).select(
         (state) => state.workout.exercises
@@ -20,20 +21,24 @@ class ExerciseTypeTextButton extends ConsumerWidget {
             .exerciseType,
       ),
     );
-
     return TextButton(
       onPressed: () {
         showModalBottomSheet(
           context: context,
           builder: (BuildContext context) {
-            return SelectExerciseTypeBottomSheet(workout, exerciseType);
+            return SelectExerciseTypeBottomSheet(
+              workout,
+              exerciseId,
+              exerciseType,
+            );
           },
         );
       },
       child: Text(switch (exerciseType) {
         null => "Select an Exercise",
         _ => exerciseType.name,
-      }),
+      }, style: theme.textTheme.labelLarge),
+      style: ButtonStyle(),
     );
   }
 }
