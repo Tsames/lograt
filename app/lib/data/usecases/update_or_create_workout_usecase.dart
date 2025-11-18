@@ -1,5 +1,6 @@
 import 'package:lograt/data/entities/exercise_set.dart';
 
+import '../entities/exercise.dart';
 import '../entities/workout.dart';
 import '../repositories/workout_repository.dart';
 
@@ -10,6 +11,10 @@ class UpdateOrCreateWorkoutDataUsecase {
 
   Future<void> createWorkout(Workout workout) async {
     await _repository.createWorkout(workout);
+  }
+
+  Future<void> updateExercise(Exercise exercise, String workoutId) async {
+    await _repository.updateExercise(entity: exercise, workoutId: workoutId);
   }
 
   /// Creates an [ExerciseSet] in persistent storage and returns its id

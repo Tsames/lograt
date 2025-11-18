@@ -14,8 +14,6 @@ class ExerciseTable extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print("Building RecordExerciseTable for Exercise ${exerciseId}");
-
     final sets = ref.watch(
       workoutLogProvider(workout).select(
         (state) =>

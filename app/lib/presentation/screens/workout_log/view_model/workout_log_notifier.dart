@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/data/entities/exercise_type.dart';
 import 'package:lograt/data/usecases/get_full_workout_data_by_id_usecase.dart';
 import 'package:lograt/data/usecases/update_or_create_workout_usecase.dart';
 import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier_state.dart';
@@ -35,6 +36,39 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
       state = state.copyWith(isLoading: false, workout: fullWorkoutData);
     } catch (stacktrace, error) {
       state = state.copyWith(isLoading: false, error: error.toString());
+      rethrow;
+    }
+  }
+
+  void updateExerciseType(
+    ExerciseType? newExerciseType,
+    String exerciseId,
+  ) async {
+    final targetExerciseIndex = state.workout.exercises.indexWhere(
+      (e) => e.id == exerciseId,
+    );
+    if (targetExerciseIndex == -1) {
+      state = state.copyWith(
+        error:
+            "Cannot change exercise type for a an exercise outside of this workout.",
+      );
+    }
+
+    final targetExercise = state.workout.exercises[targetExerciseIndex];
+    final newExercise = targetExercise.copyWith(exerciseType: newExerciseType);
+
+    state = state.copyWith(
+      workout: state.workout.copyWith(
+        exercises: state.workout.exercises..[targetExerciseIndex] = newExercise,
+      ),
+    );
+    try {
+      _updateOrCreateWorkoutUsecase.updateExercise(
+        newExercise,
+        state.workout.id,
+      );
+    } catch (error) {
+      // todo: handle exceptions
       rethrow;
     }
   }

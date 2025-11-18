@@ -4,13 +4,16 @@ import 'package:lograt/presentation/widgets/select_exercise_type_bottom_sheet/ex
 
 import '../../../../data/entities/exercise_type.dart';
 import '../../../../data/entities/workout.dart';
+import '../view_model/workout_log_notifier.dart';
 
 class SelectExerciseTypeBottomSheet extends ConsumerWidget {
   final Workout workout;
+  final String exerciseId;
   final ExerciseType? selectedType;
 
   const SelectExerciseTypeBottomSheet(
     this.workout,
+    this.exerciseId,
     this.selectedType, {
     super.key,
   });
@@ -22,7 +25,7 @@ class SelectExerciseTypeBottomSheet extends ConsumerWidget {
     final exerciseTypesState = ref.watch(exerciseTypesProvider);
     final exerciseTypes = exerciseTypesState.exerciseTypes;
 
-    // final workoutLogNotifier = ref.read(workoutLogProvider(workout).notifier);
+    final workoutLogNotifier = ref.read(workoutLogProvider(workout).notifier);
 
     return Container(
       height: 600,
@@ -42,24 +45,45 @@ class SelectExerciseTypeBottomSheet extends ConsumerWidget {
             Text("Select an Exercise"),
             SizedBox(height: 20),
             Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(16),
-                itemCount: exerciseTypes.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return InkWell(
-                    onTap: () {
-                      // Todo: On tap, change state to selected exercise type and close bottom sheet
-                    },
-                    child: ListTile(
-                      title: Text(
-                        exerciseTypes[index].name,
-                        style: theme.textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  );
+              child: ShaderMask(
+                shaderCallback: (Rect bounds) {
+                  return LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      theme.colorScheme.surface,
+                      theme.colorScheme.surface,
+                      Colors.transparent,
+                    ],
+                    stops: [0.0, 0.15, 0.85, 1.0],
+                  ).createShader(bounds);
                 },
+                blendMode: BlendMode.dstIn,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(16),
+                  itemCount: exerciseTypes.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return InkWell(
+                      onTap: () {
+                        // Todo: On tap, change state to selected exercise type and close bottom sheet
+                        workoutLogNotifier.updateExerciseType(
+                          exerciseTypes[index],
+                          exerciseId,
+                        );
+                        Navigator.pop(context);
+                      },
+                      child: ListTile(
+                        title: Text(
+                          exerciseTypes[index].name,
+                          style: theme.textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],
