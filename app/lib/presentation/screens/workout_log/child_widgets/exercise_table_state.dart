@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier.dart';
+import 'package:lograt/presentation/screens/workout_log/child_widgets/exercise_table_widget.dart';
 
 import '../../../../data/entities/set_type.dart';
 import '../../../../data/entities/units.dart';
-import '../../../../data/entities/workout.dart';
+import '../view_model/workout_log_notifier.dart';
 
-class ExerciseTable extends ConsumerWidget {
-  final Workout workout;
-  final String exerciseId;
-
-  const ExerciseTable(this.workout, this.exerciseId, {super.key});
+class ExerciseTableState extends ConsumerState<ExerciseTableWidget> {
+  late bool _showNotes =
+      widget.exercise.notes != null && widget.exercise.notes!.isNotEmpty;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    print(widget.exercise.notes);
+
     final sets = ref.watch(
-      workoutLogProvider(workout).select(
-        (state) =>
-            state.workout.exercises.firstWhere((e) => e.id == exerciseId).sets,
+      workoutLogProvider(widget.workout).select(
+        (state) => state.workout.exercises
+            .firstWhere((e) => e.id == widget.exercise.id)
+            .sets,
       ),
     );
-    final workoutLogNotifier = ref.read(workoutLogProvider(workout).notifier);
+
+    final workoutLogNotifier = ref.read(
+      workoutLogProvider(widget.workout).notifier,
+    );
     final theme = Theme.of(context);
 
     return Column(
@@ -90,7 +94,7 @@ class ExerciseTable extends ConsumerWidget {
                     onSelected: (SetType? valueChanged) {
                       workoutLogNotifier.updateSet(
                         set.copyWith(setType: valueChanged),
-                        exerciseId,
+                        widget.exercise.id,
                       );
                     },
                   ),
@@ -115,7 +119,7 @@ class ExerciseTable extends ConsumerWidget {
                               _ => double.parse(valueChanged),
                             },
                           ),
-                          exerciseId,
+                          widget.exercise.id,
                         );
                       },
                     ),
@@ -140,7 +144,7 @@ class ExerciseTable extends ConsumerWidget {
                     onSelected: (Units? valueChanged) {
                       workoutLogNotifier.updateSet(
                         set.copyWith(units: valueChanged),
-                        exerciseId,
+                        widget.exercise.id,
                       );
                     },
                   ),
@@ -165,7 +169,7 @@ class ExerciseTable extends ConsumerWidget {
                               _ => int.parse(valueChanged),
                             },
                           ),
-                          exerciseId,
+                          widget.exercise.id,
                         );
                       },
                     ),
@@ -175,28 +179,67 @@ class ExerciseTable extends ConsumerWidget {
             }),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 20),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 200),
+          child: _showNotes
+              ? Column(
+                  children: [
+                    TextField(
+                      keyboardType: TextInputType.multiline,
+                      minLines: 2,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        hintText: 'Notes',
+                        hintStyle: theme.textTheme.bodyMedium,
+                      ),
+                      style: theme.textTheme.bodyMedium,
+                      controller: TextEditingController(
+                        text: widget.exercise.notes,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                )
+              : const SizedBox.shrink(),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             // Todo: make this button toggle an interface for notes on and off
             // Todo: make it animated!
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.mode_comment_rounded, size: 18),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              child: IconButton(
+                key: ValueKey<bool>(_showNotes),
+                onPressed: () {
+                  setState(() {
+                    _showNotes = !_showNotes;
+                  });
+                },
+                icon: Icon(
+                  _showNotes
+                      ? Icons.mode_comment_rounded
+                      : Icons.mode_comment_outlined,
+                  size: 18,
+                ),
+              ),
             ),
             IconButton(
-              onPressed: () => workoutLogNotifier.addSetToExercise(exerciseId),
+              onPressed: () =>
+                  workoutLogNotifier.addSetToExercise(widget.exercise.id),
               icon: const Icon(Icons.add, size: 18),
             ),
             IconButton(
-              onPressed: () =>
-                  workoutLogNotifier.removeLastSetFromExercise(exerciseId),
+              onPressed: () => workoutLogNotifier.removeLastSetFromExercise(
+                widget.exercise.id,
+              ),
               icon: const Icon(Icons.remove, size: 18),
             ),
             IconButton(
-              onPressed: () =>
-                  workoutLogNotifier.duplicateLastSetOfExercise(exerciseId),
+              onPressed: () => workoutLogNotifier.duplicateLastSetOfExercise(
+                widget.exercise.id,
+              ),
               icon: const Icon(Icons.copy, size: 18),
             ),
             //todo: add an undo button to undo the last action the user took
