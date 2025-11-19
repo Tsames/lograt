@@ -12,8 +12,6 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.exercise.notes);
-
     final sets = ref.watch(
       workoutLogProvider(widget.workout).select(
         (state) => state.workout.exercises
