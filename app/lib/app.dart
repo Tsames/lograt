@@ -10,13 +10,13 @@ class App extends StatelessWidget {
       title: 'Lograt',
       theme: ThemeData(
         brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.amberAccent),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.amber,
+          seedColor: Colors.amberAccent,
           brightness: Brightness.dark,
         ),
         useMaterial3: true,

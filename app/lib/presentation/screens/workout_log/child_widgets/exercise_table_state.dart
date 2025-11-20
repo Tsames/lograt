@@ -1,7 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/presentation/screens/workout_log/child_widgets/exercise_table_widget.dart';
 
+import '../../../../data/entities/exercise_set.dart';
 import '../../../../data/entities/set_type.dart';
 import '../../../../data/entities/units.dart';
 import '../view_model/workout_log_notifier.dart';
@@ -28,13 +30,12 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Table(
-          border: TableBorder.all(color: theme.colorScheme.secondary),
-          children: [
-            // Header row
-            TableRow(
-              children: [
-                Padding(
+        // Set Fields Header
+        Container(
+          child: Row(
+            children: [
+              Expanded(
+                child: Padding(
                   padding: EdgeInsets.all(4.0),
                   child: Text(
                     "Set Type",
@@ -42,7 +43,9 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                Padding(
+              ),
+              Expanded(
+                child: Padding(
                   padding: EdgeInsets.all(4.0),
                   child: Text(
                     "Weight",
@@ -50,7 +53,9 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                Padding(
+              ),
+              Expanded(
+                child: Padding(
                   padding: EdgeInsets.all(4.0),
                   child: Text(
                     "Units",
@@ -58,7 +63,9 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                Padding(
+              ),
+              Expanded(
+                child: Padding(
                   padding: EdgeInsets.all(4.0),
                   child: Text(
                     "Reps",
@@ -66,116 +73,163 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-              ],
-            ),
-            ...sets.asMap().entries.map((entry) {
-              final set = entry.value;
-              return TableRow(
+              ),
+            ],
+          ),
+        ),
+        // Sets
+        ReorderableListView(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          onReorder: (int oldIndex, int newIndex) {
+            setState(() {
+              /*
+                When moving a tab to the right, flutter thinks the tab being moved still occupies its old place in the list.
+                This means the newIndex will be at one greater than the correct index, possibly even out of bounds, if not adjusted.
+              */
+              if (oldIndex < newIndex) {
+                newIndex -= 1;
+              }
+
+              final ExerciseSet item = sets.removeAt(oldIndex);
+              sets.insert(newIndex, item);
+            });
+          },
+          children: sets.mapIndexed((index, set) {
+            return Container(
+              key: ValueKey(set.id),
+              decoration: BoxDecoration(
+                border: BoxBorder.fromLTRB(
+                  bottom: BorderSide(
+                    width: 1,
+                    color: theme.colorScheme.secondary,
+                  ),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  DropdownMenu<SetType>(
-                    hintText: "--",
-                    initialSelection: set.setType,
-                    dropdownMenuEntries: SetType.values.map((setType) {
-                      return DropdownMenuEntry(
-                        value: setType,
-                        label: setType.name,
-                      );
-                    }).toList(),
-                    inputDecorationTheme: const InputDecorationTheme(
-                      border: InputBorder.none,
-                    ),
-                    textStyle: theme.textTheme.bodySmall,
-                    textAlign: TextAlign.center,
-                    menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
-                    showTrailingIcon: false,
-                    // Todo: update state based on selection
-                    onSelected: (SetType? valueChanged) {
-                      workoutLogNotifier.updateSet(
-                        set.copyWith(setType: valueChanged),
-                        widget.exercise.id,
-                      );
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: TextField(
-                      decoration: const InputDecoration(
+                  Expanded(
+                    child: DropdownMenu<SetType>(
+                      hintText: "--",
+                      initialSelection: set.setType,
+                      dropdownMenuEntries: SetType.values.map((setType) {
+                        return DropdownMenuEntry(
+                          value: setType,
+                          label: setType.name,
+                        );
+                      }).toList(),
+                      inputDecorationTheme: InputDecorationTheme(
                         border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                        isDense: true,
                       ),
-                      keyboardType: TextInputType.number,
-                      controller: TextEditingController(
-                        text: set.weight != null ? set.weight.toString() : "-",
-                      ),
-                      style: theme.textTheme.bodySmall,
+                      textStyle: theme.textTheme.bodySmall,
                       textAlign: TextAlign.center,
-                      // Todo: update state based on selection
-                      onChanged: (String valueChanged) {
+                      menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
+                      showTrailingIcon: false,
+                      onSelected: (SetType? valueChanged) {
                         workoutLogNotifier.updateSet(
-                          set.copyWith(
-                            weight: switch (valueChanged) {
-                              "" => null,
-                              _ => double.parse(valueChanged),
-                            },
-                          ),
+                          set.copyWith(setType: valueChanged),
                           widget.exercise.id,
                         );
                       },
                     ),
                   ),
-                  DropdownMenu<Units>(
-                    hintText: "--",
-                    initialSelection: set.units,
-                    dropdownMenuEntries: Units.values.map((setType) {
-                      return DropdownMenuEntry(
-                        value: setType,
-                        label: setType.abbreviation,
-                      );
-                    }).toList(),
-                    inputDecorationTheme: const InputDecorationTheme(
-                      border: InputBorder.none,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                        keyboardType: TextInputType.number,
+                        controller: TextEditingController(
+                          text: set.weight != null
+                              ? set.weight.toString()
+                              : "-",
+                        ),
+                        style: theme.textTheme.bodySmall,
+                        textAlign: TextAlign.center,
+                        onChanged: (String valueChanged) {
+                          workoutLogNotifier.updateSet(
+                            set.copyWith(
+                              weight: valueChanged.isEmpty
+                                  ? null
+                                  : double.parse(valueChanged),
+                            ),
+                            widget.exercise.id,
+                          );
+                        },
+                      ),
                     ),
-                    textStyle: theme.textTheme.bodySmall,
-                    textAlign: TextAlign.center,
-                    menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
-                    showTrailingIcon: false,
-                    // Todo: update state based on selection
-                    onSelected: (Units? valueChanged) {
-                      workoutLogNotifier.updateSet(
-                        set.copyWith(units: valueChanged),
-                        widget.exercise.id,
-                      );
-                    },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: TextField(
-                      decoration: const InputDecoration(
+                  Expanded(
+                    child: DropdownMenu<Units>(
+                      hintText: "--",
+                      initialSelection: set.units,
+                      dropdownMenuEntries: Units.values.map((units) {
+                        return DropdownMenuEntry(
+                          value: units,
+                          label: units.abbreviation,
+                        );
+                      }).toList(),
+                      inputDecorationTheme: InputDecorationTheme(
                         border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                        isDense: true,
                       ),
-                      keyboardType: TextInputType.number,
-                      style: theme.textTheme.bodySmall,
-                      controller: TextEditingController(
-                        text: set.reps != null ? set.reps.toString() : "-",
-                      ),
+                      textStyle: theme.textTheme.bodySmall,
                       textAlign: TextAlign.center,
-                      // Todo: update state based on selection
-                      onChanged: (String valueChanged) {
+                      menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
+                      showTrailingIcon: false,
+                      onSelected: (Units? valueChanged) {
                         workoutLogNotifier.updateSet(
-                          set.copyWith(
-                            reps: switch (valueChanged) {
-                              "" => null,
-                              _ => int.parse(valueChanged),
-                            },
-                          ),
+                          set.copyWith(units: valueChanged),
                           widget.exercise.id,
                         );
                       },
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                        keyboardType: TextInputType.number,
+                        style: theme.textTheme.bodySmall,
+                        controller: TextEditingController(
+                          text: set.reps != null ? set.reps.toString() : "-",
+                        ),
+                        textAlign: TextAlign.center,
+                        onChanged: (String valueChanged) {
+                          workoutLogNotifier.updateSet(
+                            set.copyWith(
+                              reps: valueChanged.isEmpty
+                                  ? null
+                                  : int.parse(valueChanged),
+                            ),
+                            widget.exercise.id,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  ReorderableDragStartListener(
+                    index: index,
+                    child: Icon(
+                      Icons.drag_indicator_rounded,
+                      size: 12,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                 ],
-              );
-            }),
-          ],
+              ),
+            );
+          }).toList(),
         ),
         const SizedBox(height: 20),
         AnimatedSize(
@@ -204,8 +258,6 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            // Todo: make this button toggle an interface for notes on and off
-            // Todo: make it animated!
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child: IconButton(
