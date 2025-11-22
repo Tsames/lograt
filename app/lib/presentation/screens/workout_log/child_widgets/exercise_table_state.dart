@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/presentation/screens/workout_log/child_widgets/exercise_table_widget.dart';
@@ -30,6 +31,12 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      debugPrint(
+        "Building Exercise Table for exercise: ${widget.exercise.id} - order: ${widget.exercise.order}",
+      );
+    }
+
     final sets = ref.watch(
       workoutLogProvider(widget.workout).select(
         (state) => state.workout.exercises
@@ -60,14 +67,11 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
 
         // Animate in if it's a new set
         if (isNewSet) {
-          WidgetsBinding.instance.addPostFrameCallback(
-            (_) => _setAnimationControllers[set.id]!.forward(),
-          );
+          _setAnimationControllers[set.id]!.forward();
         }
       }
     }
 
-    // Update previous set IDs for next build
     _previousSetIds = currentSetIds;
 
     final workoutLogNotifier = ref.read(
@@ -208,7 +212,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                     children: [
                       Expanded(
                         child: DropdownMenu<SetType>(
-                          hintText: "--",
+                          hintText: "-",
                           initialSelection: set.setType,
                           dropdownMenuEntries: SetType.values.map((setType) {
                             return DropdownMenuEntry(
@@ -227,8 +231,9 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                           showTrailingIcon: false,
                           onSelected: (SetType? valueChanged) {
                             workoutLogNotifier.updateSet(
-                              set.copyWith(setType: valueChanged),
                               widget.exercise.id,
+                              set.copyWith(setType: valueChanged),
+                              index,
                             );
                           },
                         ),
@@ -248,14 +253,15 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                             ),
                             style: theme.textTheme.bodySmall,
                             textAlign: TextAlign.center,
-                            onChanged: (String valueChanged) {
+                            onSubmitted: (String valueChanged) {
                               workoutLogNotifier.updateSet(
+                                widget.exercise.id,
                                 set.copyWith(
                                   weight: valueChanged.isEmpty
                                       ? null
                                       : double.parse(valueChanged),
                                 ),
-                                widget.exercise.id,
+                                index,
                               );
                             },
                           ),
@@ -263,7 +269,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                       ),
                       Expanded(
                         child: DropdownMenu<Units>(
-                          hintText: "--",
+                          hintText: "-",
                           initialSelection: set.units,
                           dropdownMenuEntries: Units.values.map((units) {
                             return DropdownMenuEntry(
@@ -282,8 +288,9 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                           showTrailingIcon: false,
                           onSelected: (Units? valueChanged) {
                             workoutLogNotifier.updateSet(
-                              set.copyWith(units: valueChanged),
                               widget.exercise.id,
+                              set.copyWith(units: valueChanged),
+                              index,
                             );
                           },
                         ),
@@ -303,14 +310,15 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                                   : "-",
                             ),
                             textAlign: TextAlign.center,
-                            onChanged: (String valueChanged) {
+                            onSubmitted: (String valueChanged) {
                               workoutLogNotifier.updateSet(
+                                widget.exercise.id,
                                 set.copyWith(
                                   reps: valueChanged.isEmpty
                                       ? null
                                       : int.parse(valueChanged),
                                 ),
-                                widget.exercise.id,
+                                index,
                               );
                             },
                           ),
