@@ -131,7 +131,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     }
   }
 
-  void duplicateLastSetOfExercise(String exerciseId) {
+  void duplicateSetOfExercise(String exerciseId, int setIndex) {
     final targetExerciseIndex = state.workout.exercises.indexWhere(
       (e) => e.id == exerciseId,
     );
@@ -139,33 +139,40 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
       state = state.copyWith(
         error: "Cannot duplicate a set of an exercise outside of this workout.",
       );
+      return;
     }
 
     final targetExercise = state.workout.exercises[targetExerciseIndex];
-    final lastSetOfTargetExercise = targetExercise.sets.lastOrNull;
 
-    // Do nothing if there are no sets
-    if (lastSetOfTargetExercise == null) return;
+    // If the index is out of bounds change state and return early.
+    if (targetExercise.sets.isEmpty || targetExercise.sets.length <= setIndex) {
+      state = state.copyWith(
+        error: "Target set index [$setIndex] for duplication is out of bounds.",
+      );
+      return;
+    }
+
+    final targetSet = targetExercise.sets[setIndex];
 
     final newSet = ExerciseSet(
-      order: lastSetOfTargetExercise.order + 1,
-      setType: lastSetOfTargetExercise.setType,
-      weight: lastSetOfTargetExercise.weight,
-      units: lastSetOfTargetExercise.units,
-      reps: lastSetOfTargetExercise.reps,
-      restTime: lastSetOfTargetExercise.restTime,
+      order: targetSet.order + 1,
+      setType: targetSet.setType,
+      weight: targetSet.weight,
+      units: targetSet.units,
+      reps: targetSet.reps,
+      restTime: targetSet.restTime,
     );
 
-    // Copy the existing exercise, but with a new list for the sets (triggering a rebuild of the record_exercise widget)
+    // Copy the existing exercise, but with a new list for the sets (triggering a rebuild of the exercise_table widget only)
     final copyOfTargetExercise = targetExercise.copyWith(
-      sets: [...targetExercise.sets, newSet],
+      sets: [...targetExercise.sets]..insert(setIndex + 1, newSet),
     );
 
     /*
-      Optimistic update
-      Copy the existing exercises list (avoiding triggering a rebuild of the workout_log widget)
-      Replace the target exercise with the copy that was just created above
-    */
+        Optimistic update
+        Copy the existing exercises list (avoiding triggering a rebuild of the workout_log widget)
+        Replace the target exercise with the copy that was just created above
+      */
     state = state.copyWith(
       workout: state.workout.copyWith(
         exercises: state.workout.exercises
@@ -173,32 +180,38 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
       ),
     );
     try {
-      _updateOrCreateWorkoutUsecase.createSet(newSet, exerciseId);
+      // todo: update database - which includes updating the order property of each set that was displaced
+      // _updateOrCreateWorkoutUsecase.createSet(newSet, exerciseId);
     } catch (error) {
       // todo: handle exceptions
       rethrow;
     }
   }
 
-  void removeLastSetFromExercise(String exerciseId) {
+  void removeSetFromExercise(String exerciseId, int setIndex) {
     final targetExerciseIndex = state.workout.exercises.indexWhere(
       (e) => e.id == exerciseId,
     );
     if (targetExerciseIndex == -1) {
       state = state.copyWith(
-        error: "Cannot remove a set of an exercise outside of this workout.",
+        error: "Cannot duplicate a set of an exercise outside of this workout.",
       );
+      return;
     }
 
     final targetExercise = state.workout.exercises[targetExerciseIndex];
-    final lastSetOfTargetExercise = targetExercise.sets.lastOrNull;
 
-    // Do nothing if there are no sets
-    if (lastSetOfTargetExercise == null) return;
+    // If the index is out of bounds change state and return early.
+    if (targetExercise.sets.isEmpty || targetExercise.sets.length <= setIndex) {
+      state = state.copyWith(
+        error: "Target set index [$setIndex] for removal is out of bounds.",
+      );
+      return;
+    }
 
-    // Copy the existing exercise, but with a new list for the sets (triggering a rebuild of the record_exercise widget)
+    // Copy the existing exercise, but with a new list for the sets (triggering a rebuild of the exercise_table widget only)
     final copyOfTargetExercise = targetExercise.copyWith(
-      sets: [...targetExercise.sets]..removeLast(),
+      sets: [...targetExercise.sets]..removeAt(setIndex),
     );
 
     /*
@@ -213,10 +226,8 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
       ),
     );
     try {
-      _updateOrCreateWorkoutUsecase.removeSet(
-        lastSetOfTargetExercise,
-        exerciseId,
-      );
+      //todo: update database
+      // _updateOrCreateWorkoutUsecase.removeSet(lastSetOfTargetExercise, exerciseId);
     } catch (error) {
       // todo: handle exceptions
       rethrow;
