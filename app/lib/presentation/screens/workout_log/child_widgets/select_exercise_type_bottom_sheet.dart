@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/presentation/widgets/select_exercise_type_bottom_sheet/exercise_types_notifier.dart';
 
 import '../../../../data/entities/exercise_type.dart';
 import '../../../../data/entities/workout.dart';
+import '../view_model/exercise_types_notifier.dart';
 import '../view_model/workout_log_notifier.dart';
 
 class SelectExerciseTypeBottomSheet extends ConsumerWidget {

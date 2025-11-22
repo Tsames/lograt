@@ -6,7 +6,7 @@ import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_n
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 
 import '../../../data/entities/workout.dart';
-import 'child_widgets/exercise_table_widget.dart';
+import 'child_widgets/exercise_table/exercise_table_widget.dart';
 
 class WorkoutLogWidget extends ConsumerWidget {
   final Workout workout;
