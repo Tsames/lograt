@@ -10,22 +10,21 @@ import '../view_model/workout_log_notifier.dart';
 
 class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
     with TickerProviderStateMixin {
-  late final AnimationController _lastSetAnimationController =
-      AnimationController(duration: const Duration(seconds: 1), vsync: this);
-  late final Animation<double> _lastSetAnimation = CurvedAnimation(
-    parent: _lastSetAnimationController,
-    curve: Curves.easeInOutCubic,
-  );
+  late final Map<String, AnimationController> _setAnimationControllers = {};
+  late final Map<String, Animation<double>> _setAnimations = {};
+
+  Set<String> _previousSetIds = {};
 
   @override
   void initState() {
     super.initState();
-    _lastSetAnimationController.value = 1;
+    _previousSetIds = widget.exercise.sets.map((s) => s.id).toSet();
   }
 
   @override
   void dispose() {
-    _lastSetAnimationController.dispose();
+    for (final controller in _setAnimationControllers.values)
+      controller.dispose();
     super.dispose();
   }
 
@@ -39,13 +38,45 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
       ),
     );
 
+    final currentSetIds = sets.map((s) => s.id).toSet();
+
+    for (final set in sets) {
+      if (!_setAnimationControllers.containsKey(set.id)) {
+        // Determine if this is a new set
+        final isNewSet = !_previousSetIds.contains(set.id);
+
+        _setAnimationControllers[set.id] = AnimationController(
+          duration: const Duration(milliseconds: 500),
+          vsync: this,
+          value: isNewSet
+              ? 0.0
+              : 1.0, // Start at 0 for new sets, 1 for existing
+        );
+
+        _setAnimations[set.id] = CurvedAnimation(
+          parent: _setAnimationControllers[set.id]!,
+          curve: Curves.easeInOutCubic,
+        );
+
+        // Animate in if it's a new set
+        if (isNewSet) {
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _setAnimationControllers[set.id]!.forward(),
+          );
+        }
+      }
+    }
+
+    // Update previous set IDs for next build
+    _previousSetIds = currentSetIds;
+
     final workoutLogNotifier = ref.read(
       workoutLogProvider(widget.workout).notifier,
     );
     final theme = Theme.of(context);
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // <><><><><> Set Fields Header <><><><><>
         Container(
@@ -118,184 +149,190 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
             });
           },
           children: sets.mapIndexed((index, set) {
-            // Only build the final row wrapped in a SizeTransition, as this is the only row that is either added or removed
-            final isLastSet = index == sets.length - 1;
-            Widget rowWidget = _buildSetAsRow(
-              index,
-              set,
-              workoutLogNotifier,
-              theme,
+            final animationController = _setAnimationControllers[set.id];
+            return SizeTransition(
+              key: ValueKey(set.id),
+              sizeFactor: _setAnimations[set.id]!,
+              child: Dismissible(
+                key: Key(set.id),
+                confirmDismiss: (direction) async {
+                  if (direction == DismissDirection.endToStart) {
+                    // Swipe left - delete
+                    await animationController?.reverse();
+                    workoutLogNotifier.removeSetFromExercise(
+                      widget.exercise.id,
+                      index,
+                    );
+
+                    // Remove Controller and animation from state maps
+                    _setAnimationControllers.remove(set.id)?..dispose();
+                    _setAnimations.remove(set.id);
+
+                    return true; // Allow dismissal
+                  } else if (direction == DismissDirection.startToEnd) {
+                    // Swipe right - duplicate
+                    workoutLogNotifier.duplicateSetOfExercise(
+                      widget.exercise.id,
+                      index,
+                    );
+                    return false; // Don't dismiss, just animate back
+                  }
+                  return false;
+                },
+                background: Container(
+                  // Shows when swiping right
+                  color: theme.colorScheme.primary,
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(left: 16),
+                  child: Icon(Icons.copy, color: theme.colorScheme.onPrimary),
+                ),
+                secondaryBackground: Container(
+                  // Shows when swiping left
+                  color: theme.colorScheme.error,
+                  alignment: Alignment.centerRight,
+                  padding: EdgeInsets.only(right: 16),
+                  child: Icon(Icons.delete, color: theme.colorScheme.onError),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: BoxBorder.fromLTRB(
+                      bottom: BorderSide(
+                        width: 1,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: DropdownMenu<SetType>(
+                          hintText: "--",
+                          initialSelection: set.setType,
+                          dropdownMenuEntries: SetType.values.map((setType) {
+                            return DropdownMenuEntry(
+                              value: setType,
+                              label: setType.name,
+                            );
+                          }).toList(),
+                          inputDecorationTheme: InputDecorationTheme(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                            isDense: true,
+                          ),
+                          textStyle: theme.textTheme.bodySmall,
+                          textAlign: TextAlign.center,
+                          menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
+                          showTrailingIcon: false,
+                          onSelected: (SetType? valueChanged) {
+                            workoutLogNotifier.updateSet(
+                              set.copyWith(setType: valueChanged),
+                              widget.exercise.id,
+                            );
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                            keyboardType: TextInputType.number,
+                            controller: TextEditingController(
+                              text: set.weight != null
+                                  ? set.weight.toString()
+                                  : "-",
+                            ),
+                            style: theme.textTheme.bodySmall,
+                            textAlign: TextAlign.center,
+                            onChanged: (String valueChanged) {
+                              workoutLogNotifier.updateSet(
+                                set.copyWith(
+                                  weight: valueChanged.isEmpty
+                                      ? null
+                                      : double.parse(valueChanged),
+                                ),
+                                widget.exercise.id,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: DropdownMenu<Units>(
+                          hintText: "--",
+                          initialSelection: set.units,
+                          dropdownMenuEntries: Units.values.map((units) {
+                            return DropdownMenuEntry(
+                              value: units,
+                              label: units.abbreviation,
+                            );
+                          }).toList(),
+                          inputDecorationTheme: InputDecorationTheme(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                            isDense: true,
+                          ),
+                          textStyle: theme.textTheme.bodySmall,
+                          textAlign: TextAlign.center,
+                          menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
+                          showTrailingIcon: false,
+                          onSelected: (Units? valueChanged) {
+                            workoutLogNotifier.updateSet(
+                              set.copyWith(units: valueChanged),
+                              widget.exercise.id,
+                            );
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                            keyboardType: TextInputType.number,
+                            style: theme.textTheme.bodySmall,
+                            controller: TextEditingController(
+                              text: set.reps != null
+                                  ? set.reps.toString()
+                                  : "-",
+                            ),
+                            textAlign: TextAlign.center,
+                            onChanged: (String valueChanged) {
+                              workoutLogNotifier.updateSet(
+                                set.copyWith(
+                                  reps: valueChanged.isEmpty
+                                      ? null
+                                      : int.parse(valueChanged),
+                                ),
+                                widget.exercise.id,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      ReorderableDragStartListener(
+                        index: index,
+                        child: Icon(
+                          Icons.drag_indicator_rounded,
+                          size: 12,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             );
-            if (isLastSet) {
-              return SizeTransition(
-                key: ValueKey(set.id),
-                sizeFactor: _lastSetAnimation,
-                child: rowWidget,
-              );
-            } else {
-              return Container(key: ValueKey(set.id), child: rowWidget);
-            }
           }).toList(),
         ),
         const SizedBox(height: 20),
       ],
-    );
-  }
-
-  Widget _buildSetAsRow(
-    int index,
-    ExerciseSet set,
-    WorkoutLogNotifier workoutLogNotifier,
-    ThemeData theme,
-  ) {
-    return Dismissible(
-      key: Key(set.id),
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.endToStart) {
-          // Swipe left - delete
-          // workoutLogNotifier.removeSet(widget.exercise.id, set.id);
-          return true; // Allow dismissal
-        } else if (direction == DismissDirection.startToEnd) {
-          // Swipe right - duplicate
-          // workoutLogNotifier.duplicateSet(widget.exercise.id, set.id);
-          return false; // Don't dismiss, just animate back
-        }
-        return false;
-      },
-      background: Container(
-        // Shows when swiping right
-        color: Colors.blue,
-        alignment: Alignment.centerLeft,
-        padding: EdgeInsets.only(left: 16),
-        child: Icon(Icons.copy, color: Colors.white),
-      ),
-      secondaryBackground: Container(
-        // Shows when swiping left
-        color: Colors.red,
-        alignment: Alignment.centerRight,
-        padding: EdgeInsets.only(right: 16),
-        child: Icon(Icons.delete, color: Colors.white),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          border: BoxBorder.fromLTRB(
-            bottom: BorderSide(width: 1, color: theme.colorScheme.secondary),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: DropdownMenu<SetType>(
-                hintText: "--",
-                initialSelection: set.setType,
-                dropdownMenuEntries: SetType.values.map((setType) {
-                  return DropdownMenuEntry(value: setType, label: setType.name);
-                }).toList(),
-                inputDecorationTheme: InputDecorationTheme(
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
-                  isDense: true,
-                ),
-                textStyle: theme.textTheme.bodySmall,
-                textAlign: TextAlign.center,
-                menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
-                showTrailingIcon: false,
-                onSelected: (SetType? valueChanged) {
-                  workoutLogNotifier.updateSet(
-                    set.copyWith(setType: valueChanged),
-                    widget.exercise.id,
-                  );
-                },
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: TextField(
-                  decoration: const InputDecoration(border: InputBorder.none),
-                  keyboardType: TextInputType.number,
-                  controller: TextEditingController(
-                    text: set.weight != null ? set.weight.toString() : "-",
-                  ),
-                  style: theme.textTheme.bodySmall,
-                  textAlign: TextAlign.center,
-                  onChanged: (String valueChanged) {
-                    workoutLogNotifier.updateSet(
-                      set.copyWith(
-                        weight: valueChanged.isEmpty
-                            ? null
-                            : double.parse(valueChanged),
-                      ),
-                      widget.exercise.id,
-                    );
-                  },
-                ),
-              ),
-            ),
-            Expanded(
-              child: DropdownMenu<Units>(
-                hintText: "--",
-                initialSelection: set.units,
-                dropdownMenuEntries: Units.values.map((units) {
-                  return DropdownMenuEntry(
-                    value: units,
-                    label: units.abbreviation,
-                  );
-                }).toList(),
-                inputDecorationTheme: InputDecorationTheme(
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
-                  isDense: true,
-                ),
-                textStyle: theme.textTheme.bodySmall,
-                textAlign: TextAlign.center,
-                menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
-                showTrailingIcon: false,
-                onSelected: (Units? valueChanged) {
-                  workoutLogNotifier.updateSet(
-                    set.copyWith(units: valueChanged),
-                    widget.exercise.id,
-                  );
-                },
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: TextField(
-                  decoration: const InputDecoration(border: InputBorder.none),
-                  keyboardType: TextInputType.number,
-                  style: theme.textTheme.bodySmall,
-                  controller: TextEditingController(
-                    text: set.reps != null ? set.reps.toString() : "-",
-                  ),
-                  textAlign: TextAlign.center,
-                  onChanged: (String valueChanged) {
-                    workoutLogNotifier.updateSet(
-                      set.copyWith(
-                        reps: valueChanged.isEmpty
-                            ? null
-                            : int.parse(valueChanged),
-                      ),
-                      widget.exercise.id,
-                    );
-                  },
-                ),
-              ),
-            ),
-            ReorderableDragStartListener(
-              index: index,
-              child: Icon(
-                Icons.drag_indicator_rounded,
-                size: 12,
-                color: theme.colorScheme.onSurface,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
