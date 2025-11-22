@@ -2,15 +2,14 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/presentation/screens/workout_log/child_widgets/exercise_table_widget.dart';
 
-import '../../../../data/entities/exercise_set.dart';
-import '../../../../data/entities/set_type.dart';
-import '../../../../data/entities/units.dart';
-import '../view_model/workout_log_notifier.dart';
+import '../../../../../data/entities/exercise_set.dart';
+import '../../../../../data/entities/set_type.dart';
+import '../../../../../data/entities/units.dart';
+import '../../view_model/workout_log_notifier.dart';
+import 'exercise_table_widget.dart';
 
-class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
-    with TickerProviderStateMixin {
+class ExerciseTableState extends ConsumerState<ExerciseTableWidget> with TickerProviderStateMixin {
   late final Map<String, AnimationController> _setAnimationControllers = {};
   late final Map<String, Animation<double>> _setAnimations = {};
 
@@ -24,25 +23,20 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
 
   @override
   void dispose() {
-    for (final controller in _setAnimationControllers.values)
-      controller.dispose();
+    for (final controller in _setAnimationControllers.values) controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     if (kDebugMode) {
-      debugPrint(
-        "Building Exercise Table for exercise: ${widget.exercise.id} - order: ${widget.exercise.order}",
-      );
+      debugPrint("Building Exercise Table for exercise: ${widget.exercise.id} - order: ${widget.exercise.order}");
     }
 
     final sets = ref.watch(
-      workoutLogProvider(widget.workout).select(
-        (state) => state.workout.exercises
-            .firstWhere((e) => e.id == widget.exercise.id)
-            .sets,
-      ),
+      workoutLogProvider(
+        widget.workout,
+      ).select((state) => state.workout.exercises.firstWhere((e) => e.id == widget.exercise.id).sets),
     );
 
     final currentSetIds = sets.map((s) => s.id).toSet();
@@ -55,9 +49,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
         _setAnimationControllers[set.id] = AnimationController(
           duration: const Duration(milliseconds: 500),
           vsync: this,
-          value: isNewSet
-              ? 0.0
-              : 1.0, // Start at 0 for new sets, 1 for existing
+          value: isNewSet ? 0.0 : 1.0, // Start at 0 for new sets, 1 for existing
         );
 
         _setAnimations[set.id] = CurvedAnimation(
@@ -74,9 +66,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
 
     _previousSetIds = currentSetIds;
 
-    final workoutLogNotifier = ref.read(
-      workoutLogProvider(widget.workout).notifier,
-    );
+    final workoutLogNotifier = ref.read(workoutLogProvider(widget.workout).notifier);
     final theme = Theme.of(context);
 
     return Column(
@@ -85,50 +75,32 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
         // <><><><><> Set Fields Header <><><><><>
         Container(
           decoration: BoxDecoration(
-            border: BoxBorder.fromLTRB(
-              bottom: BorderSide(width: 1, color: theme.colorScheme.secondary),
-            ),
+            border: BoxBorder.fromLTRB(bottom: BorderSide(width: 1, color: theme.colorScheme.secondary)),
           ),
           child: Row(
             children: [
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.all(4.0),
-                  child: Text(
-                    "Set Type",
-                    style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Text("Set Type", style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
                 ),
               ),
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.all(4.0),
-                  child: Text(
-                    "Weight",
-                    style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Text("Weight", style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
                 ),
               ),
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.all(4.0),
-                  child: Text(
-                    "Units",
-                    style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Text("Units", style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
                 ),
               ),
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.all(4.0),
-                  child: Text(
-                    "Reps",
-                    style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Text("Reps", style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
                 ),
               ),
             ],
@@ -163,10 +135,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                   if (direction == DismissDirection.endToStart) {
                     // Swipe left - delete
                     await animationController?.reverse();
-                    workoutLogNotifier.removeSetFromExercise(
-                      widget.exercise.id,
-                      index,
-                    );
+                    workoutLogNotifier.removeSetFromExercise(widget.exercise.id, index);
 
                     // Remove Controller and animation from state maps
                     _setAnimationControllers.remove(set.id)?..dispose();
@@ -175,10 +144,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                     return true; // Allow dismissal
                   } else if (direction == DismissDirection.startToEnd) {
                     // Swipe right - duplicate
-                    workoutLogNotifier.duplicateSetOfExercise(
-                      widget.exercise.id,
-                      index,
-                    );
+                    workoutLogNotifier.duplicateSetOfExercise(widget.exercise.id, index);
                     return false; // Don't dismiss, just animate back
                   }
                   return false;
@@ -199,12 +165,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                 ),
                 child: Container(
                   decoration: BoxDecoration(
-                    border: BoxBorder.fromLTRB(
-                      bottom: BorderSide(
-                        width: 1,
-                        color: theme.colorScheme.secondary,
-                      ),
-                    ),
+                    border: BoxBorder.fromLTRB(bottom: BorderSide(width: 1, color: theme.colorScheme.secondary)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -215,10 +176,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                           hintText: "-",
                           initialSelection: set.setType,
                           dropdownMenuEntries: SetType.values.map((setType) {
-                            return DropdownMenuEntry(
-                              value: setType,
-                              label: setType.name,
-                            );
+                            return DropdownMenuEntry(value: setType, label: setType.name);
                           }).toList(),
                           inputDecorationTheme: InputDecorationTheme(
                             border: InputBorder.none,
@@ -242,25 +200,15 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                         child: Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: TextField(
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                            ),
+                            decoration: const InputDecoration(border: InputBorder.none),
                             keyboardType: TextInputType.number,
-                            controller: TextEditingController(
-                              text: set.weight != null
-                                  ? set.weight.toString()
-                                  : "-",
-                            ),
+                            controller: TextEditingController(text: set.weight != null ? set.weight.toString() : "-"),
                             style: theme.textTheme.bodySmall,
                             textAlign: TextAlign.center,
                             onSubmitted: (String valueChanged) {
                               workoutLogNotifier.updateSet(
                                 widget.exercise.id,
-                                set.copyWith(
-                                  weight: valueChanged.isEmpty
-                                      ? null
-                                      : double.parse(valueChanged),
-                                ),
+                                set.copyWith(weight: valueChanged.isEmpty ? null : double.parse(valueChanged)),
                                 index,
                               );
                             },
@@ -272,10 +220,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                           hintText: "-",
                           initialSelection: set.units,
                           dropdownMenuEntries: Units.values.map((units) {
-                            return DropdownMenuEntry(
-                              value: units,
-                              label: units.abbreviation,
-                            );
+                            return DropdownMenuEntry(value: units, label: units.abbreviation);
                           }).toList(),
                           inputDecorationTheme: InputDecorationTheme(
                             border: InputBorder.none,
@@ -287,11 +232,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                           menuStyle: MenuStyle(alignment: Alignment.bottomLeft),
                           showTrailingIcon: false,
                           onSelected: (Units? valueChanged) {
-                            workoutLogNotifier.updateSet(
-                              widget.exercise.id,
-                              set.copyWith(units: valueChanged),
-                              index,
-                            );
+                            workoutLogNotifier.updateSet(widget.exercise.id, set.copyWith(units: valueChanged), index);
                           },
                         ),
                       ),
@@ -299,25 +240,15 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                         child: Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: TextField(
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                            ),
+                            decoration: const InputDecoration(border: InputBorder.none),
                             keyboardType: TextInputType.number,
                             style: theme.textTheme.bodySmall,
-                            controller: TextEditingController(
-                              text: set.reps != null
-                                  ? set.reps.toString()
-                                  : "-",
-                            ),
+                            controller: TextEditingController(text: set.reps != null ? set.reps.toString() : "-"),
                             textAlign: TextAlign.center,
                             onSubmitted: (String valueChanged) {
                               workoutLogNotifier.updateSet(
                                 widget.exercise.id,
-                                set.copyWith(
-                                  reps: valueChanged.isEmpty
-                                      ? null
-                                      : int.parse(valueChanged),
-                                ),
+                                set.copyWith(reps: valueChanged.isEmpty ? null : int.parse(valueChanged)),
                                 index,
                               );
                             },
@@ -326,11 +257,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                       ),
                       ReorderableDragStartListener(
                         index: index,
-                        child: Icon(
-                          Icons.drag_indicator_rounded,
-                          size: 12,
-                          color: theme.colorScheme.onSurface,
-                        ),
+                        child: Icon(Icons.drag_indicator_rounded, size: 12, color: theme.colorScheme.onSurface),
                       ),
                     ],
                   ),

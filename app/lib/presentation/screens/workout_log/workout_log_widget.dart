@@ -6,7 +6,7 @@ import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_n
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 
 import '../../../data/entities/workout.dart';
-import 'child_widgets/exercise_table_widget.dart';
+import 'child_widgets/exercise_table/exercise_table_widget.dart';
 
 class WorkoutLogWidget extends ConsumerWidget {
   final Workout workout;
@@ -16,28 +16,18 @@ class WorkoutLogWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (kDebugMode) {
-      debugPrint(
-        "Building Workout Log for exercise: ${workout.id} - ${workout.title}",
-      );
+      debugPrint("Building Workout Log for exercise: ${workout.id} - ${workout.title}");
     }
 
-    final exercises = ref.watch(
-      workoutLogProvider(workout).select((state) => state.workout.exercises),
-    );
+    final exercises = ref.watch(workoutLogProvider(workout).select((state) => state.workout.exercises));
     return Scaffold(
       appBar: AppBar(
         title: Text(workout.title ?? "New Workout"),
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back_ios),
-        ),
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios)),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(16),
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 8),
-            child: Text(workout.date.toHumanFriendlyFormat()),
-          ),
+          child: Padding(padding: EdgeInsets.symmetric(vertical: 8), child: Text(workout.date.toHumanFriendlyFormat())),
         ),
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz))],
       ),
@@ -45,16 +35,12 @@ class WorkoutLogWidget extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: ListView.separated(
           itemCount: exercises.length,
-          separatorBuilder: (BuildContext context, int index) =>
-              const SizedBox(height: 20),
+          separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 20),
           itemBuilder: (BuildContext context, int index) {
             final exerciseId = exercises[index].id;
             return Card(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Column(
                   children: [
                     ExerciseTypeTextButton(workout, exerciseId),

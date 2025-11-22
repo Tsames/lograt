@@ -1,4 +1,4 @@
-import '../../../data/entities/exercise_type.dart';
+import '../../../../data/entities/exercise_type.dart';
 
 class ExerciseTypesNotifierState {
   final List<ExerciseType> exerciseTypes;
