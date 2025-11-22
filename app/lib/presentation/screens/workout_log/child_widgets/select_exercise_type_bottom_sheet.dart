@@ -11,7 +11,12 @@ class SelectExerciseTypeBottomSheet extends ConsumerWidget {
   final String exerciseId;
   final ExerciseType? selectedType;
 
-  const SelectExerciseTypeBottomSheet(this.workout, this.exerciseId, this.selectedType, {super.key});
+  const SelectExerciseTypeBottomSheet(
+    this.workout,
+    this.exerciseId,
+    this.selectedType, {
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,7 +31,10 @@ class SelectExerciseTypeBottomSheet extends ConsumerWidget {
       height: 600,
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(40),
+          topRight: Radius.circular(40),
+        ),
       ),
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
       child: Center(
@@ -60,7 +68,10 @@ class SelectExerciseTypeBottomSheet extends ConsumerWidget {
                     return InkWell(
                       onTap: () {
                         // Todo: On tap, change state to selected exercise type and close bottom sheet
-                        workoutLogNotifier.updateExerciseType(exerciseTypes[index], exerciseId);
+                        workoutLogNotifier.updateExerciseType(
+                          exerciseTypes[index],
+                          exerciseId,
+                        );
                         Navigator.pop(context);
                       },
                       child: ListTile(

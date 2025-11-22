@@ -7,7 +7,8 @@ import 'exercise_types_notifier_state.dart';
 class ExerciseTypesNotifier extends StateNotifier<ExerciseTypesNotifierState> {
   final GetPaginatedExerciseTypesUsecase _getExerciseTypesUsecase;
 
-  ExerciseTypesNotifier(this._getExerciseTypesUsecase) : super(ExerciseTypesNotifierState()) {
+  ExerciseTypesNotifier(this._getExerciseTypesUsecase)
+    : super(ExerciseTypesNotifierState()) {
     loadExerciseTypes();
   }
 
@@ -28,7 +29,10 @@ class ExerciseTypesNotifier extends StateNotifier<ExerciseTypesNotifierState> {
   }
 }
 
-final exerciseTypesProvider = StateNotifierProvider<ExerciseTypesNotifier, ExerciseTypesNotifierState>((ref) {
-  final getExerciseTypesUsecase = ref.read(getExerciseTypesUsecaseProvider);
-  return ExerciseTypesNotifier(getExerciseTypesUsecase);
-});
+final exerciseTypesProvider =
+    StateNotifierProvider<ExerciseTypesNotifier, ExerciseTypesNotifierState>((
+      ref,
+    ) {
+      final getExerciseTypesUsecase = ref.read(getExerciseTypesUsecaseProvider);
+      return ExerciseTypesNotifier(getExerciseTypesUsecase);
+    });
