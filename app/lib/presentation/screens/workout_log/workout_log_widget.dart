@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/presentation/screens/workout_log/child_widgets/exercise_type_text_button.dart';
@@ -14,6 +15,12 @@ class WorkoutLogWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (kDebugMode) {
+      debugPrint(
+        "Building Workout Log for exercise: ${workout.id} - ${workout.title}",
+      );
+    }
+
     final exercises = ref.watch(
       workoutLogProvider(workout).select((state) => state.workout.exercises),
     );

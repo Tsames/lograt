@@ -73,9 +73,39 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     }
   }
 
-  void updateSet(ExerciseSet set, String exerciseId) async {
+  void updateSet(String exerciseId, ExerciseSet newSet, int setIndex) async {
+    final targetExerciseIndex = state.workout.exercises.indexWhere(
+      (e) => e.id == exerciseId,
+    );
+    if (targetExerciseIndex == -1) {
+      state = state.copyWith(
+        error: "Cannot update a set for an exercise outside of this workout.",
+      );
+      return;
+    }
+
+    final targetExercise = state.workout.exercises[targetExerciseIndex];
+
+    // If the index is out of bounds change state and return early.
+    if (targetExercise.sets.isEmpty || targetExercise.sets.length <= setIndex) {
+      state = state.copyWith(
+        error: "Target set index [$setIndex] for duplication is out of bounds.",
+      );
+      return;
+    }
+
+    // Copy existing state with existing sets but just change set data (does not trigger a rebuild of exercise_table widget)
+    state = state.copyWith(
+      workout: state.workout.copyWith(
+        exercises: state.workout.exercises
+          ..[targetExerciseIndex] = targetExercise.copyWith(
+            sets: [...targetExercise.sets]..[setIndex] = newSet,
+          ),
+      ),
+    );
+
     try {
-      await _updateOrCreateWorkoutUsecase.updateSet(set, exerciseId);
+      await _updateOrCreateWorkoutUsecase.updateSet(newSet, exerciseId);
     } catch (e) {
       state = state.copyWith(error: "An error occurred while editing a set.");
     }
