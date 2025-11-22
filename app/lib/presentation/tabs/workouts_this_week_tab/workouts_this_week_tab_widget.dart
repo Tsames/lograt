@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/presentation/tabs/workouts_this_week_tab/view_model/workouts_this_week_tab_provider.dart';
 import 'package:lograt/presentation/widgets/workout_list_tile.dart';
-
-import 'view_model/workouts_this_week_tab_provider.dart';
 
 class WorkoutsThisWeekTabWidget extends ConsumerWidget {
   const WorkoutsThisWeekTabWidget({super.key});
@@ -44,13 +43,13 @@ class WorkoutsThisWeekTabWidget extends ConsumerWidget {
     // Handle empty state
     if (workouts.isEmpty) {
       return Center(
-        child: const Text("No workouts yet.", style: TextStyle(fontSize: 18)),
+        child: const Text('No workouts yet.', style: TextStyle(fontSize: 18)),
       );
     }
 
     return Column(
       children: [
-        Text("This Week", style: textTheme.headlineSmall),
+        Text('This Week', style: textTheme.headlineSmall),
         Divider(),
         Expanded(
           child: ListView.builder(

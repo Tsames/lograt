@@ -1,7 +1,6 @@
+import 'package:lograt/data/entities/exercise_set.dart';
+import 'package:lograt/data/entities/exercise_type.dart';
 import 'package:lograt/util/uuidv7.dart';
-
-import 'exercise_set.dart';
-import 'exercise_type.dart';
 
 class Exercise {
   final String id;

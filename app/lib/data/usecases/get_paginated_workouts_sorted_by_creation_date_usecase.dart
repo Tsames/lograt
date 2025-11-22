@@ -1,6 +1,6 @@
-import '../../util/paginated_results.dart';
-import '../entities/workout.dart';
-import '../repositories/workout_repository.dart';
+import 'package:lograt/data/entities/workout.dart';
+import 'package:lograt/data/repositories/workout_repository.dart';
+import 'package:lograt/util/paginated_results.dart';
 
 class GetPaginatedWorkoutsSortedByCreationDateUsecase {
   static const pageSize = 25;

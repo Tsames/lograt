@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../../data/entities/exercise_type.dart';
-import '../../../../data/entities/workout.dart';
-import '../view_model/exercise_types_notifier.dart';
-import '../view_model/workout_log_notifier.dart';
+import 'package:lograt/data/entities/exercise_type.dart';
+import 'package:lograt/data/entities/workout.dart';
+import 'package:lograt/presentation/screens/workout_log/view_model/exercise_types_notifier.dart';
+import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier.dart';
 
 class SelectExerciseTypeBottomSheet extends ConsumerWidget {
   final Workout workout;
@@ -42,7 +41,7 @@ class SelectExerciseTypeBottomSheet extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Select an Exercise"),
+            Text('Select an Exercise'),
             SizedBox(height: 20),
             Expanded(
               child: ShaderMask(

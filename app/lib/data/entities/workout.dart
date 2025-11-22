@@ -1,7 +1,6 @@
+import 'package:lograt/data/entities/exercise.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 import 'package:lograt/util/uuidv7.dart';
-
-import 'exercise.dart';
 
 class Workout {
   final String id;
@@ -47,5 +46,5 @@ class Workout {
 
   @override
   String toString() =>
-      "Workout(id: $id, date: ${date.toHumanFriendlyFormat()}, exercises: $exercises, title: $title, notes: $notes)";
+      'Workout(id: $id, date: ${date.toHumanFriendlyFormat()}, exercises: $exercises, title: $title, notes: $notes)';
 }

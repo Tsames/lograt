@@ -64,13 +64,13 @@ class WorkoutHistoryTabState extends ConsumerState<WorkoutHistoryTabWidget> {
     // Handle empty state
     if (workouts.isEmpty) {
       return Center(
-        child: const Text("No workouts yet.", style: TextStyle(fontSize: 18)),
+        child: const Text('No workouts yet.', style: TextStyle(fontSize: 18)),
       );
     }
 
     return Column(
       children: [
-        Text("Workout History", style: textTheme.headlineSmall),
+        Text('Workout History', style: textTheme.headlineSmall),
         Divider(),
         Expanded(
           child: ListView.builder(

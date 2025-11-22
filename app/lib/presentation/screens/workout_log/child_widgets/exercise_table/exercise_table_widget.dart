@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/data/entities/exercise.dart';
+import 'package:lograt/data/entities/workout.dart';
 import 'package:lograt/presentation/screens/workout_log/child_widgets/exercise_table/exercise_table_state.dart';
-
-import '../../../../../data/entities/exercise.dart';
-import '../../../../../data/entities/workout.dart';
 
 class ExerciseTableWidget extends ConsumerStatefulWidget {
   final Workout workout;

@@ -1,4 +1,4 @@
-import '../../../../data/entities/workout.dart';
+import 'package:lograt/data/entities/workout.dart';
 
 class WorkoutLogNotifierState {
   final Workout workout;

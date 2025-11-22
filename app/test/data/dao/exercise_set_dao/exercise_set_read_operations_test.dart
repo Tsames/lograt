@@ -96,7 +96,7 @@ void main() {
 
     test('should return null when exercise set does not exist', () async {
       // Try to retrieve an exercise set that definitely doesn't exist
-      final nonExistentSet = await exerciseSetDao.getById("99999");
+      final nonExistentSet = await exerciseSetDao.getById('99999');
 
       // Should handle missing data gracefully
       expect(nonExistentSet, isNull);

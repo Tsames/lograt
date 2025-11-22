@@ -2,9 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'app.dart';
-import 'data/providers.dart';
+import 'package:lograt/app.dart';
+import 'package:lograt/data/providers.dart';
 
 void main() async {
   SystemChrome.setSystemUIOverlayStyle(

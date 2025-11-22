@@ -87,7 +87,7 @@ void main() {
       'should return false when trying to delete non-existent exercise set',
       () async {
         // Try to delete an exercise set that doesn't exist
-        final setIsDeleted = await exerciseSetDao.delete("99999");
+        final setIsDeleted = await exerciseSetDao.delete('99999');
 
         // Should indicate no rows were affected
         expect(setIsDeleted, equals(false));

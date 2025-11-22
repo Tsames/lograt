@@ -59,9 +59,9 @@ class AppDatabase {
   }
 
   static const workoutsTableName = 'workouts';
-  static const exerciseTypesTableName = "exercise_types";
-  static const exercisesTableName = "workout_exercises";
-  static const exerciseSetsTableName = "exercise_sets";
+  static const exerciseTypesTableName = 'exercise_types';
+  static const exercisesTableName = 'workout_exercises';
+  static const exerciseSetsTableName = 'exercise_sets';
 
   // Build the complete schema for new installations
   List<String> _buildInitializationScript() {

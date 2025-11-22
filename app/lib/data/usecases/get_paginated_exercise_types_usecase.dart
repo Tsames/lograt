@@ -1,6 +1,6 @@
-import '../../util/paginated_results.dart';
-import '../entities/exercise_type.dart';
-import '../repositories/workout_repository.dart';
+import 'package:lograt/data/entities/exercise_type.dart';
+import 'package:lograt/data/repositories/workout_repository.dart';
+import 'package:lograt/util/paginated_results.dart';
 
 class GetPaginatedExerciseTypesUsecase {
   static const pageSize = 50;

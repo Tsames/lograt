@@ -1,10 +1,10 @@
-import '../../util/extensions/beginning_of_the_week.dart';
-import '../entities/exercise.dart';
-import '../entities/exercise_set.dart';
-import '../entities/exercise_type.dart';
-import '../entities/set_type.dart';
-import '../entities/units.dart';
-import '../entities/workout.dart';
+import 'package:lograt/data/entities/exercise.dart';
+import 'package:lograt/data/entities/exercise_set.dart';
+import 'package:lograt/data/entities/exercise_type.dart';
+import 'package:lograt/data/entities/set_type.dart';
+import 'package:lograt/data/entities/units.dart';
+import 'package:lograt/data/entities/workout.dart';
+import 'package:lograt/util/extensions/beginning_of_the_week.dart';
 
 class SeedData {
   static final beginningOfTheWeek = DateTime.now().beginningOfTheWeek;

@@ -1,8 +1,7 @@
+import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/entities/exercise_set.dart';
 import 'package:lograt/data/models/exercise_set_model.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../database/app_database.dart';
 
 class ExerciseSetDao {
   final AppDatabase _db;

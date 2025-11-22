@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/data/providers.dart';
+import 'package:lograt/data/usecases/get_paginated_workouts_sorted_by_creation_date_usecase.dart';
 import 'package:lograt/presentation/tabs/workout_history_tab/view_model/workout_history_tab_notifier_state.dart';
-
-import '../../../../data/providers.dart';
-import '../../../../data/usecases/get_paginated_workouts_sorted_by_creation_date_usecase.dart';
 
 class WorkoutHistoryTabNotifier
     extends StateNotifier<WorkoutHistoryTabNotifierState> {

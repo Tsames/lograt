@@ -56,7 +56,7 @@ void main() {
       'should return false when trying to update non-existent exercise type',
       () async {
         final nonExistentExerciseType = ExerciseTypeModel(
-          id: "99999",
+          id: '99999',
           name: 'Ghost Exercise',
           description: 'This exercise type does not exist in the database',
         );

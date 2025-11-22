@@ -1,4 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/data/dao/exercise_dao.dart';
+import 'package:lograt/data/dao/exercise_set_dao.dart';
+import 'package:lograt/data/dao/exercise_type_dao.dart';
+import 'package:lograt/data/dao/workout_dao.dart';
+import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/repositories/workout_repository.dart';
 import 'package:lograt/data/usecases/get_full_workout_data_by_id_usecase.dart';
 import 'package:lograt/data/usecases/get_paginated_exercise_types_usecase.dart';
@@ -6,12 +11,6 @@ import 'package:lograt/data/usecases/get_paginated_workouts_sorted_by_creation_d
 import 'package:lograt/data/usecases/get_this_weeks_workouts_usecase.dart';
 import 'package:lograt/data/usecases/seed_data_usecase.dart';
 import 'package:lograt/data/usecases/update_or_create_workout_usecase.dart';
-
-import 'dao/exercise_dao.dart';
-import 'dao/exercise_set_dao.dart';
-import 'dao/exercise_type_dao.dart';
-import 'dao/workout_dao.dart';
-import 'database/app_database.dart';
 
 // --- Database provider ---
 
