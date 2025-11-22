@@ -1,4 +1,4 @@
-import '../../util/uuidv7.dart';
+import 'package:lograt/util/uuidv7.dart';
 
 class ExerciseType {
   final String id;

@@ -1,7 +1,6 @@
 import 'package:lograt/data/database/app_database.dart';
+import 'package:lograt/data/models/exercise_model.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../models/exercise_model.dart';
 
 /// Data Access Object operations for an Exercise
 /// This class handles all database operations related to exercises

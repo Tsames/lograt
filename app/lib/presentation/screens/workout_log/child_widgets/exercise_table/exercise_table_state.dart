@@ -2,12 +2,11 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../../../data/entities/exercise_set.dart';
-import '../../../../../data/entities/set_type.dart';
-import '../../../../../data/entities/units.dart';
-import '../../view_model/workout_log_notifier.dart';
-import 'exercise_table_widget.dart';
+import 'package:lograt/data/entities/exercise_set.dart';
+import 'package:lograt/data/entities/set_type.dart';
+import 'package:lograt/data/entities/units.dart';
+import 'package:lograt/presentation/screens/workout_log/child_widgets/exercise_table/exercise_table_widget.dart';
+import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier.dart';
 
 class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
     with TickerProviderStateMixin {
@@ -24,8 +23,9 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
 
   @override
   void dispose() {
-    for (final controller in _setAnimationControllers.values)
+    for (final controller in _setAnimationControllers.values) {
       controller.dispose();
+    }
     super.dispose();
   }
 
@@ -33,7 +33,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
   Widget build(BuildContext context) {
     if (kDebugMode) {
       debugPrint(
-        "Building Exercise Table for exercise: ${widget.exercise.id} - order: ${widget.exercise.order}",
+        'Building Exercise Table for exercise: ${widget.exercise.id} - order: ${widget.exercise.order}',
       );
     }
 
@@ -95,7 +95,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                 child: Padding(
                   padding: EdgeInsets.all(4.0),
                   child: Text(
-                    "Set Type",
+                    'Set Type',
                     style: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -105,7 +105,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                 child: Padding(
                   padding: EdgeInsets.all(4.0),
                   child: Text(
-                    "Weight",
+                    'Weight',
                     style: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -115,7 +115,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                 child: Padding(
                   padding: EdgeInsets.all(4.0),
                   child: Text(
-                    "Units",
+                    'Units',
                     style: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -125,7 +125,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                 child: Padding(
                   padding: EdgeInsets.all(4.0),
                   child: Text(
-                    "Reps",
+                    'Reps',
                     style: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -169,7 +169,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                     );
 
                     // Remove Controller and animation from state maps
-                    _setAnimationControllers.remove(set.id)?..dispose();
+                    _setAnimationControllers.remove(set.id)?.dispose();
                     _setAnimations.remove(set.id);
 
                     return true; // Allow dismissal
@@ -212,7 +212,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                     children: [
                       Expanded(
                         child: DropdownMenu<SetType>(
-                          hintText: "-",
+                          hintText: '-',
                           initialSelection: set.setType,
                           dropdownMenuEntries: SetType.values.map((setType) {
                             return DropdownMenuEntry(
@@ -249,7 +249,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                             controller: TextEditingController(
                               text: set.weight != null
                                   ? set.weight.toString()
-                                  : "-",
+                                  : '-',
                             ),
                             style: theme.textTheme.bodySmall,
                             textAlign: TextAlign.center,
@@ -269,7 +269,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                       ),
                       Expanded(
                         child: DropdownMenu<Units>(
-                          hintText: "-",
+                          hintText: '-',
                           initialSelection: set.units,
                           dropdownMenuEntries: Units.values.map((units) {
                             return DropdownMenuEntry(
@@ -307,7 +307,7 @@ class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
                             controller: TextEditingController(
                               text: set.reps != null
                                   ? set.reps.toString()
-                                  : "-",
+                                  : '-',
                             ),
                             textAlign: TextAlign.center,
                             onSubmitted: (String valueChanged) {

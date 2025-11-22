@@ -1,20 +1,19 @@
+import 'package:lograt/data/dao/exercise_dao.dart';
+import 'package:lograt/data/dao/exercise_set_dao.dart';
+import 'package:lograt/data/dao/exercise_type_dao.dart';
+import 'package:lograt/data/dao/workout_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
+import 'package:lograt/data/database/seed_data.dart';
+import 'package:lograt/data/entities/exercise.dart';
+import 'package:lograt/data/entities/exercise_set.dart';
+import 'package:lograt/data/entities/exercise_type.dart';
+import 'package:lograt/data/entities/workout.dart';
+import 'package:lograt/data/exceptions/workout_exceptions.dart';
+import 'package:lograt/data/models/exercise_model.dart';
+import 'package:lograt/data/models/exercise_set_model.dart';
+import 'package:lograt/data/models/exercise_type_model.dart';
+import 'package:lograt/data/models/workout_model.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../dao/exercise_dao.dart';
-import '../dao/exercise_set_dao.dart';
-import '../dao/exercise_type_dao.dart';
-import '../dao/workout_dao.dart';
-import '../database/seed_data.dart';
-import '../entities/exercise.dart';
-import '../entities/exercise_set.dart';
-import '../entities/exercise_type.dart';
-import '../entities/workout.dart';
-import '../exceptions/workout_exceptions.dart';
-import '../models/exercise_model.dart';
-import '../models/exercise_set_model.dart';
-import '../models/exercise_type_model.dart';
-import '../models/workout_model.dart';
 
 class WorkoutRepository {
   final AppDatabase _db;
@@ -142,7 +141,7 @@ class WorkoutRepository {
             .toList();
 
         return exerciseModel.toEntity(
-          exerciseTypeModel != null ? exerciseTypeModel.toEntity() : null,
+          exerciseTypeModel?.toEntity(),
           exerciseSetEntities,
         );
       }).toList();

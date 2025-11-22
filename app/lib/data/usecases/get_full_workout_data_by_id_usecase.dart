@@ -1,5 +1,5 @@
-import '../entities/workout.dart';
-import '../repositories/workout_repository.dart';
+import 'package:lograt/data/entities/workout.dart';
+import 'package:lograt/data/repositories/workout_repository.dart';
 
 class GetFullWorkoutDataByIdUsecase {
   final WorkoutRepository _repository;

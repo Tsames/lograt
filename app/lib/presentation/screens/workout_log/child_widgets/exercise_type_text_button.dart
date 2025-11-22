@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/data/entities/workout.dart';
 import 'package:lograt/presentation/screens/workout_log/child_widgets/select_exercise_type_bottom_sheet.dart';
-
-import '../../../../data/entities/workout.dart';
-import '../view_model/workout_log_notifier.dart';
+import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier.dart';
 
 class ExerciseTypeTextButton extends ConsumerWidget {
   final Workout workout;
@@ -34,11 +33,11 @@ class ExerciseTypeTextButton extends ConsumerWidget {
           },
         );
       },
+      style: ButtonStyle(),
       child: Text(switch (exerciseType) {
-        null => "Select an Exercise",
+        null => 'Select an Exercise',
         _ => exerciseType.name,
       }, style: theme.textTheme.labelLarge),
-      style: ButtonStyle(),
     );
   }
 }

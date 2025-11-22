@@ -1,15 +1,14 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/data/entities/exercise_set.dart';
 import 'package:lograt/data/entities/exercise_type.dart';
+import 'package:lograt/data/entities/set_type.dart';
+import 'package:lograt/data/entities/units.dart';
+import 'package:lograt/data/entities/workout.dart';
+import 'package:lograt/data/providers.dart';
 import 'package:lograt/data/usecases/get_full_workout_data_by_id_usecase.dart';
 import 'package:lograt/data/usecases/update_or_create_workout_usecase.dart';
 import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier_state.dart';
-
-import '../../../../data/entities/exercise_set.dart';
-import '../../../../data/entities/set_type.dart';
-import '../../../../data/entities/units.dart';
-import '../../../../data/entities/workout.dart';
-import '../../../../data/providers.dart';
 
 class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
   final GetFullWorkoutDataByIdUsecase _getFullWorkoutDataByIdUsecase;
@@ -50,7 +49,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     if (targetExerciseIndex == -1) {
       state = state.copyWith(
         error:
-            "Cannot change exercise type for a an exercise outside of this workout.",
+            'Cannot change exercise type for a an exercise outside of this workout.',
       );
     }
 
@@ -79,7 +78,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     );
     if (targetExerciseIndex == -1) {
       state = state.copyWith(
-        error: "Cannot update a set for an exercise outside of this workout.",
+        error: 'Cannot update a set for an exercise outside of this workout.',
       );
       return;
     }
@@ -89,7 +88,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     // If the index is out of bounds change state and return early.
     if (targetExercise.sets.isEmpty || targetExercise.sets.length <= setIndex) {
       state = state.copyWith(
-        error: "Target set index [$setIndex] for duplication is out of bounds.",
+        error: 'Target set index [$setIndex] for duplication is out of bounds.',
       );
       return;
     }
@@ -107,7 +106,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     try {
       await _updateOrCreateWorkoutUsecase.updateSet(newSet, exerciseId);
     } catch (e) {
-      state = state.copyWith(error: "An error occurred while editing a set.");
+      state = state.copyWith(error: 'An error occurred while editing a set.');
     }
   }
 
@@ -117,7 +116,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     );
     if (targetExerciseIndex == -1) {
       state = state.copyWith(
-        error: "Cannot add a set to an exercise outside of this workout.",
+        error: 'Cannot add a set to an exercise outside of this workout.',
       );
     }
 
@@ -167,7 +166,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     );
     if (targetExerciseIndex == -1) {
       state = state.copyWith(
-        error: "Cannot duplicate a set of an exercise outside of this workout.",
+        error: 'Cannot duplicate a set of an exercise outside of this workout.',
       );
       return;
     }
@@ -177,7 +176,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     // If the index is out of bounds change state and return early.
     if (targetExercise.sets.isEmpty || targetExercise.sets.length <= setIndex) {
       state = state.copyWith(
-        error: "Target set index [$setIndex] for duplication is out of bounds.",
+        error: 'Target set index [$setIndex] for duplication is out of bounds.',
       );
       return;
     }
@@ -224,7 +223,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     );
     if (targetExerciseIndex == -1) {
       state = state.copyWith(
-        error: "Cannot duplicate a set of an exercise outside of this workout.",
+        error: 'Cannot duplicate a set of an exercise outside of this workout.',
       );
       return;
     }
@@ -234,7 +233,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     // If the index is out of bounds change state and return early.
     if (targetExercise.sets.isEmpty || targetExercise.sets.length <= setIndex) {
       state = state.copyWith(
-        error: "Target set index [$setIndex] for removal is out of bounds.",
+        error: 'Target set index [$setIndex] for removal is out of bounds.',
       );
       return;
     }

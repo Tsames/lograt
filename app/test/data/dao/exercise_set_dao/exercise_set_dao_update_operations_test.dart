@@ -108,7 +108,7 @@ void main() {
       () async {
         // Create an exercise set with an ID that doesn't exist
         final nonExistentExerciseSet = ExerciseSetModel(
-          id: "99999",
+          id: '99999',
           order: 1,
           exerciseId: testExercise.id,
           setType: SetType.working.name,

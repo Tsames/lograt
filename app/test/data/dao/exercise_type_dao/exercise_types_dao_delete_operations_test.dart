@@ -47,7 +47,7 @@ void main() {
       'should return false when trying to delete non-existent exercise type',
       () async {
         final correctlyDeletedRecord = await exerciseTypeDao.deleteById(
-          "99999",
+          '99999',
         );
 
         expect(correctlyDeletedRecord, equals(false));

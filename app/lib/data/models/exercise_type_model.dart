@@ -1,5 +1,5 @@
-import '../../util/uuidv7.dart';
-import '../entities/exercise_type.dart';
+import 'package:lograt/data/entities/exercise_type.dart';
+import 'package:lograt/util/uuidv7.dart';
 
 class ExerciseTypeModel {
   final String id;

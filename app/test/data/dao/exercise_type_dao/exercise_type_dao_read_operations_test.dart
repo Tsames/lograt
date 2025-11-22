@@ -55,7 +55,7 @@ void main() {
     });
 
     test('should return null when exercise type does not exist', () async {
-      final nonExistentById = await exerciseTypeDao.getById("99999");
+      final nonExistentById = await exerciseTypeDao.getById('99999');
       final nonExistentByName = await exerciseTypeDao.getByName(
         'Non-existent Exercise',
       );

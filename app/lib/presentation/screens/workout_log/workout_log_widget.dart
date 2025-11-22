@@ -1,12 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/data/entities/workout.dart';
+import 'package:lograt/presentation/screens/workout_log/child_widgets/exercise_table/exercise_table_widget.dart';
 import 'package:lograt/presentation/screens/workout_log/child_widgets/exercise_type_text_button.dart';
 import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
-
-import '../../../data/entities/workout.dart';
-import 'child_widgets/exercise_table/exercise_table_widget.dart';
 
 class WorkoutLogWidget extends ConsumerWidget {
   final Workout workout;
@@ -17,7 +16,7 @@ class WorkoutLogWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     if (kDebugMode) {
       debugPrint(
-        "Building Workout Log for exercise: ${workout.id} - ${workout.title}",
+        'Building Workout Log for exercise: ${workout.id} - ${workout.title}',
       );
     }
 
@@ -26,7 +25,7 @@ class WorkoutLogWidget extends ConsumerWidget {
     );
     return Scaffold(
       appBar: AppBar(
-        title: Text(workout.title ?? "New Workout"),
+        title: Text(workout.title ?? 'New Workout'),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: Icon(Icons.arrow_back_ios),
