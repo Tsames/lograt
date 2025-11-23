@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lograt/presentation/screens/home.dart';
+import 'package:lograt/presentation/screens/workout_history/workout_history_widget.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -8,6 +8,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Lograt',
+      routes: {'/workout-history': (context) => WorkoutHistoryWidget()},
       theme: ThemeData(
         brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber.shade200),
@@ -21,7 +22,7 @@ class App extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: Home(),
+      home: WorkoutHistoryWidget(),
     );
   }
 }
