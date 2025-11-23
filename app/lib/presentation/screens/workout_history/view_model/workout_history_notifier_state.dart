@@ -1,29 +1,29 @@
 import 'package:lograt/data/entities/workout.dart';
 
-class WorkoutHistoryTabNotifierState {
-  final List<Workout> sortedWorkouts;
+class WorkoutHistoryNotifierState {
+  final List<Workout> workouts;
   final bool isLoading;
   final String? error;
   final int offset;
   final bool hasMore;
 
-  const WorkoutHistoryTabNotifierState({
-    this.sortedWorkouts = const [],
+  const WorkoutHistoryNotifierState({
+    this.workouts = const [],
     this.isLoading = false,
     this.error,
     this.offset = 0,
     this.hasMore = true,
   });
 
-  WorkoutHistoryTabNotifierState copyWith({
+  WorkoutHistoryNotifierState copyWith({
     List<Workout>? workouts,
     bool? isLoading,
     String? error,
     int? offset,
     bool? hasMore,
   }) {
-    return WorkoutHistoryTabNotifierState(
-      sortedWorkouts: workouts ?? sortedWorkouts,
+    return WorkoutHistoryNotifierState(
+      workouts: workouts ?? this.workouts,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
       offset: offset ?? this.offset,

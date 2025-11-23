@@ -1,17 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/data/providers.dart';
 import 'package:lograt/data/usecases/get_paginated_workouts_sorted_by_creation_date_usecase.dart';
-import 'package:lograt/presentation/tabs/workout_history_tab/view_model/workout_history_tab_notifier_state.dart';
+import 'package:lograt/presentation/screens/workout_history/view_model/workout_history_notifier_state.dart';
 
-class WorkoutHistoryTabNotifier
-    extends StateNotifier<WorkoutHistoryTabNotifierState> {
+class WorkoutHistoryNotifier
+    extends StateNotifier<WorkoutHistoryNotifierState> {
   final GetPaginatedWorkoutsSortedByCreationDateUsecase
   _getPaginatedSortedWorkouts;
+  late final now = DateTime.now();
 
-  WorkoutHistoryTabNotifier(this._getPaginatedSortedWorkouts)
-    : super(const WorkoutHistoryTabNotifierState()) {
-    loadPaginatedWorkouts();
-  }
+  WorkoutHistoryNotifier(this._getPaginatedSortedWorkouts)
+    : super(const WorkoutHistoryNotifierState());
 
   Future<void> loadPaginatedWorkouts() async {
     if (!state.hasMore) return;
@@ -20,7 +19,7 @@ class WorkoutHistoryTabNotifier
     try {
       final paginatedResults = await _getPaginatedSortedWorkouts(state.offset);
       state = state.copyWith(
-        workouts: state.sortedWorkouts + paginatedResults.results,
+        workouts: state.workouts + paginatedResults.results,
         isLoading: false,
         offset: paginatedResults.nextOffset,
         hasMore: paginatedResults.hasMore,
@@ -31,14 +30,13 @@ class WorkoutHistoryTabNotifier
   }
 }
 
-final workoutHistoryTabProvider =
-    StateNotifierProvider<
-      WorkoutHistoryTabNotifier,
-      WorkoutHistoryTabNotifierState
-    >((ref) {
+final workoutHistoryProvider =
+    StateNotifierProvider<WorkoutHistoryNotifier, WorkoutHistoryNotifierState>((
+      ref,
+    ) {
       final getSortedWorkouts = ref.read(
         getSortedPaginatedWorkoutsUsecaseProvider,
       );
 
-      return WorkoutHistoryTabNotifier(getSortedWorkouts);
+      return WorkoutHistoryNotifier(getSortedWorkouts);
     });
