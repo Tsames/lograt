@@ -14,13 +14,13 @@ class App extends StatelessWidget {
       routes: {workoutHistory: (context) => WorkoutHistoryWidget()},
       theme: ThemeData(
         brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber.shade200),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow.shade700),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.amber.shade200,
+          seedColor: Colors.yellow.shade700,
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
