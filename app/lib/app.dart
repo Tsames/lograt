@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lograt/presentation/screens/splash_screen/splash_screen_widget.dart';
 import 'package:lograt/presentation/screens/workout_history/workout_history_widget.dart';
 
 class App extends StatelessWidget {
@@ -14,18 +13,18 @@ class App extends StatelessWidget {
       routes: {workoutHistory: (context) => WorkoutHistoryWidget()},
       theme: ThemeData(
         brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber.shade200),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow.shade700),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.amber.shade200,
+          seedColor: Colors.yellow.shade700,
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
       ),
-      home: SplashScreenWidget(),
+      home: WorkoutHistoryWidget(),
     );
   }
 }
