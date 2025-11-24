@@ -40,29 +40,31 @@ class WorkoutLogWidget extends ConsumerWidget {
         ),
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz))],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        child: ListView.separated(
-          itemCount: exercises.length,
-          separatorBuilder: (BuildContext context, int index) =>
-              const SizedBox(height: 20),
-          itemBuilder: (BuildContext context, int index) {
-            final exerciseId = exercises[index].id;
-            return Card(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          child: ListView.separated(
+            itemCount: exercises.length,
+            separatorBuilder: (BuildContext context, int index) =>
+                const SizedBox(height: 20),
+            itemBuilder: (BuildContext context, int index) {
+              final exerciseId = exercises[index].id;
+              return Card(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: Column(
+                    children: [
+                      ExerciseTypeTextButton(workout, exerciseId),
+                      ExerciseTableWidget(workout, exercises[index]),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    ExerciseTypeTextButton(workout, exerciseId),
-                    ExerciseTableWidget(workout, exercises[index]),
-                  ],
-                ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
