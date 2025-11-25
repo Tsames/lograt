@@ -4,7 +4,8 @@ import 'package:lograt/data/entities/workout.dart';
 import 'package:lograt/presentation/screens/workout_history/view_model/workout_history_notifier.dart';
 import 'package:lograt/presentation/screens/workout_history/view_model/workout_history_notifier_state.dart';
 import 'package:lograt/presentation/screens/workout_history/workout_history_widget.dart';
-import 'package:lograt/presentation/widgets/workout_list_tile.dart';
+import 'package:lograt/presentation/screens/workout_log/workout_log_widget.dart';
+import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 
 class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
   late final notifier = ref.read(workoutHistoryProvider.notifier);
@@ -75,7 +76,24 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
                 itemBuilder: (context, index) {
                   switch (items[index]) {
                     case Workout workout:
-                      return WorkoutListTile(workout);
+                      return ListTile(
+                        title: Text(
+                          workout.title ?? 'New Workout',
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                        subtitle: Text(
+                          workout.date.toHumanFriendlyFormat(),
+                          style: theme.textTheme.labelSmall,
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WorkoutLogWidget(workout),
+                            ),
+                          );
+                        },
+                      );
                     case String title:
                       return Column(
                         children: [
