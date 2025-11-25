@@ -28,8 +28,20 @@ dev_dependencies:
   sqflite_common_ffi: ^2.3.6
   mockito: ^5.4.6
   riverpod_generator: ^2.6.5
+  flutter_native_splash: ^2.4.7
+
+flutter_native_splash:
+  color: "#FDD835"
+  image: assets/images/lograt_splash.png
+  fullscreen: true
+  android_12:
+    color: "#FDD835"
+    image: assets/images/lograt_splash_android12.png
+    icon_background_color: "#FDD835"
 
 flutter:
   uses-material-design: true
   assets:
-    - assets/icons/lograt_icon.svg
+    - assets/svgs/lograt_icon.svg
+    - assets/images/lograt_splash.png
+    - assets/images/lograt_splash_android12.png

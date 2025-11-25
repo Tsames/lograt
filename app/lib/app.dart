@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lograt/presentation/screens/splash_screen/splash_screen_widget.dart';
 import 'package:lograt/presentation/screens/workout_history/workout_history_widget.dart';
 
 class App extends StatelessWidget {
@@ -25,7 +24,7 @@ class App extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: SplashScreenWidget(),
+      home: WorkoutHistoryWidget(),
     );
   }
 }
