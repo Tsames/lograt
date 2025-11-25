@@ -38,32 +38,21 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
 
     return switch (workoutHistoryState) {
       WorkoutHistoryNotifierState(error: final error?) => Center(
-        child: Text(
-          'Error: $error',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.error,
-          ),
-        ),
+        child: Text('Error: $error', style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.error)),
       ),
-      WorkoutHistoryNotifierState(isLoading: true, workouts: []) => Center(
-        child: const CircularProgressIndicator(),
-      ),
+      WorkoutHistoryNotifierState(isLoading: true, workouts: []) => Center(child: const CircularProgressIndicator()),
       WorkoutHistoryNotifierState(workouts: []) => Center(
         child: const Text('No workouts yet.', style: TextStyle(fontSize: 18)),
       ),
       _ => () {
         final thisWeek = notifier.getWorkoutsThisWeek();
         final thisMonth = notifier.getWorkoutsThisMonthExcludingThisWeek();
-        final lastThreeMonths = notifier
-            .getWorkoutsLastThreeMonthsExcludingThisMonth();
+        final lastThreeMonths = notifier.getWorkoutsLastThreeMonthsExcludingThisMonth();
 
         final items = [
           if (thisWeek.isNotEmpty) ...['This Week', ...thisWeek],
           if (thisMonth.isNotEmpty) ...['This Month', ...thisMonth],
-          if (lastThreeMonths.isNotEmpty) ...[
-            'Last 3 Months',
-            ...lastThreeMonths,
-          ],
+          if (lastThreeMonths.isNotEmpty) ...['Last 3 Months', ...lastThreeMonths],
         ];
 
         return Column(
@@ -77,31 +66,17 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
                   switch (items[index]) {
                     case Workout workout:
                       return ListTile(
-                        title: Text(
-                          workout.title ?? 'New Workout',
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                        subtitle: Text(
-                          workout.date.toHumanFriendlyFormat(),
-                          style: theme.textTheme.labelSmall,
-                        ),
+                        title: Text(workout.title ?? 'New Workout', style: theme.textTheme.bodyLarge),
+                        subtitle: Text(workout.date.toHumanFriendlyFormat(), style: theme.textTheme.labelSmall),
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => WorkoutLogWidget(workout),
-                            ),
-                          );
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => WorkoutLogWidget(workout)));
                         },
                       );
                     case String title:
                       return Column(
                         children: [
-                          Text(
-                            title,
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.titleLarge,
-                          ),
+                          SizedBox(height: 20),
+                          Text(title, textAlign: TextAlign.center, style: theme.textTheme.titleLarge),
                           Divider(thickness: 1, indent: 40, endIndent: 40),
                         ],
                       );
