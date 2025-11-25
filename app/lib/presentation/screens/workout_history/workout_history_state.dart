@@ -35,77 +35,68 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
     final workoutHistoryState = ref.watch(workoutHistoryProvider);
     final theme = Theme.of(context);
 
-    return Scaffold(
-      body: SafeArea(
-        child: switch (workoutHistoryState) {
-          WorkoutHistoryNotifierState(error: final error?) => Center(
-            child: Text(
-              'Error: $error',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.error,
+    return switch (workoutHistoryState) {
+      WorkoutHistoryNotifierState(error: final error?) => Center(
+        child: Text(
+          'Error: $error',
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.error,
+          ),
+        ),
+      ),
+      WorkoutHistoryNotifierState(isLoading: true, workouts: []) => Center(
+        child: const CircularProgressIndicator(),
+      ),
+      WorkoutHistoryNotifierState(workouts: []) => Center(
+        child: const Text('No workouts yet.', style: TextStyle(fontSize: 18)),
+      ),
+      _ => () {
+        final thisWeek = notifier.getWorkoutsThisWeek();
+        final thisMonth = notifier.getWorkoutsThisMonthExcludingThisWeek();
+        final lastThreeMonths = notifier
+            .getWorkoutsLastThreeMonthsExcludingThisMonth();
+
+        final items = [
+          if (thisWeek.isNotEmpty) ...['This Week', ...thisWeek],
+          if (thisMonth.isNotEmpty) ...['This Month', ...thisMonth],
+          if (lastThreeMonths.isNotEmpty) ...[
+            'Last 3 Months',
+            ...lastThreeMonths,
+          ],
+        ];
+
+        return Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(16),
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  switch (items[index]) {
+                    case Workout workout:
+                      return WorkoutListTile(workout);
+                    case String title:
+                      return Column(
+                        children: [
+                          Text(
+                            title,
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.titleLarge,
+                          ),
+                          Divider(thickness: 1, indent: 40, endIndent: 40),
+                        ],
+                      );
+                    default:
+                      return null;
+                  }
+                },
+                controller: scrollController,
               ),
             ),
-          ),
-          WorkoutHistoryNotifierState(isLoading: true, workouts: []) => Center(
-            child: const CircularProgressIndicator(),
-          ),
-          WorkoutHistoryNotifierState(workouts: []) => Center(
-            child: const Text(
-              'No workouts yet.',
-              style: TextStyle(fontSize: 18),
-            ),
-          ),
-          _ => () {
-            final thisWeek = notifier.getWorkoutsThisWeek();
-            final thisMonth = notifier.getWorkoutsThisMonthExcludingThisWeek();
-            final lastThreeMonths = notifier
-                .getWorkoutsLastThreeMonthsExcludingThisMonth();
-
-            final items = [
-              if (thisWeek.isNotEmpty) ...['This Week', ...thisWeek],
-              if (thisMonth.isNotEmpty) ...['This Month', ...thisMonth],
-              if (lastThreeMonths.isNotEmpty) ...[
-                'Last 3 Months',
-                ...lastThreeMonths,
-              ],
-            ];
-
-            return Column(
-              children: [
-                Text('Workout History', style: theme.textTheme.headlineSmall),
-                Divider(),
-                Expanded(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      switch (items[index]) {
-                        case Workout workout:
-                          return WorkoutListTile(workout);
-                        case String title:
-                          return Column(
-                            children: [
-                              Text(
-                                title,
-                                textAlign: TextAlign.center,
-                                style: theme.textTheme.titleLarge,
-                              ),
-                              Divider(thickness: 1, indent: 40, endIndent: 40),
-                            ],
-                          );
-                        default:
-                          return null;
-                      }
-                    },
-                    controller: scrollController,
-                  ),
-                ),
-              ],
-            );
-          }(),
-        },
-      ),
-    );
+          ],
+        );
+      }(),
+    };
   }
 }
