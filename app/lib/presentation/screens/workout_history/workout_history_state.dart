@@ -97,10 +97,13 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
                     case String title:
                       return Column(
                         children: [
+                          if (index > 0) SizedBox(height: 45),
                           Text(
                             title,
                             textAlign: TextAlign.center,
-                            style: theme.textTheme.titleLarge,
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              color: theme.colorScheme.primary,
+                            ),
                           ),
                           Divider(thickness: 1, indent: 40, endIndent: 40),
                         ],
