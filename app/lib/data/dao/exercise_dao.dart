@@ -14,7 +14,7 @@ class ExerciseDao {
   Future<ExerciseModel?> getById(String id) async {
     final database = await _db.database;
     final maps = await database.query(
-      exerciseTable,
+      exercisesTable,
       where: '${ExerciseFields.id} = ?',
       whereArgs: [id],
     );
@@ -28,7 +28,7 @@ class ExerciseDao {
   Future<List<ExerciseModel>> getByWorkoutId(String workoutId) async {
     final database = await _db.database;
     final maps = await database.query(
-      exerciseTable,
+      exercisesTable,
       where: '${ExerciseFields.workoutId} = ?',
       whereArgs: [workoutId],
     );
@@ -54,7 +54,7 @@ class ExerciseDao {
   //       we.notes,
   //       et.name as exercise_type_name,
   //       et.description as exercise_type_description
-  //     FROM $exerciseTable we
+  //     FROM $exercisesTable we
   //     JOIN exercise_types et ON we.exercise_type_id = et.id
   //     WHERE we.workout_id = ?
   //     ORDER BY we.exercise_order ASC
@@ -89,7 +89,7 @@ class ExerciseDao {
   }) async {
     final database = await _db.database;
     final maps = await database.query(
-      exerciseTable,
+      exercisesTable,
       where: '${ExerciseFields.exerciseTypeId} = ?',
       whereArgs: [exerciseTypeId],
       orderBy: '${ExerciseFields.workoutId} DESC',
@@ -105,7 +105,7 @@ class ExerciseDao {
     final result = await database.rawQuery(
       '''
       SELECT COUNT(*) as count 
-      FROM $exerciseTable 
+      FROM $exercisesTable 
       WHERE ${ExerciseFields.workoutId} = ?
     ''',
       [workoutId],
@@ -119,7 +119,7 @@ class ExerciseDao {
   Future<int> insert(ExerciseModel exercise) async {
     final database = await _db.database;
     return await database.insert(
-      exerciseTable,
+      exercisesTable,
       exercise.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -129,7 +129,7 @@ class ExerciseDao {
     required ExerciseModel exercise,
     required Transaction txn,
   }) async {
-    return await txn.insert(exerciseTable, exercise.toMap());
+    return await txn.insert(exercisesTable, exercise.toMap());
   }
 
   /// Update an existing exercise
@@ -137,7 +137,7 @@ class ExerciseDao {
   Future<int> update(ExerciseModel exercise) async {
     final database = await _db.database;
     return await database.update(
-      exerciseTable,
+      exercisesTable,
       exercise.toMap(),
       where: '${ExerciseFields.id} = ?',
       whereArgs: [exercise.id],
@@ -151,7 +151,7 @@ class ExerciseDao {
 
     final database = await _db.database;
     return await database.delete(
-      exerciseTable,
+      exercisesTable,
       where: '${ExerciseFields.id} = ?',
       whereArgs: [exerciseId],
     );
@@ -162,7 +162,7 @@ class ExerciseDao {
   Future<int> deleteByWorkoutId(String workoutId) async {
     final database = await _db.database;
     return await database.delete(
-      exerciseTable,
+      exercisesTable,
       where: '${ExerciseFields.workoutId} = ?',
       whereArgs: [workoutId],
     );
@@ -170,6 +170,6 @@ class ExerciseDao {
 
   Future<void> clearTable() async {
     final db = await _db.database;
-    await db.delete(exerciseTable);
+    await db.delete(exercisesTable);
   }
 }

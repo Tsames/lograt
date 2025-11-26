@@ -12,7 +12,7 @@ class WorkoutDao {
   Future<WorkoutModel?> getById(String id) async {
     final database = await _db.database;
     final maps = await database.query(
-      workoutTable,
+      workoutsTable,
       where: '${WorkoutFields.id} = ?',
       whereArgs: [id],
     );
@@ -30,7 +30,7 @@ class WorkoutDao {
     final db = await _db.database;
 
     final maps = await db.query(
-      workoutTable,
+      workoutsTable,
       orderBy: '${WorkoutFields.date} DESC',
       limit: limit,
       offset: offset,
@@ -47,7 +47,7 @@ class WorkoutDao {
     final db = await _db.database;
 
     final maps = await db.query(
-      workoutTable,
+      workoutsTable,
       where: '${WorkoutFields.date} >= ?',
       whereArgs: [dateThresholdInMilliseconds],
       orderBy: '${WorkoutFields.date} DESC',
@@ -59,7 +59,7 @@ class WorkoutDao {
   Future<void> insert(WorkoutModel workout) async {
     final db = await _db.database;
     await db.insert(
-      workoutTable,
+      workoutsTable,
       workout.toMap(),
       conflictAlgorithm: ConflictAlgorithm.fail,
     );
@@ -69,13 +69,13 @@ class WorkoutDao {
     WorkoutModel workout,
     Transaction txn,
   ) async {
-    await txn.insert(workoutTable, workout.toMap());
+    await txn.insert(workoutsTable, workout.toMap());
   }
 
   Future<int> update(WorkoutModel workout) async {
     final db = await _db.database;
     return await db.update(
-      workoutTable,
+      workoutsTable,
       workout.toMap(),
       where: '${WorkoutFields.id} = ?',
       whereArgs: [workout.id],
@@ -85,7 +85,7 @@ class WorkoutDao {
   Future<int> delete(String id) async {
     final db = await _db.database;
     return await db.delete(
-      workoutTable,
+      workoutsTable,
       where: '${WorkoutFields.id} = ?',
       whereArgs: [id],
     );
@@ -93,6 +93,6 @@ class WorkoutDao {
 
   Future<void> clearTable() async {
     final db = await _db.database;
-    await db.delete(workoutTable);
+    await db.delete(workoutsTable);
   }
 }

@@ -3,7 +3,7 @@ import 'package:lograt/data/entities/workout.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 import 'package:lograt/util/uuidv7.dart';
 
-const workoutTable = 'workouts';
+const workoutsTable = 'workouts';
 
 class WorkoutFields {
   static final List<String> values = [id, date, title, notes];
