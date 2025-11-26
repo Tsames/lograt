@@ -3,6 +3,17 @@ import 'package:lograt/data/entities/workout.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 import 'package:lograt/util/uuidv7.dart';
 
+const workoutTable = 'workouts';
+
+class WorkoutFields {
+  static final List<String> values = [id, date, title, notes];
+
+  static final String id = 'id';
+  static final String date = 'date';
+  static final String title = 'title';
+  static final String notes = 'notes';
+}
+
 class WorkoutModel {
   final String id;
   final DateTime date;
@@ -38,13 +49,13 @@ class WorkoutModel {
   }
 
   static WorkoutModel? fromMap(Map<String, dynamic> map) {
-    final id = map['id'];
+    final id = map[WorkoutFields.id];
     if (id == null || id is! String) return null;
-    final date = map['date'];
+    final date = map[WorkoutFields.date];
     if (date == null || date is! int) return null;
-    final title = map['title'];
+    final title = map[WorkoutFields.title];
     if (title != null && title is! String) return null;
-    final notes = map['notes'];
+    final notes = map[WorkoutFields.notes];
     if (notes != null && notes is! String) return null;
     return WorkoutModel(
       id: id,
@@ -56,10 +67,10 @@ class WorkoutModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'date': date.millisecondsSinceEpoch,
-      'title': title,
-      'notes': notes,
+      WorkoutFields.id: id,
+      WorkoutFields.date: date.millisecondsSinceEpoch,
+      WorkoutFields.title: title,
+      WorkoutFields.notes: notes,
     };
   }
 

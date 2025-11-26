@@ -4,7 +4,6 @@ import 'package:sqflite/sqflite.dart';
 
 class WorkoutDao {
   final AppDatabase _db;
-  static const _tableName = 'workouts';
 
   WorkoutDao(this._db);
 
@@ -13,8 +12,8 @@ class WorkoutDao {
   Future<WorkoutModel?> getById(String id) async {
     final database = await _db.database;
     final maps = await database.query(
-      _tableName,
-      where: 'id = ?',
+      workoutTable,
+      where: '${WorkoutFields.id} = ?',
       whereArgs: [id],
     );
 
@@ -31,8 +30,8 @@ class WorkoutDao {
     final db = await _db.database;
 
     final maps = await db.query(
-      _tableName,
-      orderBy: 'date DESC',
+      workoutTable,
+      orderBy: '${WorkoutFields.date} DESC',
       limit: limit,
       offset: offset,
     );
@@ -48,10 +47,10 @@ class WorkoutDao {
     final db = await _db.database;
 
     final maps = await db.query(
-      _tableName,
-      where: 'date >= ?',
+      workoutTable,
+      where: '${WorkoutFields.date} >= ?',
       whereArgs: [dateThresholdInMilliseconds],
-      orderBy: 'date DESC',
+      orderBy: '${WorkoutFields.date} DESC',
     );
 
     return maps.map((map) => WorkoutModel.fromMap(map)).nonNulls.toList();
@@ -60,7 +59,7 @@ class WorkoutDao {
   Future<void> insert(WorkoutModel workout) async {
     final db = await _db.database;
     await db.insert(
-      _tableName,
+      workoutTable,
       workout.toMap(),
       conflictAlgorithm: ConflictAlgorithm.fail,
     );
@@ -70,26 +69,30 @@ class WorkoutDao {
     WorkoutModel workout,
     Transaction txn,
   ) async {
-    await txn.insert(_tableName, workout.toMap());
+    await txn.insert(workoutTable, workout.toMap());
   }
 
   Future<int> update(WorkoutModel workout) async {
     final db = await _db.database;
     return await db.update(
-      _tableName,
+      workoutTable,
       workout.toMap(),
-      where: 'id = ?',
+      where: '${WorkoutFields.id} = ?',
       whereArgs: [workout.id],
     );
   }
 
   Future<int> delete(String id) async {
     final db = await _db.database;
-    return await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
+    return await db.delete(
+      workoutTable,
+      where: '${WorkoutFields.id} = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<void> clearTable() async {
     final db = await _db.database;
-    await db.delete(_tableName);
+    await db.delete(workoutTable);
   }
 }
