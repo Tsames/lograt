@@ -1,4 +1,5 @@
 import 'package:lograt/data/models/exercise_model.dart';
+import 'package:lograt/data/models/exercise_set_model.dart';
 import 'package:lograt/data/models/exercise_type_model.dart';
 import 'package:lograt/data/models/workout_model.dart';
 import 'package:path/path.dart';
@@ -61,8 +62,6 @@ class AppDatabase {
     }
   }
 
-  static const exerciseSetsTableName = 'exercise_sets';
-
   // Build the complete schema for new installations
   List<String> _buildInitializationScript() {
     return [
@@ -115,16 +114,16 @@ class AppDatabase {
 
   String _createSetsTableSQL() {
     return '''
-    CREATE TABLE $exerciseSetsTableName(
-      id TEXT PRIMARY KEY,
-      set_order INTEGER NOT NULL,
-      exercise_id TEXT NOT NULL,
-      set_type TEXT,
-      weight REAL,
-      units TEXT,
-      reps INTEGER,
-      rest_time_seconds INTEGER,
-      FOREIGN KEY (exercise_id) REFERENCES $exercisesTable(${ExerciseFields.id}) ON DELETE CASCADE
+    CREATE TABLE $setsTable(
+      ${ExerciseSetFields.id} TEXT PRIMARY KEY,
+      ${ExerciseSetFields.order} INTEGER NOT NULL,
+      ${ExerciseSetFields.exerciseId} TEXT NOT NULL,
+      ${ExerciseSetFields.setType} TEXT,
+      ${ExerciseSetFields.weight} REAL,
+      ${ExerciseSetFields.units} TEXT,
+      ${ExerciseSetFields.reps} INTEGER,
+      ${ExerciseSetFields.restTimeSeconds} INTEGER,
+      FOREIGN KEY (${ExerciseSetFields.exerciseId}) REFERENCES $exercisesTable(${ExerciseFields.id}) ON DELETE CASCADE
     )
     ''';
   }

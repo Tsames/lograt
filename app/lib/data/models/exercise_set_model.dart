@@ -3,6 +3,30 @@ import 'package:lograt/data/entities/set_type.dart';
 import 'package:lograt/data/entities/units.dart';
 import 'package:lograt/util/uuidv7.dart';
 
+const setsTable = 'sets';
+
+class ExerciseSetFields {
+  static final List<String> values = [
+    id,
+    order,
+    exerciseId,
+    setType,
+    weight,
+    units,
+    reps,
+    restTimeSeconds,
+  ];
+
+  static final String id = 'id';
+  static final String order = 'set_order';
+  static final String exerciseId = 'exercise_id';
+  static final String setType = 'set_type';
+  static final String weight = 'weight';
+  static final String units = 'units';
+  static final String reps = 'reps';
+  static final String restTimeSeconds = 'rest_time_seconds';
+}
+
 class ExerciseSetModel {
   final String id;
   final int order;
@@ -72,21 +96,21 @@ class ExerciseSetModel {
   }
 
   static ExerciseSetModel? fromMap(Map<String, dynamic> map) {
-    final id = map['id'];
+    final id = map[ExerciseSetFields.id];
     if (id == null || id is! String) return null;
-    final order = map['set_order'];
+    final order = map[ExerciseSetFields.order];
     if (order == null || order is! int) return null;
-    final exerciseId = map['exercise_id'];
+    final exerciseId = map[ExerciseSetFields.exerciseId];
     if (exerciseId == null || exerciseId is! String) return null;
-    final setType = map['set_type'];
+    final setType = map[ExerciseSetFields.setType];
     if (setType != null && setType is! String) return null;
-    final weight = map['weight'];
+    final weight = map[ExerciseSetFields.weight];
     if (weight != null && weight is! double) return null;
-    final units = map['units'];
+    final units = map[ExerciseSetFields.units];
     if (units != null && units is! String) return null;
-    final reps = map['reps'];
+    final reps = map[ExerciseSetFields.reps];
     if (reps != null && reps is! int) return null;
-    final restTimeSeconds = map['rest_time_seconds'];
+    final restTimeSeconds = map[ExerciseSetFields.restTimeSeconds];
     if (restTimeSeconds != null && restTimeSeconds is! int) return null;
     return ExerciseSetModel(
       id: id,
@@ -102,14 +126,14 @@ class ExerciseSetModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'set_order': order,
-      'exercise_id': exerciseId,
-      'set_type': setType,
-      'weight': weight,
-      'units': units,
-      'reps': reps,
-      'rest_time_seconds': restTimeSeconds,
+      ExerciseSetFields.id: id,
+      ExerciseSetFields.order: order,
+      ExerciseSetFields.exerciseId: exerciseId,
+      ExerciseSetFields.setType: setType,
+      ExerciseSetFields.weight: weight,
+      ExerciseSetFields.units: units,
+      ExerciseSetFields.reps: reps,
+      ExerciseSetFields.restTimeSeconds: restTimeSeconds,
     };
   }
 
