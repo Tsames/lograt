@@ -1,6 +1,6 @@
 import 'package:lograt/data/entities/exercise_type.dart';
+import 'package:lograt/data/entities/templates/exercise_set_template.dart';
 import 'package:lograt/data/entities/templates/exercise_template.dart';
-import 'package:lograt/data/entities/templates/set_template.dart';
 import 'package:lograt/util/uuidv7.dart';
 
 const exerciseTemplatesTable = 'exercise_templates';
@@ -55,7 +55,7 @@ class ExerciseTemplateModel {
 
   ExerciseTemplate toEntity(
     ExerciseType? exerciseType, [
-    List<SetTemplate> sets = const [],
+    List<ExerciseSetTemplate> sets = const [],
   ]) {
     return ExerciseTemplate(
       id: id,

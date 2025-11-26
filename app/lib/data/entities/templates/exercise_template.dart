@@ -1,26 +1,26 @@
 import 'package:lograt/data/entities/exercise_type.dart';
-import 'package:lograt/data/entities/templates/set_template.dart';
+import 'package:lograt/data/entities/templates/exercise_set_template.dart';
 import 'package:lograt/util/uuidv7.dart';
 
 class ExerciseTemplate {
   final String id;
   final int order;
-  final List<SetTemplate> sets;
+  final List<ExerciseSetTemplate> sets;
   final ExerciseType? exerciseType;
 
   ExerciseTemplate({
     String? id,
     int? order,
-    List<SetTemplate>? sets,
+    List<ExerciseSetTemplate>? sets,
     this.exerciseType,
   }) : id = id ?? uuidV7(),
        order = order ?? 0,
-       sets = sets ?? const <SetTemplate>[];
+       sets = sets ?? const <ExerciseSetTemplate>[];
 
   ExerciseTemplate copyWith({
     String? id,
     int? order,
-    List<SetTemplate>? sets,
+    List<ExerciseSetTemplate>? sets,
     ExerciseType? exerciseType,
   }) {
     return ExerciseTemplate(
