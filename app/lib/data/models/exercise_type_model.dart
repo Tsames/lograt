@@ -1,6 +1,16 @@
 import 'package:lograt/data/entities/exercise_type.dart';
 import 'package:lograt/util/uuidv7.dart';
 
+const exerciseTypesTable = 'exercise_types';
+
+class ExerciseTypeFields {
+  static final List<String> values = [id, name, description];
+
+  static final String id = 'id';
+  static final String name = 'name';
+  static final String description = 'description';
+}
+
 class ExerciseTypeModel {
   final String id;
   final String name;
@@ -23,17 +33,21 @@ class ExerciseTypeModel {
   }
 
   static ExerciseTypeModel? fromMap(Map<String, dynamic> map) {
-    final id = map['id'];
+    final id = map[ExerciseTypeFields.id];
     if (id == null || id is! String) return null;
-    final name = map['name'];
+    final name = map[ExerciseTypeFields.name];
     if (name == null || name is! String) return null;
-    final description = map['description'];
+    final description = map[ExerciseTypeFields.description];
     if (description is! String && description != null) return null;
     return ExerciseTypeModel(id: id, name: name, description: description);
   }
 
   Map<String, dynamic> toMap() {
-    return {'id': id, 'name': name, 'description': description};
+    return {
+      ExerciseTypeFields.id: id,
+      ExerciseTypeFields.name: name,
+      ExerciseTypeFields.description: description,
+    };
   }
 
   ExerciseTypeModel copyWith({String? id, String? name, String? description}) {

@@ -6,6 +6,7 @@ import 'package:lograt/data/dao/workout_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/database/seed_data.dart';
 import 'package:lograt/data/models/exercise_model.dart';
+import 'package:lograt/data/models/exercise_type_model.dart';
 import 'package:lograt/data/models/workout_model.dart';
 import 'package:lograt/data/repositories/workout_repository.dart';
 import 'package:lograt/data/usecases/seed_data_usecase.dart';
@@ -69,11 +70,9 @@ void main() {
       await seedDataUsecase.call();
 
       // Verify counts
-      final workoutCount = await repository.count(workoutTable);
-      final exerciseCount = await repository.count(exerciseTable);
-      final exerciseTypeCount = await repository.count(
-        AppDatabase.exerciseTypesTableName,
-      );
+      final workoutCount = await repository.count(workoutsTable);
+      final exerciseCount = await repository.count(exercisesTable);
+      final exerciseTypeCount = await repository.count(exerciseTypesTable);
       final exerciseSetCount = await repository.count(
         AppDatabase.exerciseSetsTableName,
       );

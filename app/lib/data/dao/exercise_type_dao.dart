@@ -4,7 +4,6 @@ import 'package:sqflite/sqflite.dart';
 
 class ExerciseTypeDao {
   final AppDatabase _db;
-  static const String _tableName = AppDatabase.exerciseTypesTableName;
 
   ExerciseTypeDao(this._db);
 
@@ -20,8 +19,8 @@ class ExerciseTypeDao {
     final DatabaseExecutor executor = txn ?? await _db.database;
 
     final maps = await executor.query(
-      _tableName,
-      where: 'id = ?',
+      exerciseTypesTable,
+      where: '${ExerciseTypeFields.id} = ?',
       whereArgs: [id],
     );
 
@@ -41,8 +40,8 @@ class ExerciseTypeDao {
     final DatabaseExecutor executor = txn ?? await _db.database;
 
     final maps = await executor.query(
-      _tableName,
-      where: 'name = ?',
+      exerciseTypesTable,
+      where: '${ExerciseTypeFields.name} = ?',
       whereArgs: [name],
     );
 
@@ -68,8 +67,8 @@ class ExerciseTypeDao {
     final DatabaseExecutor executor = txn ?? await _db.database;
 
     final maps = await executor.query(
-      _tableName,
-      orderBy: 'name ASC',
+      exerciseTypesTable,
+      orderBy: '${ExerciseTypeFields.name} ASC',
       limit: limit,
       offset: offset,
     );
@@ -92,7 +91,7 @@ class ExerciseTypeDao {
     final DatabaseExecutor executor = txn ?? await _db.database;
     try {
       return await executor.insert(
-        _tableName,
+        exerciseTypesTable,
         exerciseType.toMap(),
         conflictAlgorithm: ConflictAlgorithm.fail, // Prevent duplicate names
       );
@@ -119,9 +118,9 @@ class ExerciseTypeDao {
   ]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     return await executor.update(
-          _tableName,
+          exerciseTypesTable,
           exerciseType.toMap(),
-          where: 'id = ?',
+          where: '${ExerciseTypeFields.id} = ?',
           whereArgs: [exerciseType.id],
         ) ==
         1;
@@ -141,8 +140,8 @@ class ExerciseTypeDao {
     final DatabaseExecutor executor = txn ?? await _db.database;
     try {
       return await executor.delete(
-            _tableName,
-            where: 'id = ?',
+            exerciseTypesTable,
+            where: '${ExerciseTypeFields.id} = ?',
             whereArgs: [id],
           ) ==
           1;
@@ -155,6 +154,6 @@ class ExerciseTypeDao {
 
   Future<void> clearTable() async {
     final db = await _db.database;
-    await db.delete(_tableName);
+    await db.delete(exerciseTypesTable);
   }
 }

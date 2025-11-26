@@ -1,4 +1,5 @@
 import 'package:lograt/data/models/exercise_model.dart';
+import 'package:lograt/data/models/exercise_type_model.dart';
 import 'package:lograt/data/models/workout_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -60,7 +61,6 @@ class AppDatabase {
     }
   }
 
-  static const exerciseTypesTableName = 'exercise_types';
   static const exerciseSetsTableName = 'exercise_sets';
 
   // Build the complete schema for new installations
@@ -80,7 +80,7 @@ class AppDatabase {
 
   String _createWorkoutsTableSQL() {
     return '''
-      CREATE TABLE $workoutTable(
+      CREATE TABLE $workoutsTable(
         ${WorkoutFields.id} TEXT PRIMARY KEY,
         ${WorkoutFields.date} INTEGER NOT NULL,
         ${WorkoutFields.title} TEXT,
@@ -91,24 +91,24 @@ class AppDatabase {
 
   String _createExerciseTypesTableSQL() {
     return '''
-      CREATE TABLE $exerciseTypesTableName(
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL UNIQUE,
-        description TEXT
+      CREATE TABLE $exerciseTypesTable(
+        ${ExerciseTypeFields.id} TEXT PRIMARY KEY,
+        ${ExerciseTypeFields.name} TEXT NOT NULL UNIQUE,
+        ${ExerciseTypeFields.description} TEXT
       )
     ''';
   }
 
   String _createExercisesTableSQL() {
     return '''
-    CREATE TABLE $exerciseTable(
+    CREATE TABLE $exercisesTable(
       ${ExerciseFields.id} TEXT PRIMARY KEY,
       ${ExerciseFields.order} INTEGER NOT NULL,
       ${ExerciseFields.workoutId} TEXT NOT NULL,
       ${ExerciseFields.exerciseTypeId} TEXT,
       ${ExerciseFields.notes} TEXT,
-      FOREIGN KEY (${ExerciseFields.workoutId}) REFERENCES $workoutTable(${WorkoutFields.id}) ON DELETE CASCADE,
-      FOREIGN KEY (${ExerciseFields.exerciseTypeId}) REFERENCES $exerciseTypesTableName(id) ON DELETE RESTRICT
+      FOREIGN KEY (${ExerciseFields.workoutId}) REFERENCES $workoutsTable(${WorkoutFields.id}) ON DELETE CASCADE,
+      FOREIGN KEY (${ExerciseFields.exerciseTypeId}) REFERENCES $exerciseTypesTable(${ExerciseTypeFields.id}) ON DELETE RESTRICT
     )
   ''';
   }
@@ -124,7 +124,7 @@ class AppDatabase {
       units TEXT,
       reps INTEGER,
       rest_time_seconds INTEGER,
-      FOREIGN KEY (exercise_id) REFERENCES $exerciseTable(${ExerciseFields.id}) ON DELETE CASCADE
+      FOREIGN KEY (exercise_id) REFERENCES $exercisesTable(${ExerciseFields.id}) ON DELETE CASCADE
     )
     ''';
   }

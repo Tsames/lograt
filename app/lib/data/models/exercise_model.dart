@@ -3,7 +3,7 @@ import 'package:lograt/data/entities/exercise_set.dart';
 import 'package:lograt/data/entities/exercise_type.dart';
 import 'package:lograt/util/uuidv7.dart';
 
-const exerciseTable = 'workout_exercises';
+const exercisesTable = 'exercises';
 
 class ExerciseFields {
   static final List<String> values = [
