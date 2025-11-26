@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 /// This class handles all database operations related to exercises
 class ExerciseDao {
   final AppDatabase _db;
-  static const String _tableName = AppDatabase.exercisesTableName;
+  static const String _tableName = exerciseTable;
 
   ExerciseDao(this._db);
 
@@ -16,7 +16,7 @@ class ExerciseDao {
     final database = await _db.database;
     final maps = await database.query(
       _tableName,
-      where: 'id = ?',
+      where: '${ExerciseFields.id} = ?',
       whereArgs: [id],
     );
 
@@ -30,7 +30,7 @@ class ExerciseDao {
     final database = await _db.database;
     final maps = await database.query(
       _tableName,
-      where: 'workout_id = ?',
+      where: '${ExerciseFields.workoutId} = ?',
       whereArgs: [workoutId],
     );
 
@@ -91,9 +91,9 @@ class ExerciseDao {
     final database = await _db.database;
     final maps = await database.query(
       _tableName,
-      where: 'exercise_type_id = ?',
+      where: '${ExerciseFields.exerciseTypeId} = ?',
       whereArgs: [exerciseTypeId],
-      orderBy: 'workout_id DESC',
+      orderBy: '${ExerciseFields.workoutId} DESC',
       limit: limit,
     );
 
@@ -107,7 +107,7 @@ class ExerciseDao {
       '''
       SELECT COUNT(*) as count 
       FROM $_tableName 
-      WHERE workout_id = ?
+      WHERE ${ExerciseFields.workoutId} = ?
     ''',
       [workoutId],
     );
@@ -140,7 +140,7 @@ class ExerciseDao {
     return await database.update(
       _tableName,
       exercise.toMap(),
-      where: 'id = ?',
+      where: '${ExerciseFields.id} = ?',
       whereArgs: [exercise.id],
     );
   }
@@ -153,7 +153,7 @@ class ExerciseDao {
     final database = await _db.database;
     return await database.delete(
       _tableName,
-      where: 'id = ?',
+      where: '${ExerciseFields.id} = ?',
       whereArgs: [exerciseId],
     );
   }
@@ -164,7 +164,7 @@ class ExerciseDao {
     final database = await _db.database;
     return await database.delete(
       _tableName,
-      where: 'workout_id = ?',
+      where: '${ExerciseFields.workoutId} = ?',
       whereArgs: [workoutId],
     );
   }

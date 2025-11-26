@@ -3,6 +3,24 @@ import 'package:lograt/data/entities/exercise_set.dart';
 import 'package:lograt/data/entities/exercise_type.dart';
 import 'package:lograt/util/uuidv7.dart';
 
+const exerciseTable = 'workout_exercises';
+
+class ExerciseFields {
+  static final List<String> values = [
+    id,
+    order,
+    workoutId,
+    exerciseTypeId,
+    notes,
+  ];
+
+  static final String id = 'id';
+  static final String order = 'exercise_order';
+  static final String workoutId = 'workout_id';
+  static final String exerciseTypeId = 'exercise_type_id';
+  static final String notes = 'notes';
+}
+
 class ExerciseModel {
   final String id;
   final int order;
