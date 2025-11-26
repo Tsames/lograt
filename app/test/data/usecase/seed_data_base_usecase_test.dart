@@ -6,6 +6,7 @@ import 'package:lograt/data/dao/workout_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/database/seed_data.dart';
 import 'package:lograt/data/models/exercise_model.dart';
+import 'package:lograt/data/models/exercise_set_model.dart';
 import 'package:lograt/data/models/exercise_type_model.dart';
 import 'package:lograt/data/models/workout_model.dart';
 import 'package:lograt/data/repositories/workout_repository.dart';
@@ -73,9 +74,7 @@ void main() {
       final workoutCount = await repository.count(workoutsTable);
       final exerciseCount = await repository.count(exercisesTable);
       final exerciseTypeCount = await repository.count(exerciseTypesTable);
-      final exerciseSetCount = await repository.count(
-        AppDatabase.exerciseSetsTableName,
-      );
+      final exerciseSetCount = await repository.count(setsTable);
 
       expect(workoutCount, equals(expectedWorkoutCount));
       expect(exerciseCount, equals(expectedExerciseCount));
