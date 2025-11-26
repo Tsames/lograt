@@ -6,7 +6,6 @@ import 'package:sqflite/sqflite.dart';
 /// This class handles all database operations related to exercises
 class ExerciseDao {
   final AppDatabase _db;
-  static const String _tableName = exerciseTable;
 
   ExerciseDao(this._db);
 
@@ -15,7 +14,7 @@ class ExerciseDao {
   Future<ExerciseModel?> getById(String id) async {
     final database = await _db.database;
     final maps = await database.query(
-      _tableName,
+      exerciseTable,
       where: '${ExerciseFields.id} = ?',
       whereArgs: [id],
     );
@@ -29,7 +28,7 @@ class ExerciseDao {
   Future<List<ExerciseModel>> getByWorkoutId(String workoutId) async {
     final database = await _db.database;
     final maps = await database.query(
-      _tableName,
+      exerciseTable,
       where: '${ExerciseFields.workoutId} = ?',
       whereArgs: [workoutId],
     );
@@ -55,7 +54,7 @@ class ExerciseDao {
   //       we.notes,
   //       et.name as exercise_type_name,
   //       et.description as exercise_type_description
-  //     FROM $_tableName we
+  //     FROM $exerciseTable we
   //     JOIN exercise_types et ON we.exercise_type_id = et.id
   //     WHERE we.workout_id = ?
   //     ORDER BY we.exercise_order ASC
@@ -90,7 +89,7 @@ class ExerciseDao {
   }) async {
     final database = await _db.database;
     final maps = await database.query(
-      _tableName,
+      exerciseTable,
       where: '${ExerciseFields.exerciseTypeId} = ?',
       whereArgs: [exerciseTypeId],
       orderBy: '${ExerciseFields.workoutId} DESC',
@@ -106,7 +105,7 @@ class ExerciseDao {
     final result = await database.rawQuery(
       '''
       SELECT COUNT(*) as count 
-      FROM $_tableName 
+      FROM $exerciseTable 
       WHERE ${ExerciseFields.workoutId} = ?
     ''',
       [workoutId],
@@ -120,7 +119,7 @@ class ExerciseDao {
   Future<int> insert(ExerciseModel exercise) async {
     final database = await _db.database;
     return await database.insert(
-      _tableName,
+      exerciseTable,
       exercise.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -130,7 +129,7 @@ class ExerciseDao {
     required ExerciseModel exercise,
     required Transaction txn,
   }) async {
-    return await txn.insert(_tableName, exercise.toMap());
+    return await txn.insert(exerciseTable, exercise.toMap());
   }
 
   /// Update an existing exercise
@@ -138,7 +137,7 @@ class ExerciseDao {
   Future<int> update(ExerciseModel exercise) async {
     final database = await _db.database;
     return await database.update(
-      _tableName,
+      exerciseTable,
       exercise.toMap(),
       where: '${ExerciseFields.id} = ?',
       whereArgs: [exercise.id],
@@ -152,7 +151,7 @@ class ExerciseDao {
 
     final database = await _db.database;
     return await database.delete(
-      _tableName,
+      exerciseTable,
       where: '${ExerciseFields.id} = ?',
       whereArgs: [exerciseId],
     );
@@ -163,7 +162,7 @@ class ExerciseDao {
   Future<int> deleteByWorkoutId(String workoutId) async {
     final database = await _db.database;
     return await database.delete(
-      _tableName,
+      exerciseTable,
       where: '${ExerciseFields.workoutId} = ?',
       whereArgs: [workoutId],
     );
@@ -171,6 +170,6 @@ class ExerciseDao {
 
   Future<void> clearTable() async {
     final db = await _db.database;
-    await db.delete(_tableName);
+    await db.delete(exerciseTable);
   }
 }

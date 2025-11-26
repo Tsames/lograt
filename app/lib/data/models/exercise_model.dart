@@ -72,15 +72,15 @@ class ExerciseModel {
   }
 
   static ExerciseModel? fromMap(Map<String, dynamic> map) {
-    final id = map['id'];
+    final id = map[ExerciseFields.id];
     if (id == null || id is! String) return null;
-    final order = map['exercise_order'];
+    final order = map[ExerciseFields.order];
     if (order == null || order is! int) return null;
-    final workoutId = map['workout_id'];
+    final workoutId = map[ExerciseFields.workoutId];
     if (workoutId == null || workoutId is! String) return null;
-    final exerciseTypeId = map['exercise_type_id'];
+    final exerciseTypeId = map[ExerciseFields.exerciseTypeId];
     if (exerciseTypeId != null && exerciseTypeId is! String) return null;
-    final notes = map['notes'];
+    final notes = map[ExerciseFields.notes];
     if (notes != null && notes is! String) return null;
     return ExerciseModel(
       id: id,
@@ -93,11 +93,11 @@ class ExerciseModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'exercise_order': order,
-      'workout_id': workoutId,
-      'exercise_type_id': exerciseTypeId,
-      'notes': notes,
+      ExerciseFields.id: id,
+      ExerciseFields.order: order,
+      ExerciseFields.workoutId: workoutId,
+      ExerciseFields.exerciseTypeId: exerciseTypeId,
+      ExerciseFields.notes: notes,
     };
   }
 

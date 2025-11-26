@@ -1,4 +1,5 @@
 import 'package:lograt/data/models/exercise_model.dart';
+import 'package:lograt/data/models/workout_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_migration/sqflite_migration.dart';
@@ -59,7 +60,6 @@ class AppDatabase {
     }
   }
 
-  static const workoutsTableName = 'workouts';
   static const exerciseTypesTableName = 'exercise_types';
   static const exerciseSetsTableName = 'exercise_sets';
 
@@ -80,11 +80,11 @@ class AppDatabase {
 
   String _createWorkoutsTableSQL() {
     return '''
-      CREATE TABLE $workoutsTableName(
-        id TEXT PRIMARY KEY,
-        date INTEGER NOT NULL,
-        title TEXT,
-        notes TEXT
+      CREATE TABLE $workoutTable(
+        ${WorkoutFields.id} TEXT PRIMARY KEY,
+        ${WorkoutFields.date} INTEGER NOT NULL,
+        ${WorkoutFields.title} TEXT,
+        ${WorkoutFields.notes} TEXT
       )
     ''';
   }
@@ -107,7 +107,7 @@ class AppDatabase {
       ${ExerciseFields.workoutId} TEXT NOT NULL,
       ${ExerciseFields.exerciseTypeId} TEXT,
       ${ExerciseFields.notes} TEXT,
-      FOREIGN KEY (${ExerciseFields.workoutId}) REFERENCES $workoutsTableName(id) ON DELETE CASCADE,
+      FOREIGN KEY (${ExerciseFields.workoutId}) REFERENCES $workoutTable(${WorkoutFields.id}) ON DELETE CASCADE,
       FOREIGN KEY (${ExerciseFields.exerciseTypeId}) REFERENCES $exerciseTypesTableName(id) ON DELETE RESTRICT
     )
   ''';
@@ -124,7 +124,7 @@ class AppDatabase {
       units TEXT,
       reps INTEGER,
       rest_time_seconds INTEGER,
-      FOREIGN KEY (exercise_id) REFERENCES $exerciseTable(id) ON DELETE CASCADE
+      FOREIGN KEY (exercise_id) REFERENCES $exerciseTable(${ExerciseFields.id}) ON DELETE CASCADE
     )
     ''';
   }
