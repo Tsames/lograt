@@ -6,36 +6,46 @@ import 'package:lograt/util/uuidv7.dart';
 const workoutTemplatesTable = 'workout_templates';
 
 class WorkoutTemplateFields {
-  static final List<String> values = [id, date, title, notes];
+  static final List<String> values = [id, date, title, description];
 
   static final String id = 'id';
   static final String date = 'date';
   static final String title = 'title';
-  static final String notes = 'notes';
+  static final String description = 'description';
 }
 
 class WorkoutTemplateModel {
   final String id;
   final DateTime date;
   final String? title;
-  final String? notes;
+  final String? description;
 
   const WorkoutTemplateModel({
     required this.id,
     required this.date,
     this.title,
-    this.notes,
+    this.description,
   });
 
-  WorkoutTemplateModel.forTest({String? title, String? notes})
-    : this(id: uuidV7(), date: DateTime.now(), title: title, notes: notes);
+  WorkoutTemplateModel.forTest({
+    DateTime? date,
+    String? title,
+    String? description,
+  }) : this(
+         id: uuidV7(),
+         date:
+             date?.copyWith(millisecond: 0, microsecond: 0) ??
+             DateTime.now().copyWith(millisecond: 0, microsecond: 0),
+         title: title,
+         description: description,
+       );
 
   WorkoutTemplateModel.fromEntity(WorkoutTemplate workoutTemplate)
     : this(
         id: workoutTemplate.id,
         date: workoutTemplate.date,
         title: workoutTemplate.title,
-        notes: workoutTemplate.notes,
+        description: workoutTemplate.description,
       );
 
   WorkoutTemplate toEntity([
@@ -46,7 +56,7 @@ class WorkoutTemplateModel {
       date: date,
       exercises: exerciseTemplates,
       title: title,
-      notes: notes,
+      description: description,
     );
   }
 
@@ -57,13 +67,13 @@ class WorkoutTemplateModel {
     if (date == null || date is! int) return null;
     final title = map[WorkoutTemplateFields.title];
     if (title != null && title is! String) return null;
-    final notes = map[WorkoutTemplateFields.notes];
-    if (notes != null && notes is! String) return null;
+    final description = map[WorkoutTemplateFields.description];
+    if (description != null && description is! String) return null;
     return WorkoutTemplateModel(
       id: id,
       date: DateTime.fromMillisecondsSinceEpoch(date),
       title: title,
-      notes: notes,
+      description: description,
     );
   }
 
@@ -72,7 +82,7 @@ class WorkoutTemplateModel {
       WorkoutTemplateFields.id: id,
       WorkoutTemplateFields.date: date.millisecondsSinceEpoch,
       WorkoutTemplateFields.title: title,
-      WorkoutTemplateFields.notes: notes,
+      WorkoutTemplateFields.description: description,
     };
   }
 
@@ -80,13 +90,13 @@ class WorkoutTemplateModel {
     String? id,
     DateTime? date,
     String? title,
-    String? notes,
+    String? description,
   }) {
     return WorkoutTemplateModel(
       id: id ?? this.id,
       date: date ?? this.date,
       title: title ?? this.title,
-      notes: notes ?? this.notes,
+      description: description ?? this.description,
     );
   }
 
@@ -101,5 +111,5 @@ class WorkoutTemplateModel {
 
   @override
   String toString() =>
-      'WorkoutTemplateModel(id: $id, date: ${date.toHumanFriendlyFormat()}, title: $title, notes: $notes)';
+      'WorkoutTemplateModel(id: $id, date: ${date.toHumanFriendlyFormat()}, title: $title, description: $description)';
 }

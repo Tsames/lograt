@@ -1,6 +1,7 @@
 import 'package:lograt/data/models/exercise_model.dart';
 import 'package:lograt/data/models/exercise_set_model.dart';
 import 'package:lograt/data/models/exercise_type_model.dart';
+import 'package:lograt/data/models/templates/workout_template_model.dart';
 import 'package:lograt/data/models/workout_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -48,6 +49,7 @@ class AppDatabase {
       version: 1,
       onCreate: (Database db, int version) async {
         await db.execute(_createWorkoutsTableSQL());
+        await db.execute(_createWorkoutTemplatesTableSQL());
         await db.execute(_createExerciseTypesTableSQL());
         await db.execute(_createExercisesTableSQL());
         await db.execute(_createSetsTableSQL());
@@ -66,6 +68,7 @@ class AppDatabase {
   List<String> _buildInitializationScript() {
     return [
       _createWorkoutsTableSQL(),
+      _createWorkoutTemplatesTableSQL(),
       _createExerciseTypesTableSQL(),
       _createExercisesTableSQL(),
       _createSetsTableSQL(),
@@ -84,6 +87,17 @@ class AppDatabase {
         ${WorkoutFields.date} INTEGER NOT NULL,
         ${WorkoutFields.title} TEXT,
         ${WorkoutFields.notes} TEXT
+      )
+    ''';
+  }
+
+  String _createWorkoutTemplatesTableSQL() {
+    return '''
+      CREATE TABLE $workoutTemplatesTable(
+        ${WorkoutTemplateFields.id} TEXT PRIMARY KEY,
+        ${WorkoutTemplateFields.date} INTEGER NOT NULL,
+        ${WorkoutTemplateFields.title} TEXT,
+        ${WorkoutTemplateFields.description} TEXT
       )
     ''';
   }
