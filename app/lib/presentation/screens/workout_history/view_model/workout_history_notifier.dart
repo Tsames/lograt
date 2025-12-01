@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/data/entities/workout.dart';
+import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/data/providers.dart';
 import 'package:lograt/data/usecases/get_paginated_workouts_sorted_by_creation_date_usecase.dart';
 import 'package:lograt/presentation/screens/workout_history/view_model/workout_history_notifier_state.dart';

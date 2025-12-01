@@ -1,5 +1,5 @@
 import 'package:lograt/data/database/app_database.dart';
-import 'package:lograt/data/models/exercise_model.dart';
+import 'package:lograt/data/models/workouts/exercise_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// Data Access Object operations for an Exercise

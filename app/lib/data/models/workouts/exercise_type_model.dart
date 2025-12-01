@@ -1,4 +1,4 @@
-import 'package:lograt/data/entities/exercise_type.dart';
+import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/util/uuidv7.dart';
 
 const exerciseTypesTable = 'exercise_types';

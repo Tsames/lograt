@@ -1,8 +1,8 @@
-import 'package:lograt/data/models/exercise_model.dart';
-import 'package:lograt/data/models/exercise_set_model.dart';
-import 'package:lograt/data/models/exercise_type_model.dart';
+import 'package:lograt/data/models/workouts/exercise_model.dart';
+import 'package:lograt/data/models/workouts/exercise_set_model.dart';
+import 'package:lograt/data/models/workouts/exercise_type_model.dart';
 import 'package:lograt/data/models/templates/workout_template_model.dart';
-import 'package:lograt/data/models/workout_model.dart';
+import 'package:lograt/data/models/workouts/workout_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_migration/sqflite_migration.dart';
@@ -86,7 +86,9 @@ class AppDatabase {
         ${WorkoutFields.id} TEXT PRIMARY KEY,
         ${WorkoutFields.date} INTEGER NOT NULL,
         ${WorkoutFields.title} TEXT,
-        ${WorkoutFields.notes} TEXT
+        ${WorkoutFields.templateId} TEXT,
+        ${WorkoutFields.notes} TEXT,
+        FOREIGN KEY (${WorkoutFields.templateId}) REFERENCES $workoutTemplatesTable(${WorkoutTemplateFields.id}) ON DELETE SET NULL
       )
     ''';
   }

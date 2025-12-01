@@ -6,10 +6,10 @@ import 'package:lograt/data/dao/workout_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/entities/set_type.dart';
 import 'package:lograt/data/entities/units.dart';
-import 'package:lograt/data/models/exercise_model.dart';
-import 'package:lograt/data/models/exercise_set_model.dart';
-import 'package:lograt/data/models/exercise_type_model.dart';
-import 'package:lograt/data/models/workout_model.dart';
+import 'package:lograt/data/models/workouts/exercise_model.dart';
+import 'package:lograt/data/models/workouts/exercise_set_model.dart';
+import 'package:lograt/data/models/workouts/exercise_type_model.dart';
+import 'package:lograt/data/models/workouts/workout_model.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
