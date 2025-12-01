@@ -1,4 +1,4 @@
-import 'package:lograt/data/entities/exercise_set.dart';
+import 'package:lograt/data/entities/workouts/exercise_set.dart';
 import 'package:lograt/data/entities/set_type.dart';
 import 'package:lograt/data/entities/units.dart';
 import 'package:lograt/util/uuidv7.dart';

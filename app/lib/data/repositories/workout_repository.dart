@@ -4,15 +4,15 @@ import 'package:lograt/data/dao/exercise_type_dao.dart';
 import 'package:lograt/data/dao/workout_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/database/seed_data.dart';
-import 'package:lograt/data/entities/exercise.dart';
-import 'package:lograt/data/entities/exercise_set.dart';
-import 'package:lograt/data/entities/exercise_type.dart';
-import 'package:lograt/data/entities/workout.dart';
+import 'package:lograt/data/entities/workouts/exercise.dart';
+import 'package:lograt/data/entities/workouts/exercise_set.dart';
+import 'package:lograt/data/entities/workouts/exercise_type.dart';
+import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/data/exceptions/workout_exceptions.dart';
-import 'package:lograt/data/models/exercise_model.dart';
-import 'package:lograt/data/models/exercise_set_model.dart';
-import 'package:lograt/data/models/exercise_type_model.dart';
-import 'package:lograt/data/models/workout_model.dart';
+import 'package:lograt/data/models/workouts/exercise_model.dart';
+import 'package:lograt/data/models/workouts/exercise_set_model.dart';
+import 'package:lograt/data/models/workouts/exercise_type_model.dart';
+import 'package:lograt/data/models/workouts/workout_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class WorkoutRepository {
@@ -150,7 +150,7 @@ class WorkoutRepository {
 
       final validExercises = exerciseEntities.nonNulls.toList();
 
-      return workoutModel.toEntity(validExercises);
+      return workoutModel.toEntity(exercises: validExercises);
     } on WorkoutNotFoundException {
       rethrow;
     } on DatabaseException catch (e) {

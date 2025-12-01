@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/data/entities/workout.dart';
+import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/presentation/screens/workout_history/view_model/workout_history_notifier.dart';
 import 'package:lograt/presentation/screens/workout_history/view_model/workout_history_notifier_state.dart';
 import 'package:lograt/presentation/screens/workout_history/workout_history_widget.dart';

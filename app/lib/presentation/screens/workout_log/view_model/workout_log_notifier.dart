@@ -1,10 +1,10 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/data/entities/exercise_set.dart';
-import 'package:lograt/data/entities/exercise_type.dart';
+import 'package:lograt/data/entities/workouts/exercise_set.dart';
+import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/data/entities/set_type.dart';
 import 'package:lograt/data/entities/units.dart';
-import 'package:lograt/data/entities/workout.dart';
+import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/data/providers.dart';
 import 'package:lograt/data/usecases/get_full_workout_data_by_id_usecase.dart';
 import 'package:lograt/data/usecases/update_or_create_workout_usecase.dart';

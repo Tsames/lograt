@@ -1,6 +1,6 @@
-import 'package:lograt/data/entities/exercise.dart';
-import 'package:lograt/data/entities/exercise_set.dart';
-import 'package:lograt/data/entities/workout.dart';
+import 'package:lograt/data/entities/workouts/exercise.dart';
+import 'package:lograt/data/entities/workouts/exercise_set.dart';
+import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/data/repositories/workout_repository.dart';
 
 class UpdateOrCreateWorkoutDataUsecase {

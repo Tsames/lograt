@@ -1,5 +1,5 @@
 import 'package:lograt/data/database/app_database.dart';
-import 'package:lograt/data/models/workout_model.dart';
+import 'package:lograt/data/models/workouts/workout_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class WorkoutDao {

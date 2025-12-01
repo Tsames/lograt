@@ -5,7 +5,7 @@ enum MuscleGroup {
   shoulders('Shoulders'),
   back('Back'),
   arms('Arms'),
-  abs('Abs'),
+  core('Core'),
   legs('Legs');
 
   final String name;

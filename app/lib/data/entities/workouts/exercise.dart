@@ -1,5 +1,5 @@
-import 'package:lograt/data/entities/exercise_set.dart';
-import 'package:lograt/data/entities/exercise_type.dart';
+import 'package:lograt/data/entities/workouts/exercise_set.dart';
+import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/util/uuidv7.dart';
 
 class Exercise {

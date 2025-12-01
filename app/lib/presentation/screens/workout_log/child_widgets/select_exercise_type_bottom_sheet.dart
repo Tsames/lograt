@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/data/entities/exercise_type.dart';
-import 'package:lograt/data/entities/workout.dart';
+import 'package:lograt/data/entities/workouts/exercise_type.dart';
+import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/presentation/screens/workout_log/view_model/exercise_types_notifier.dart';
 import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier.dart';
 
