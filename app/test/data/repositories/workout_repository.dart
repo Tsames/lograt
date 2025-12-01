@@ -1,4 +1,4 @@
-import 'package:lograt/data/dao/workout_dao.dart';
+import 'package:lograt/data/dao/workout/workout_dao.dart';
 import 'package:mockito/annotations.dart';
 
 @GenerateMocks([WorkoutDao])
