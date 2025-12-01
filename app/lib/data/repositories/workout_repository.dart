@@ -1,7 +1,7 @@
-import 'package:lograt/data/dao/exercise_dao.dart';
-import 'package:lograt/data/dao/exercise_set_dao.dart';
-import 'package:lograt/data/dao/exercise_type_dao.dart';
-import 'package:lograt/data/dao/workout_dao.dart';
+import 'package:lograt/data/dao/workout/exercise_dao.dart';
+import 'package:lograt/data/dao/workout/exercise_set_dao.dart';
+import 'package:lograt/data/dao/workout/exercise_type_dao.dart';
+import 'package:lograt/data/dao/workout/workout_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/database/seed_data.dart';
 import 'package:lograt/data/entities/workouts/exercise.dart';
@@ -64,38 +64,12 @@ class WorkoutRepository {
     }
   }
 
-  /// Get a list of all of [Workout]s with creation dates after the given [dateTimeThresholdInMilliseconds]
-  /// ordered by creation date descending.
-  Future<List<Workout>> getWorkoutSummariesAfterTime(
-    int dateTimeThresholdInMilliseconds,
-  ) async {
-    try {
-      final workoutModels = await _workoutDao.getWorkoutSummariesAfterTime(
-        dateTimeThresholdInMilliseconds,
-      );
-
-      final workoutEntities = workoutModels
-          .map((workoutModel) => workoutModel.toEntity())
-          .toList();
-
-      return workoutEntities;
-    } on DatabaseException catch (e) {
-      throw WorkoutDataException('Failed to load recent workout summaries: $e');
-    } catch (e) {
-      throw WorkoutDataException(
-        'Unexpected error loading recent workout summaries: $e',
-      );
-    }
-  }
-
   /// Get a list of length [limit] of [Workout]s without their corresponding exercises
   /// ordered by creation date descending.
   Future<List<Workout>> getWorkoutSummaries({int? limit, int? offset}) async {
     try {
-      final workoutModels = await _workoutDao.getWorkoutSummaries(
-        limit: limit,
-        offset: offset,
-      );
+      final workoutModels = await _workoutDao
+          .getListOfWorkoutsOrderedByCreationDate(limit: limit, offset: offset);
 
       final workoutEntities = workoutModels
           .map((workoutModel) => workoutModel.toEntity())
@@ -191,10 +165,7 @@ class WorkoutRepository {
       return await db.transaction<void>((txn) async {
         for (final workout in workouts) {
           // Create Workout
-          await _workoutDao.insertWithTransaction(
-            WorkoutModel.fromEntity(workout),
-            txn,
-          );
+          await _workoutDao.insert(WorkoutModel.fromEntity(workout), txn);
 
           for (final exercise in workout.exercises) {
             // If the exercise has an exercise type, check if it already exists in the database, if it doesn't create it

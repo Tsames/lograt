@@ -1,14 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/data/dao/exercise_dao.dart';
-import 'package:lograt/data/dao/exercise_set_dao.dart';
-import 'package:lograt/data/dao/exercise_type_dao.dart';
-import 'package:lograt/data/dao/workout_dao.dart';
+import 'package:lograt/data/dao/workout/exercise_dao.dart';
+import 'package:lograt/data/dao/workout/exercise_set_dao.dart';
+import 'package:lograt/data/dao/workout/exercise_type_dao.dart';
+import 'package:lograt/data/dao/workout/workout_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/repositories/workout_repository.dart';
 import 'package:lograt/data/usecases/get_full_workout_data_by_id_usecase.dart';
 import 'package:lograt/data/usecases/get_paginated_exercise_types_usecase.dart';
 import 'package:lograt/data/usecases/get_paginated_workouts_sorted_by_creation_date_usecase.dart';
-import 'package:lograt/data/usecases/get_this_weeks_workouts_usecase.dart';
 import 'package:lograt/data/usecases/seed_data_usecase.dart';
 import 'package:lograt/data/usecases/update_or_create_workout_usecase.dart';
 
@@ -64,12 +63,6 @@ final getSortedPaginatedWorkoutsUsecaseProvider =
     Provider<GetPaginatedWorkoutsSortedByCreationDateUsecase>((ref) {
       final repository = ref.read(workoutRepositoryProvider);
       return GetPaginatedWorkoutsSortedByCreationDateUsecase(repository);
-    });
-
-final getThisWeeksWorkoutsUsecaseProvider =
-    Provider<GetThisWeeksWorkoutsUsecase>((ref) {
-      final repository = ref.read(workoutRepositoryProvider);
-      return GetThisWeeksWorkoutsUsecase(repository);
     });
 
 final getFullWorkoutDataByIdUsecaseProvider =

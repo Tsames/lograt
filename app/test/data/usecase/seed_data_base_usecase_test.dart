@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lograt/data/dao/exercise_dao.dart';
-import 'package:lograt/data/dao/exercise_set_dao.dart';
-import 'package:lograt/data/dao/exercise_type_dao.dart';
-import 'package:lograt/data/dao/workout_dao.dart';
+import 'package:lograt/data/dao/workout/exercise_dao.dart';
+import 'package:lograt/data/dao/workout/exercise_set_dao.dart';
+import 'package:lograt/data/dao/workout/exercise_type_dao.dart';
+import 'package:lograt/data/dao/workout/workout_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/database/seed_data.dart';
 import 'package:lograt/data/models/workouts/exercise_model.dart';

@@ -1,7 +1,7 @@
 // import 'package:flutter_test/flutter_test.dart';
 // import 'package:lograt/data/dao/exercise_dao.dart';
 // import 'package:lograt/data/dao/exercise_type_dao.dart';
-// import 'package:lograt/data/dao/workout_dao.dart';
+// import 'package:lograt/data/dao/workout_dao_test.dart';
 // import 'package:lograt/data/database/app_database.dart';
 // import 'package:lograt/data/entities/exercise.dart';
 // import 'package:lograt/data/models/exercise_model.dart';

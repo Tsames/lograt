@@ -38,7 +38,9 @@ class WorkoutModel {
     String? notes,
   }) : this(
          id: uuidV7(),
-         date: DateTime.now().copyWith(millisecond: 0, microsecond: 0),
+         date:
+             date?.copyWith(millisecond: 0, microsecond: 0) ??
+             DateTime.now().copyWith(millisecond: 0, microsecond: 0),
          title: title,
          templateId: templateId,
          notes: notes,
