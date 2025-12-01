@@ -96,7 +96,9 @@ class WorkoutRepository {
       }
 
       // Get all exercises for the workout
-      final exerciseModels = await _exerciseDao.getByWorkoutId(workoutId);
+      final exerciseModels = await _exerciseDao.getAllExercisesWithWorkoutId(
+        workoutId,
+      );
       if (exerciseModels.isEmpty) {
         return workoutModel.toEntity();
       }
@@ -183,9 +185,9 @@ class WorkoutRepository {
             }
 
             // Create exercise
-            await _exerciseDao.insertWithTransaction(
-              exercise: ExerciseModel.fromEntity(exercise, workout.id),
-              txn: txn,
+            await _exerciseDao.insert(
+              ExerciseModel.fromEntity(exercise, workout.id),
+              txn,
             );
 
             // Create Sets
