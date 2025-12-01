@@ -7,14 +7,14 @@ class WorkoutTemplate {
   final DateTime date;
   final List<ExerciseTemplate> exercises;
   final String? title;
-  final String? notes;
+  final String? description;
 
   WorkoutTemplate({
     String? id,
     DateTime? date,
     List<ExerciseTemplate>? exercises,
     this.title,
-    this.notes,
+    this.description,
   }) : id = id ?? uuidV7(),
        date = date ?? DateTime.now(),
        exercises = exercises ?? const <ExerciseTemplate>[];
@@ -24,14 +24,14 @@ class WorkoutTemplate {
     DateTime? date,
     List<ExerciseTemplate>? exercises,
     String? title,
-    String? notes,
+    String? description,
   }) {
     return WorkoutTemplate(
       id: id ?? this.id,
       date: date ?? this.date,
       exercises: exercises ?? this.exercises,
       title: title ?? this.title,
-      notes: notes ?? this.notes,
+      description: description ?? this.description,
     );
   }
 
@@ -46,5 +46,5 @@ class WorkoutTemplate {
 
   @override
   String toString() =>
-      'WorkoutTemplate(id: $id, date: ${date.toHumanFriendlyFormat()}, exercises: $exercises, title: $title, notes: $notes)';
+      'WorkoutTemplate(id: $id, date: ${date.toHumanFriendlyFormat()}, exercises: $exercises, title: $title, description: $description)';
 }
