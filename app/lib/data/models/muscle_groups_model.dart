@@ -13,6 +13,22 @@ class MuscleGroupsFields {
   static final String description = 'description';
 }
 
+class MuscleGroupsToWorkoutFields {
+  static final List<String> values = [id, muscleGroupId, workoutId];
+
+  static final String id = 'id';
+  static final String muscleGroupId = 'muscle_group_id';
+  static final String workoutId = 'workout_id';
+}
+
+class MuscleGroupsToExerciseTypeFields {
+  static final List<String> values = [id, muscleGroupId, exerciseTypeId];
+
+  static final String id = 'id';
+  static final String muscleGroupId = 'muscle_group_id';
+  static final String exerciseTypeId = 'exercise_type_id';
+}
+
 class MuscleGroupsModel {
   final String id;
   final String label;
