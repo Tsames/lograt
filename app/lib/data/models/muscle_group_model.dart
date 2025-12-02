@@ -1,11 +1,11 @@
 import 'package:lograt/data/entities/muscle_group.dart';
 import 'package:lograt/util/uuidv7.dart';
 
-const muscleGroupsTable = 'muscle_groups';
-const muscleGroupsToWorkoutsTable = 'muscle_groups_to_workouts';
-const muscleGroupsToExerciseTypesTable = 'muscle_groups_to_exercise_types';
+const muscleGroupTable = 'muscle_groups';
+const muscleGroupToWorkoutTable = 'muscle_group_to_workout';
+const muscleGroupToExerciseTypeTable = 'muscle_group_to_exercise_type';
 
-class MuscleGroupsFields {
+class MuscleGroupFields {
   static final List<String> values = [id, label, description];
 
   static final String id = 'id';
@@ -13,7 +13,7 @@ class MuscleGroupsFields {
   static final String description = 'description';
 }
 
-class MuscleGroupsToWorkoutFields {
+class MuscleGroupToWorkoutFields {
   static final List<String> values = [id, muscleGroupId, workoutId];
 
   static final String id = 'id';
@@ -21,7 +21,7 @@ class MuscleGroupsToWorkoutFields {
   static final String workoutId = 'workout_id';
 }
 
-class MuscleGroupsToExerciseTypeFields {
+class MuscleGroupToExerciseTypeFields {
   static final List<String> values = [id, muscleGroupId, exerciseTypeId];
 
   static final String id = 'id';
@@ -29,21 +29,21 @@ class MuscleGroupsToExerciseTypeFields {
   static final String exerciseTypeId = 'exercise_type_id';
 }
 
-class MuscleGroupsModel {
+class MuscleGroupModel {
   final String id;
   final String label;
   final String? description;
 
-  const MuscleGroupsModel({
+  const MuscleGroupModel({
     required this.id,
     required this.label,
     this.description,
   });
 
-  MuscleGroupsModel.forTest({required String label, String? description})
+  MuscleGroupModel.forTest({required String label, String? description})
     : this(id: uuidV7(), label: label, description: description);
 
-  MuscleGroupsModel.fromEntity(MuscleGroup muscleGroup)
+  MuscleGroupModel.fromEntity(MuscleGroup muscleGroup)
     : this(
         id: muscleGroup.id,
         label: muscleGroup.label,
@@ -54,26 +54,26 @@ class MuscleGroupsModel {
     return MuscleGroup(id: id, label: label, description: description);
   }
 
-  static MuscleGroupsModel? fromMap(Map<String, dynamic> map) {
-    final id = map[MuscleGroupsFields.id];
+  static MuscleGroupModel? fromMap(Map<String, dynamic> map) {
+    final id = map[MuscleGroupFields.id];
     if (id == null || id is! String) return null;
-    final label = map[MuscleGroupsFields.label];
+    final label = map[MuscleGroupFields.label];
     if (label == null || label is! String) return null;
-    final description = map[MuscleGroupsFields.description];
+    final description = map[MuscleGroupFields.description];
     if (description != null && description is! String) return null;
-    return MuscleGroupsModel(id: id, label: label, description: description);
+    return MuscleGroupModel(id: id, label: label, description: description);
   }
 
   Map<String, dynamic> toMap() {
     return {
-      MuscleGroupsFields.id: id,
-      MuscleGroupsFields.label: label,
-      MuscleGroupsFields.description: description,
+      MuscleGroupFields.id: id,
+      MuscleGroupFields.label: label,
+      MuscleGroupFields.description: description,
     };
   }
 
-  MuscleGroupsModel copyWith({String? id, String? label, String? description}) {
-    return MuscleGroupsModel(
+  MuscleGroupModel copyWith({String? id, String? label, String? description}) {
+    return MuscleGroupModel(
       id: id ?? this.id,
       label: label ?? this.label,
       description: description ?? this.description,
@@ -83,7 +83,7 @@ class MuscleGroupsModel {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is MuscleGroupsModel && id == other.id;
+    return other is MuscleGroupModel && id == other.id;
   }
 
   @override
@@ -91,5 +91,5 @@ class MuscleGroupsModel {
 
   @override
   String toString() =>
-      'MuscleGroupsModel(id: $id, label: $label, description: $description)';
+      'MuscleGroupModel(id: $id, label: $label, description: $description)';
 }
