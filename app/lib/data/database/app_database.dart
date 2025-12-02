@@ -1,4 +1,4 @@
-import 'package:lograt/data/models/muscle_groups_model.dart';
+import 'package:lograt/data/models/muscle_group_model.dart';
 import 'package:lograt/data/models/templates/exercise_template_model.dart';
 import 'package:lograt/data/models/templates/workout_template_model.dart';
 import 'package:lograt/data/models/workouts/exercise_model.dart';
@@ -169,36 +169,36 @@ class AppDatabase {
 
   String _createMuscleGroupsTableSQL() {
     return '''
-      CREATE TABLE $muscleGroupsTable(
-        ${MuscleGroupsFields.id} TEXT PRIMARY KEY,
-        ${MuscleGroupsFields.label} TEXT NOT NULL UNIQUE,
-        ${MuscleGroupsFields.description} TEXT
+      CREATE TABLE $muscleGroupTable(
+        ${MuscleGroupFields.id} TEXT PRIMARY KEY,
+        ${MuscleGroupFields.label} TEXT NOT NULL UNIQUE,
+        ${MuscleGroupFields.description} TEXT
       )
     ''';
   }
 
   String _createMuscleGroupsToWorkoutsTableSQL() {
     return '''
-    CREATE TABLE $muscleGroupsToWorkoutsTable(
-      ${MuscleGroupsToWorkoutFields.id} TEXT PRIMARY KEY,
-      ${MuscleGroupsToWorkoutFields.muscleGroupId} TEXT NOT NULL,
-      ${MuscleGroupsToWorkoutFields.workoutId} TEXT NOT NULL,
-      FOREIGN KEY (${MuscleGroupsToWorkoutFields.workoutId}) REFERENCES $workoutsTable(${WorkoutFields.id}) ON DELETE CASCADE,
-      FOREIGN KEY (${MuscleGroupsToWorkoutFields.muscleGroupId}) REFERENCES $muscleGroupsTable(${MuscleGroupsFields.id}) ON DELETE CASCADE,
-      UNIQUE(${MuscleGroupsToWorkoutFields.workoutId}, ${MuscleGroupsToWorkoutFields.muscleGroupId})
+    CREATE TABLE $muscleGroupToWorkoutTable(
+      ${MuscleGroupToWorkoutFields.id} TEXT PRIMARY KEY,
+      ${MuscleGroupToWorkoutFields.muscleGroupId} TEXT NOT NULL,
+      ${MuscleGroupToWorkoutFields.workoutId} TEXT NOT NULL,
+      FOREIGN KEY (${MuscleGroupToWorkoutFields.workoutId}) REFERENCES $workoutsTable(${WorkoutFields.id}) ON DELETE CASCADE,
+      FOREIGN KEY (${MuscleGroupToWorkoutFields.muscleGroupId}) REFERENCES $muscleGroupTable(${MuscleGroupFields.id}) ON DELETE CASCADE,
+      UNIQUE(${MuscleGroupToWorkoutFields.workoutId}, ${MuscleGroupToWorkoutFields.muscleGroupId})
     )
   ''';
   }
 
   String _createMuscleGroupsToExerciseTypeTableSQL() {
     return '''
-    CREATE TABLE $muscleGroupsToExerciseTypesTable(
-      ${MuscleGroupsToExerciseTypeFields.id} TEXT PRIMARY KEY,
-      ${MuscleGroupsToExerciseTypeFields.muscleGroupId} TEXT NOT NULL,
-      ${MuscleGroupsToExerciseTypeFields.exerciseTypeId} TEXT NOT NULL,
-      FOREIGN KEY (${MuscleGroupsToExerciseTypeFields.muscleGroupId}) REFERENCES $muscleGroupsTable(${MuscleGroupsFields.id}) ON DELETE CASCADE,
-      FOREIGN KEY (${MuscleGroupsToExerciseTypeFields.exerciseTypeId}) REFERENCES $exerciseTypesTable(${ExerciseTypeFields.id}) ON DELETE CASCADE,
-      UNIQUE(${MuscleGroupsToExerciseTypeFields.muscleGroupId}, ${MuscleGroupsToExerciseTypeFields.exerciseTypeId})
+    CREATE TABLE $muscleGroupToExerciseTypeTable(
+      ${MuscleGroupToExerciseTypeFields.id} TEXT PRIMARY KEY,
+      ${MuscleGroupToExerciseTypeFields.muscleGroupId} TEXT NOT NULL,
+      ${MuscleGroupToExerciseTypeFields.exerciseTypeId} TEXT NOT NULL,
+      FOREIGN KEY (${MuscleGroupToExerciseTypeFields.muscleGroupId}) REFERENCES $muscleGroupTable(${MuscleGroupFields.id}) ON DELETE CASCADE,
+      FOREIGN KEY (${MuscleGroupToExerciseTypeFields.exerciseTypeId}) REFERENCES $exerciseTypesTable(${ExerciseTypeFields.id}) ON DELETE CASCADE,
+      UNIQUE(${MuscleGroupToExerciseTypeFields.muscleGroupId}, ${MuscleGroupToExerciseTypeFields.exerciseTypeId})
     )
   ''';
   }
