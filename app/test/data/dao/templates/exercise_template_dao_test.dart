@@ -14,7 +14,10 @@ void main() {
     databaseFactory = databaseFactoryFfi;
   });
 
-  void expectExerciseTemplatesEqual(ExerciseTemplateModel? actual, ExerciseTemplateModel expected) {
+  void expectExerciseTemplatesEqual(
+    ExerciseTemplateModel? actual,
+    ExerciseTemplateModel expected,
+  ) {
     expect(actual, isNotNull);
     expect(actual!.id, equals(expected.id));
     expect(actual.workoutTemplateId, equals(expected.workoutTemplateId));
@@ -38,10 +41,15 @@ void main() {
       workoutTemplateDao = WorkoutTemplateDao(testDatabase);
       exerciseTypeDao = ExerciseTypeDao(testDatabase);
 
-      testWorkoutTemplate = WorkoutTemplateModel.forTest(description: 'Test Workout Template');
+      testWorkoutTemplate = WorkoutTemplateModel.forTest(
+        description: 'Test Workout Template',
+      );
       await workoutTemplateDao.insert(testWorkoutTemplate);
 
-      testExerciseType = ExerciseTypeModel.forTest(name: 'Bench Press', description: 'Chest exercise');
+      testExerciseType = ExerciseTypeModel.forTest(
+        name: 'Bench Press',
+        description: 'Chest exercise',
+      );
       await exerciseTypeDao.insert(testExerciseType);
 
       testExerciseTemplate = ExerciseTemplateModel.forTest(
@@ -59,66 +67,107 @@ void main() {
       test('should insert a new exercise template correctly', () async {
         await exerciseTemplateDao.insert(testExerciseTemplate);
 
-        final retrieved = await exerciseTemplateDao.getById(testExerciseTemplate.id);
+        final retrieved = await exerciseTemplateDao.getById(
+          testExerciseTemplate.id,
+        );
         expectExerciseTemplatesEqual(retrieved, testExerciseTemplate);
       });
 
-      test('should handle inserting exercise template with minimal data', () async {
-        final minimalTemplate = ExerciseTemplateModel.forTest(workoutTemplateId: testWorkoutTemplate.id);
+      test(
+        'should handle inserting exercise template with minimal data',
+        () async {
+          final minimalTemplate = ExerciseTemplateModel.forTest(
+            workoutTemplateId: testWorkoutTemplate.id,
+          );
 
-        await exerciseTemplateDao.insert(minimalTemplate);
+          await exerciseTemplateDao.insert(minimalTemplate);
 
-        final retrieved = await exerciseTemplateDao.getById(minimalTemplate.id);
-        expectExerciseTemplatesEqual(retrieved, minimalTemplate);
-      });
+          final retrieved = await exerciseTemplateDao.getById(
+            minimalTemplate.id,
+          );
+          expectExerciseTemplatesEqual(retrieved, minimalTemplate);
+        },
+      );
     });
 
     group('Batch Insert Operations', () {
-      test('should batch insert multiple exercise templates correctly', () async {
-        final templates = [
-          ExerciseTemplateModel.forTest(workoutTemplateId: testWorkoutTemplate.id, order: 1),
-          ExerciseTemplateModel.forTest(workoutTemplateId: testWorkoutTemplate.id, order: 2),
-          ExerciseTemplateModel.forTest(workoutTemplateId: testWorkoutTemplate.id, order: 3),
-        ];
+      test(
+        'should batch insert multiple exercise templates correctly',
+        () async {
+          final templates = [
+            ExerciseTemplateModel.forTest(
+              workoutTemplateId: testWorkoutTemplate.id,
+              order: 1,
+            ),
+            ExerciseTemplateModel.forTest(
+              workoutTemplateId: testWorkoutTemplate.id,
+              order: 2,
+            ),
+            ExerciseTemplateModel.forTest(
+              workoutTemplateId: testWorkoutTemplate.id,
+              order: 3,
+            ),
+          ];
 
-        await exerciseTemplateDao.batchInsert(templates);
+          await exerciseTemplateDao.batchInsert(templates);
 
-        final allTemplates = await exerciseTemplateDao.getAllExerciseTemplatesWithWorkoutTemplateId(
-          testWorkoutTemplate.id,
-        );
-        expect(allTemplates.length, equals(3));
-        for (int i = 0; i < templates.length; i++) {
-          final retrieved = await exerciseTemplateDao.getById(templates[i].id);
-          expectExerciseTemplatesEqual(retrieved, templates[i]);
-        }
-      });
+          final allTemplates = await exerciseTemplateDao
+              .getAllExerciseTemplatesWithWorkoutTemplateId(
+                testWorkoutTemplate.id,
+              );
+          expect(allTemplates.length, equals(3));
+          for (int i = 0; i < templates.length; i++) {
+            final retrieved = await exerciseTemplateDao.getById(
+              templates[i].id,
+            );
+            expectExerciseTemplatesEqual(retrieved, templates[i]);
+          }
+        },
+      );
 
       test('should handle empty list gracefully in batch insert', () async {
         await exerciseTemplateDao.batchInsert([]);
 
-        final allTemplates = await exerciseTemplateDao.getAllExerciseTemplatesWithWorkoutTemplateId(
-          testWorkoutTemplate.id,
-        );
+        final allTemplates = await exerciseTemplateDao
+            .getAllExerciseTemplatesWithWorkoutTemplateId(
+              testWorkoutTemplate.id,
+            );
         expect(allTemplates, isEmpty);
       });
 
-      test('should handle batch insert with duplicate ID among valid templates', () async {
-        await exerciseTemplateDao.insert(testExerciseTemplate);
+      test(
+        'should handle batch insert with duplicate ID among valid templates',
+        () async {
+          await exerciseTemplateDao.insert(testExerciseTemplate);
 
-        final templates = [
-          ExerciseTemplateModel.forTest(workoutTemplateId: testWorkoutTemplate.id, order: 1),
-          testExerciseTemplate, // Duplicate
-          ExerciseTemplateModel.forTest(workoutTemplateId: testWorkoutTemplate.id, order: 2),
-        ];
+          final templates = [
+            ExerciseTemplateModel.forTest(
+              workoutTemplateId: testWorkoutTemplate.id,
+              order: 1,
+            ),
+            testExerciseTemplate, // Duplicate
+            ExerciseTemplateModel.forTest(
+              workoutTemplateId: testWorkoutTemplate.id,
+              order: 2,
+            ),
+          ];
 
-        expect(() async => await exerciseTemplateDao.batchInsert(templates), throwsA(isA<DatabaseException>()));
+          expect(
+            () async => await exerciseTemplateDao.batchInsert(templates),
+            throwsA(isA<DatabaseException>()),
+          );
 
-        final allTemplates = await exerciseTemplateDao.getAllExerciseTemplatesWithWorkoutTemplateId(
-          testWorkoutTemplate.id,
-        );
-        expect(allTemplates.length, equals(1));
-        expectExerciseTemplatesEqual(allTemplates.first, testExerciseTemplate);
-      });
+          final allTemplates = await exerciseTemplateDao
+              .getAllExerciseTemplatesWithWorkoutTemplateId(
+                testWorkoutTemplate.id,
+              );
+          expect(allTemplates.length, equals(1));
+          expectExerciseTemplatesEqual(
+            allTemplates.first,
+            testExerciseTemplate,
+          );
+        },
+      );
     });
 
     group('Read Operations', () {
@@ -127,40 +176,61 @@ void main() {
       });
 
       test('should retrieve exercise template by ID correctly', () async {
-        final retrieved = await exerciseTemplateDao.getById(testExerciseTemplate.id);
+        final retrieved = await exerciseTemplateDao.getById(
+          testExerciseTemplate.id,
+        );
         expectExerciseTemplatesEqual(retrieved, testExerciseTemplate);
       });
 
-      test('should return null when exercise template does not exist', () async {
-        final nonExistent = await exerciseTemplateDao.getById('99999');
+      test(
+        'should return null when exercise template does not exist',
+        () async {
+          final nonExistent = await exerciseTemplateDao.getById('99999');
 
-        expect(nonExistent, isNull);
-      });
+          expect(nonExistent, isNull);
+        },
+      );
 
-      test('should retrieve all exercise templates for a workout template', () async {
-        final template2 = ExerciseTemplateModel.forTest(workoutTemplateId: testWorkoutTemplate.id, order: 2);
-        final template3 = ExerciseTemplateModel.forTest(workoutTemplateId: testWorkoutTemplate.id, order: 3);
+      test(
+        'should retrieve all exercise templates for a workout template',
+        () async {
+          final template2 = ExerciseTemplateModel.forTest(
+            workoutTemplateId: testWorkoutTemplate.id,
+            order: 2,
+          );
+          final template3 = ExerciseTemplateModel.forTest(
+            workoutTemplateId: testWorkoutTemplate.id,
+            order: 3,
+          );
 
-        await exerciseTemplateDao.insert(template2);
-        await exerciseTemplateDao.insert(template3);
+          await exerciseTemplateDao.insert(template2);
+          await exerciseTemplateDao.insert(template3);
 
-        final allTemplates = await exerciseTemplateDao.getAllExerciseTemplatesWithWorkoutTemplateId(
-          testWorkoutTemplate.id,
-        );
+          final allTemplates = await exerciseTemplateDao
+              .getAllExerciseTemplatesWithWorkoutTemplateId(
+                testWorkoutTemplate.id,
+              );
 
-        expect(allTemplates.length, equals(3));
-        expect(allTemplates, everyElement(isA<ExerciseTemplateModel>()));
-      });
+          expect(allTemplates.length, equals(3));
+          expect(allTemplates, everyElement(isA<ExerciseTemplateModel>()));
+        },
+      );
 
-      test('should return empty list when workout template has no exercises', () async {
-        final emptyTemplate = WorkoutTemplateModel.forTest(title: 'Empty Template');
-        await workoutTemplateDao.insert(emptyTemplate);
+      test(
+        'should return empty list when workout template has no exercises',
+        () async {
+          final emptyTemplate = WorkoutTemplateModel.forTest(
+            title: 'Empty Template',
+          );
+          await workoutTemplateDao.insert(emptyTemplate);
 
-        final templates = await exerciseTemplateDao.getAllExerciseTemplatesWithWorkoutTemplateId(emptyTemplate.id);
+          final templates = await exerciseTemplateDao
+              .getAllExerciseTemplatesWithWorkoutTemplateId(emptyTemplate.id);
 
-        expect(templates, isEmpty);
-        expect(templates, isA<List<ExerciseTemplateModel>>());
-      });
+          expect(templates, isEmpty);
+          expect(templates, isA<List<ExerciseTemplateModel>>());
+        },
+      );
     });
 
     group('Update Operations', () {
@@ -175,56 +245,77 @@ void main() {
 
         expect(rowsAffected, equals(1));
 
-        final retrieved = await exerciseTemplateDao.getById(testExerciseTemplate.id);
+        final retrieved = await exerciseTemplateDao.getById(
+          testExerciseTemplate.id,
+        );
         expectExerciseTemplatesEqual(retrieved, updatedTemplate);
       });
 
-      test('should return 0 when trying to update non-existent template', () async {
-        final nonExistentTemplate = ExerciseTemplateModel(
-          id: '99999',
-          workoutTemplateId: testWorkoutTemplate.id,
-          order: 1,
-        );
+      test(
+        'should return 0 when trying to update non-existent template',
+        () async {
+          final nonExistentTemplate = ExerciseTemplateModel(
+            id: '99999',
+            workoutTemplateId: testWorkoutTemplate.id,
+            order: 1,
+          );
 
-        final rowsAffected = await exerciseTemplateDao.update(nonExistentTemplate);
+          final rowsAffected = await exerciseTemplateDao.update(
+            nonExistentTemplate,
+          );
 
-        expect(rowsAffected, equals(0));
-      });
+          expect(rowsAffected, equals(0));
+        },
+      );
     });
 
     group('Batch Update Operations', () {
-      test('should batch update multiple exercise templates correctly', () async {
-        final templates = [
-          ExerciseTemplateModel.forTest(workoutTemplateId: testWorkoutTemplate.id, order: 1),
-          ExerciseTemplateModel.forTest(workoutTemplateId: testWorkoutTemplate.id, order: 2),
-          ExerciseTemplateModel.forTest(workoutTemplateId: testWorkoutTemplate.id, order: 3),
-        ];
+      test(
+        'should batch update multiple exercise templates correctly',
+        () async {
+          final templates = [
+            ExerciseTemplateModel.forTest(
+              workoutTemplateId: testWorkoutTemplate.id,
+              order: 1,
+            ),
+            ExerciseTemplateModel.forTest(
+              workoutTemplateId: testWorkoutTemplate.id,
+              order: 2,
+            ),
+            ExerciseTemplateModel.forTest(
+              workoutTemplateId: testWorkoutTemplate.id,
+              order: 3,
+            ),
+          ];
 
-        await exerciseTemplateDao.batchInsert(templates);
+          await exerciseTemplateDao.batchInsert(templates);
 
-        final updatedTemplates = [
-          templates[0].copyWith(order: 10),
-          templates[1].copyWith(order: 20),
-          templates[2].copyWith(order: 30),
-        ];
+          final updatedTemplates = [
+            templates[0].copyWith(order: 10),
+            templates[1].copyWith(order: 20),
+            templates[2].copyWith(order: 30),
+          ];
 
-        await exerciseTemplateDao.batchUpdate(updatedTemplates);
+          await exerciseTemplateDao.batchUpdate(updatedTemplates);
 
-        final retrieved1 = await exerciseTemplateDao.getById(templates[0].id);
-        final retrieved2 = await exerciseTemplateDao.getById(templates[1].id);
-        final retrieved3 = await exerciseTemplateDao.getById(templates[2].id);
+          final retrieved1 = await exerciseTemplateDao.getById(templates[0].id);
+          final retrieved2 = await exerciseTemplateDao.getById(templates[1].id);
+          final retrieved3 = await exerciseTemplateDao.getById(templates[2].id);
 
-        expect(retrieved1!.order, equals(10));
-        expect(retrieved2!.order, equals(20));
-        expect(retrieved3!.order, equals(30));
-      });
+          expect(retrieved1!.order, equals(10));
+          expect(retrieved2!.order, equals(20));
+          expect(retrieved3!.order, equals(30));
+        },
+      );
 
       test('should handle empty list gracefully in batch update', () async {
         await exerciseTemplateDao.insert(testExerciseTemplate);
 
         await exerciseTemplateDao.batchUpdate([]);
 
-        final retrieved = await exerciseTemplateDao.getById(testExerciseTemplate.id);
+        final retrieved = await exerciseTemplateDao.getById(
+          testExerciseTemplate.id,
+        );
         expectExerciseTemplatesEqual(retrieved, testExerciseTemplate);
       });
     });
@@ -235,19 +326,26 @@ void main() {
       });
 
       test('should delete existing exercise template successfully', () async {
-        final rowsDeleted = await exerciseTemplateDao.delete(testExerciseTemplate.id);
+        final rowsDeleted = await exerciseTemplateDao.delete(
+          testExerciseTemplate.id,
+        );
 
         expect(rowsDeleted, equals(1));
 
-        final retrieved = await exerciseTemplateDao.getById(testExerciseTemplate.id);
+        final retrieved = await exerciseTemplateDao.getById(
+          testExerciseTemplate.id,
+        );
         expect(retrieved, isNull);
       });
 
-      test('should return 0 when trying to delete non-existent template', () async {
-        final rowsDeleted = await exerciseTemplateDao.delete('99999');
+      test(
+        'should return 0 when trying to delete non-existent template',
+        () async {
+          final rowsDeleted = await exerciseTemplateDao.delete('99999');
 
-        expect(rowsDeleted, equals(0));
-      });
+          expect(rowsDeleted, equals(0));
+        },
+      );
     });
   });
 }
