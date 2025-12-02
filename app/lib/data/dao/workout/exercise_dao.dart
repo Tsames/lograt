@@ -46,7 +46,7 @@ class ExerciseDao {
     FROM $exercisesTable e
     INNER JOIN $workoutsTable w ON e.${ExerciseFields.workoutId} = w.${WorkoutFields.id}
     WHERE e.${ExerciseFields.exerciseTypeId} = ?
-    ORDER BY w.${WorkoutFields.date} DESC, e.${ExerciseFields.order} ASC
+    ORDER BY w.${WorkoutFields.date} DESC, e.${ExerciseFields.order} DESC
     LIMIT 1
     ''',
       [exerciseTypeId],
@@ -87,12 +87,17 @@ class ExerciseDao {
 
   Future<int> update(ExerciseModel exercise, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    return await executor.update(
+    final rowsUpdated = await executor.update(
       exercisesTable,
       exercise.toMap(),
       where: '${ExerciseFields.id} = ?',
       whereArgs: [exercise.id],
     );
+
+    if (rowsUpdated == 0) {
+      throw Exception('Cannot update exercise ${exercise.id}: does not exist');
+    }
+    return rowsUpdated;
   }
 
   Future<void> batchUpdate(
@@ -101,28 +106,51 @@ class ExerciseDao {
   ]) async {
     if (exercises.isEmpty) return;
 
-    final DatabaseExecutor executor = txn ?? await _db.database;
-    final batch = executor.batch();
+    Future<void> executeUpdate(Transaction transaction) async {
+      for (final exercise in exercises) {
+        final exists = await getById(exercise.id, transaction);
+        if (exists == null) {
+          throw Exception(
+            'Cannot update exercise ${exercise.id}: does not exist',
+          );
+        }
+      }
 
-    for (final exercise in exercises) {
-      batch.update(
-        exercisesTable,
-        exercise.toMap(),
-        where: '${ExerciseFields.id} = ?',
-        whereArgs: [exercise.id],
-      );
+      final batch = transaction.batch();
+      for (final exercise in exercises) {
+        batch.update(
+          exercisesTable,
+          exercise.toMap(),
+          where: '${ExerciseFields.id} = ?',
+          whereArgs: [exercise.id],
+        );
+      }
+      await batch.commit(noResult: true);
     }
 
-    await batch.commit(noResult: true);
+    // If no transaction provided, create one
+    if (txn != null) {
+      await executeUpdate(txn);
+    } else {
+      final db = await _db.database;
+      await db.transaction((transaction) async {
+        await executeUpdate(transaction);
+      });
+    }
   }
 
   Future<int> delete(String exerciseId, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    return await executor.delete(
+    final rowsDeleted = await executor.delete(
       exercisesTable,
       where: '${ExerciseFields.id} = ?',
       whereArgs: [exerciseId],
     );
+
+    if (rowsDeleted == 0) {
+      throw Exception('Cannot delete exercise $exerciseId: does not exist');
+    }
+    return rowsDeleted;
   }
 
   Future<void> clearTable([Transaction? txn]) async {
