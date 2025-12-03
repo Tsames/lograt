@@ -37,6 +37,7 @@ class AppDatabase {
 
     final path = join(await getDatabasesPath(), connectionString);
 
+    // Todo: Add foreign key constraints to production database like in the test database
     final config = MigrationConfig(
       initializationScript: _buildInitializationScript(),
       migrationScripts: _buildMigrationScripts(),
@@ -59,6 +60,9 @@ class AppDatabase {
         await db.execute(_createMuscleGroupsTableSQL());
         await db.execute(_createMuscleGroupsToWorkoutsTableSQL());
         await db.execute(_createMuscleGroupsToExerciseTypeTableSQL());
+      },
+      onOpen: (Database db) async {
+        await db.execute('PRAGMA foreign_keys = ON');
       },
     );
   }
@@ -133,7 +137,7 @@ class AppDatabase {
       ${ExerciseFields.exerciseTypeId} TEXT,
       ${ExerciseFields.notes} TEXT,
       FOREIGN KEY (${ExerciseFields.workoutId}) REFERENCES $workoutsTable(${WorkoutFields.id}) ON DELETE CASCADE,
-      FOREIGN KEY (${ExerciseFields.exerciseTypeId}) REFERENCES $exerciseTypesTable(${ExerciseTypeFields.id}) ON DELETE RESTRICT
+      FOREIGN KEY (${ExerciseFields.exerciseTypeId}) REFERENCES $exerciseTypesTable(${ExerciseTypeFields.id}) ON DELETE CASCADE
     )
   ''';
   }
@@ -146,7 +150,7 @@ class AppDatabase {
       ${ExerciseTemplateFields.workoutTemplateId} TEXT NOT NULL,
       ${ExerciseTemplateFields.exerciseTypeId} TEXT,
       FOREIGN KEY (${ExerciseTemplateFields.workoutTemplateId}) REFERENCES $workoutTemplatesTable(${WorkoutTemplateFields.id}) ON DELETE CASCADE,
-      FOREIGN KEY (${ExerciseTemplateFields.exerciseTypeId}) REFERENCES $exerciseTypesTable(${ExerciseTypeFields.id}) ON DELETE RESTRICT
+      FOREIGN KEY (${ExerciseTemplateFields.exerciseTypeId}) REFERENCES $exerciseTypesTable(${ExerciseTypeFields.id}) ON DELETE CASCADE
     )
   ''';
   }

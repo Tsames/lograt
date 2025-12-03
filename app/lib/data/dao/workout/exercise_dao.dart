@@ -85,7 +85,7 @@ class ExerciseDao {
     await batch.commit(noResult: true);
   }
 
-  Future<int> update(ExerciseModel exercise, [Transaction? txn]) async {
+  Future<void> update(ExerciseModel exercise, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsUpdated = await executor.update(
       exercisesTable,
@@ -95,9 +95,8 @@ class ExerciseDao {
     );
 
     if (rowsUpdated == 0) {
-      throw Exception('Cannot update exercise ${exercise.id}: does not exist');
+      throw Exception('Cannot update exercise $exercise: does not exist');
     }
-    return rowsUpdated;
   }
 
   Future<void> batchUpdate(
@@ -110,9 +109,7 @@ class ExerciseDao {
       for (final exercise in exercises) {
         final exists = await getById(exercise.id, transaction);
         if (exists == null) {
-          throw Exception(
-            'Cannot update exercise ${exercise.id}: does not exist',
-          );
+          throw Exception('Cannot update exercise $exercise: does not exist');
         }
       }
 
@@ -139,7 +136,7 @@ class ExerciseDao {
     }
   }
 
-  Future<int> delete(String exerciseId, [Transaction? txn]) async {
+  Future<void> delete(String exerciseId, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsDeleted = await executor.delete(
       exercisesTable,
@@ -150,7 +147,6 @@ class ExerciseDao {
     if (rowsDeleted == 0) {
       throw Exception('Cannot delete exercise $exerciseId: does not exist');
     }
-    return rowsDeleted;
   }
 
   Future<void> clearTable([Transaction? txn]) async {
