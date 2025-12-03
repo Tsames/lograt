@@ -21,14 +21,14 @@ class ExerciseTemplateDao {
 
   Future<List<ExerciseTemplateModel>>
   getAllExerciseTemplatesWithWorkoutTemplateId(
-    String workoutId, [
+    String workoutTemplateId, [
     Transaction? txn,
   ]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final maps = await executor.query(
       exerciseTemplatesTable,
       where: '${ExerciseTemplateFields.workoutTemplateId} = ?',
-      whereArgs: [workoutId],
+      whereArgs: [workoutTemplateId],
     );
 
     return maps
@@ -47,15 +47,15 @@ class ExerciseTemplateDao {
   }
 
   Future<void> batchInsert(
-    List<ExerciseTemplateModel> exercises, [
+    List<ExerciseTemplateModel> exerciseTemplates, [
     Transaction? txn,
   ]) async {
-    if (exercises.isEmpty) return;
+    if (exerciseTemplates.isEmpty) return;
 
     final DatabaseExecutor executor = txn ?? await _db.database;
     final batch = executor.batch();
 
-    for (final exercise in exercises) {
+    for (final exercise in exerciseTemplates) {
       batch.insert(
         exerciseTemplatesTable,
         exercise.toMap(),
@@ -66,44 +66,73 @@ class ExerciseTemplateDao {
     await batch.commit(noResult: true);
   }
 
-  Future<int> update(ExerciseTemplateModel exercise, [Transaction? txn]) async {
+  Future<void> update(
+    ExerciseTemplateModel exerciseTemplate, [
+    Transaction? txn,
+  ]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    return await executor.update(
+    final rowsUpdated = await executor.update(
       exerciseTemplatesTable,
-      exercise.toMap(),
+      exerciseTemplate.toMap(),
       where: '${ExerciseTemplateFields.id} = ?',
-      whereArgs: [exercise.id],
+      whereArgs: [exerciseTemplate.id],
     );
+    if (rowsUpdated == 0) {
+      throw Exception(
+        'Cannot update exercise template $exerciseTemplate: does not exist',
+      );
+    }
   }
 
   Future<void> batchUpdate(
-    List<ExerciseTemplateModel> exercises, [
+    List<ExerciseTemplateModel> exerciseTemplates, [
     Transaction? txn,
   ]) async {
-    if (exercises.isEmpty) return;
+    if (exerciseTemplates.isEmpty) return;
 
-    final DatabaseExecutor executor = txn ?? await _db.database;
-    final batch = executor.batch();
+    Future<void> executeUpdate(Transaction transaction) async {
+      for (final template in exerciseTemplates) {
+        final exists = await getById(template.id, transaction);
+        if (exists == null) {
+          throw Exception(
+            'Cannot update exercise template $template: does not exist',
+          );
+        }
+      }
 
-    for (final exercise in exercises) {
-      batch.update(
-        exerciseTemplatesTable,
-        exercise.toMap(),
-        where: '${ExerciseTemplateFields.id} = ?',
-        whereArgs: [exercise.id],
-      );
+      final batch = transaction.batch();
+      for (final exercise in exerciseTemplates) {
+        batch.update(
+          exerciseTemplatesTable,
+          exercise.toMap(),
+          where: '${ExerciseTemplateFields.id} = ?',
+          whereArgs: [exercise.id],
+        );
+      }
+      await batch.commit(noResult: true);
     }
 
-    await batch.commit(noResult: true);
+    // If no transaction provided, create one
+    if (txn != null) {
+      await executeUpdate(txn);
+    } else {
+      final db = await _db.database;
+      await db.transaction((transaction) async {
+        await executeUpdate(transaction);
+      });
+    }
   }
 
-  Future<int> delete(String exerciseId, [Transaction? txn]) async {
+  Future<void> delete(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    return await executor.delete(
+    final rowsDeleted = await executor.delete(
       exerciseTemplatesTable,
       where: '${ExerciseTemplateFields.id} = ?',
-      whereArgs: [exerciseId],
+      whereArgs: [id],
     );
+    if (rowsDeleted == 0) {
+      throw Exception('Cannot delete exercise template $id: does not exist');
+    }
   }
 
   Future<void> clearTable([Transaction? txn]) async {
