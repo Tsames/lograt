@@ -32,7 +32,7 @@ class MuscleGroupDao {
     return MuscleGroupModel.fromMap(maps.first);
   }
 
-  Future<List<MuscleGroupModel>> getAllMuscleGroups({
+  Future<List<MuscleGroupModel>> getAllMuscleGroupsPaginated({
     int? limit,
     int? offset,
     Transaction? txn,
@@ -58,23 +58,92 @@ class MuscleGroupDao {
     );
   }
 
-  Future<int> update(MuscleGroupModel muscleGroup, [Transaction? txn]) async {
+  Future<void> batchInsert(
+    List<MuscleGroupModel> muscleGroups, [
+    Transaction? txn,
+  ]) async {
+    if (muscleGroups.isEmpty) return;
+
     final DatabaseExecutor executor = txn ?? await _db.database;
-    return await executor.update(
+    final batch = executor.batch();
+
+    for (final muscleGroup in muscleGroups) {
+      batch.insert(
+        muscleGroupTable,
+        muscleGroup.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.fail,
+      );
+    }
+
+    await batch.commit(noResult: true);
+  }
+
+  Future<void> update(MuscleGroupModel muscleGroup, [Transaction? txn]) async {
+    final DatabaseExecutor executor = txn ?? await _db.database;
+    final rowsUpdated = await executor.update(
       muscleGroupTable,
       muscleGroup.toMap(),
       where: '${MuscleGroupFields.id} = ?',
       whereArgs: [muscleGroup.id],
     );
+
+    if (rowsUpdated == 0) {
+      throw Exception(
+        'Cannot update muscle group $muscleGroup: does not exist',
+      );
+    }
   }
 
-  Future<int> delete(String id, [Transaction? txn]) async {
+  Future<void> batchUpdate(
+    List<MuscleGroupModel> muscleGroups, [
+    Transaction? txn,
+  ]) async {
+    if (muscleGroups.isEmpty) return;
+
+    Future<void> executeUpdate(Transaction transaction) async {
+      for (final muscleGroup in muscleGroups) {
+        final exists = await getById(muscleGroup.id, transaction);
+        if (exists == null) {
+          throw Exception(
+            'Cannot update muscle group $muscleGroup: does not exist',
+          );
+        }
+      }
+
+      final batch = transaction.batch();
+      for (final muscleGroup in muscleGroups) {
+        batch.update(
+          muscleGroupTable,
+          muscleGroup.toMap(),
+          where: '${MuscleGroupFields.id} = ?',
+          whereArgs: [muscleGroup.id],
+        );
+      }
+      await batch.commit(noResult: true);
+    }
+
+    // If no transaction provided, create one
+    if (txn != null) {
+      await executeUpdate(txn);
+    } else {
+      final db = await _db.database;
+      await db.transaction((transaction) async {
+        await executeUpdate(transaction);
+      });
+    }
+  }
+
+  Future<void> delete(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    return await executor.delete(
+    final rowsDeleted = await executor.delete(
       muscleGroupTable,
       where: '${MuscleGroupFields.id} = ?',
       whereArgs: [id],
     );
+
+    if (rowsDeleted == 0) {
+      throw Exception('Cannot delete muscle group $id: does not exist');
+    }
   }
 
   Future<void> clearTable([Transaction? txn]) async {
