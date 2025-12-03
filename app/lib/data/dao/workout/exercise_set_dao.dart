@@ -1,5 +1,4 @@
 import 'package:lograt/data/database/app_database.dart';
-import 'package:lograt/data/entities/workouts/exercise_set.dart';
 import 'package:lograt/data/models/workouts/exercise_set_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -8,14 +7,6 @@ class ExerciseSetDao {
 
   ExerciseSetDao(this._db);
 
-  /// Retrieves an exercise set from the database by its id.
-  ///
-  /// Optionally accepts a [txn] parameter to execute the query within an existing
-  /// database transaction. If no transaction is provided, the query runs directly
-  /// against the database.
-  ///
-  /// Returns the [ExerciseSetModel] if found, or `null` if no exercise set
-  /// with the given [id] exists.
   Future<ExerciseSetModel?> getById(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
 
@@ -29,14 +20,7 @@ class ExerciseSetDao {
     return ExerciseSetModel.fromMap(maps.first);
   }
 
-  /// Retrieves a list of all exercise sets associated with a given exercise in order from the database.
-  ///
-  /// Optionally accepts a [txn] parameter to execute the query within an existing
-  /// database transaction. If no transaction is provided, the query runs directly
-  /// against the database.
-  ///
-  /// Returns an empty `List<ExerciseSetModel>` if none with the given [id] exists.
-  Future<List<ExerciseSetModel>> getByExerciseId(
+  Future<List<ExerciseSetModel>> getAllSetsWithExerciseId(
     String exerciseId, [
     Transaction? txn,
   ]) async {
@@ -51,13 +35,6 @@ class ExerciseSetDao {
     return maps.map((map) => ExerciseSetModel.fromMap(map)).nonNulls.toList();
   }
 
-  /// Inserts a new exercise set into the database.
-  ///
-  /// Optionally accepts a [txn] parameter to execute the insert within an existing
-  /// database transaction. If no transaction is provided, the insert runs directly
-  /// against the database.
-  ///
-  /// Returns the auto-generated ID of the newly inserted exercise set.
   Future<int> insert(ExerciseSetModel set, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     return await executor.insert(
@@ -67,91 +44,90 @@ class ExerciseSetDao {
     );
   }
 
-  /// Batch inserts a list of sets into the database.
-  ///
-  /// Optionally accepts a [txn] parameter to execute the insert within an existing
-  /// database transaction. If no transaction is provided, the insert runs directly
-  /// against the database.
   Future<void> batchInsert(
     List<ExerciseSetModel> sets, [
     Transaction? txn,
   ]) async {
+    if (sets.isEmpty) return;
+
     final DatabaseExecutor executor = txn ?? await _db.database;
     final batch = executor.batch();
 
     for (final set in sets) {
-      batch.insert(setsTable, set.toMap());
+      batch.insert(
+        setsTable,
+        set.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.fail,
+      );
     }
 
     await batch.commit(noResult: true);
   }
 
-  /// Updates an existing exercise set in the database.
-  ///
-  /// The [ExerciseSet] must have a non-null ID.
-  ///
-  /// Optionally accepts a [txn] parameter to execute the update within an existing
-  /// database transaction. If no transaction is provided, the update runs directly
-  /// against the database.
-  ///
-  /// Returns true if a row was updated correctly, and false if no row was updated.
-  ///
-  /// Throws an [ArgumentError] if the exercise type ID is `null`.
-  Future<bool> update(ExerciseSetModel set, [Transaction? txn]) async {
+  Future<void> update(ExerciseSetModel set, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    return await executor.update(
+    final rowsUpdated = await executor.update(
+      setsTable,
+      set.toMap(),
+      where: '${ExerciseSetFields.id} = ?',
+      whereArgs: [set.id],
+    );
+    if (rowsUpdated == 0) {
+      throw Exception('Cannot update set $set: does not exist');
+    }
+  }
+
+  Future<void> batchUpdate(
+    List<ExerciseSetModel> sets, [
+    Transaction? txn,
+  ]) async {
+    if (sets.isEmpty) return;
+
+    Future<void> executeUpdate(Transaction transaction) async {
+      for (final set in sets) {
+        final exists = await getById(set.id, transaction);
+        if (exists == null) {
+          throw Exception('Cannot update set $set: does not exist');
+        }
+      }
+
+      final batch = transaction.batch();
+      for (final set in sets) {
+        batch.update(
           setsTable,
           set.toMap(),
           where: '${ExerciseSetFields.id} = ?',
           whereArgs: [set.id],
-        ) ==
-        1;
-  }
+        );
+      }
+      await batch.commit(noResult: true);
+    }
 
-  /// Deletes an exercise set from the database by its ID.
-  ///
-  /// Optionally accepts a [txn] parameter to execute the delete within an existing
-  /// database transaction. If no transaction is provided, the delete runs directly
-  /// against the database.
-  ///
-  /// Returns the true if the row was correctly deleted, and false if no row was deleted.
-  ///
-  /// Throws an [Exception] if the exercise set is referenced by any workout exercises,
-  /// due to the RESTRICT foreign key constraint.
-  Future<bool> delete(String setId, [Transaction? txn]) async {
-    final DatabaseExecutor executor = txn ?? await _db.database;
-    try {
-      return await executor.delete(
-            setsTable,
-            where: '${ExerciseSetFields.id} = ?',
-            whereArgs: [setId],
-          ) ==
-          1;
-    } catch (e) {
-      throw Exception(
-        'Cannot delete an exercise set that is in use by an exercise. \n$e',
-      );
+    // If no transaction provided, create one
+    if (txn != null) {
+      await executeUpdate(txn);
+    } else {
+      final db = await _db.database;
+      await db.transaction((transaction) async {
+        await executeUpdate(transaction);
+      });
     }
   }
 
-  /// Deletes all exercise sets from the database that are associated with the given exercise id.
-  ///
-  /// Optionally accepts a [txn] parameter to execute the delete within an existing
-  /// database transaction. If no transaction is provided, the delete runs directly
-  /// against the database.
-  ///
-  /// Returns the number of rows that were deleted.
-  Future<int> deleteByExerciseId(String exerciseId, [Transaction? txn]) async {
+  Future<void> delete(String setId, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    return await executor.delete(
+    final rowsDeleted = await executor.delete(
       setsTable,
-      where: '${ExerciseSetFields.exerciseId} = ?',
-      whereArgs: [exerciseId],
+      where: '${ExerciseSetFields.id} = ?',
+      whereArgs: [setId],
     );
+    if (rowsDeleted == 0) {
+      throw Exception('Cannot delete set $setId: does not exist');
+    }
   }
 
-  Future<void> clearTable() async {
-    final db = await _db.database;
-    await db.delete(setsTable);
+  Future<void> clearTable([Transaction? txn]) async {
+    final DatabaseExecutor executor = txn ?? await _db.database;
+    await executor.delete(setsTable);
   }
 }

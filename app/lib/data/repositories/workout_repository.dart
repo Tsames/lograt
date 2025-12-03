@@ -109,9 +109,8 @@ class WorkoutRepository {
           _ => await _exerciseTypeDao.getById(exerciseModel.exerciseTypeId!),
         };
 
-        final exerciseSetModels = await _exerciseSetDao.getByExerciseId(
-          exerciseModel.id,
-        );
+        final exerciseSetModels = await _exerciseSetDao
+            .getAllSetsWithExerciseId(exerciseModel.id);
         final exerciseSetEntities = exerciseSetModels
             .map((set) => set.toEntity())
             .toList();
@@ -277,7 +276,7 @@ class WorkoutRepository {
     return await _exerciseTypeDao.delete(id);
   }
 
-  Future<bool> deleteExerciseSet(String id) async {
+  Future<void> deleteExerciseSet(String id) async {
     return await _exerciseSetDao.delete(id);
   }
 
