@@ -145,7 +145,7 @@ class WorkoutRepository {
     int? offset,
     Transaction? txn,
   }) async {
-    final exerciseTypeModels = await _exerciseTypeDao.getAll(
+    final exerciseTypeModels = await _exerciseTypeDao.getAllPaginated(
       limit: limit,
       offset: offset,
       txn: txn,
@@ -269,12 +269,12 @@ class WorkoutRepository {
     return await _workoutDao.delete(id);
   }
 
-  Future<int> deleteExercise(String id) async {
+  Future<void> deleteExercise(String id) async {
     return await _exerciseDao.delete(id);
   }
 
-  Future<bool> deleteExerciseType(String id) async {
-    return await _exerciseTypeDao.deleteById(id);
+  Future<void> deleteExerciseType(String id) async {
+    return await _exerciseTypeDao.delete(id);
   }
 
   Future<bool> deleteExerciseSet(String id) async {
