@@ -1,4 +1,5 @@
 import 'package:lograt/data/models/muscle_group_model.dart';
+import 'package:lograt/data/models/templates/exercise_set_template_model.dart';
 import 'package:lograt/data/models/templates/exercise_template_model.dart';
 import 'package:lograt/data/models/templates/workout_template_model.dart';
 import 'package:lograt/data/models/workouts/exercise_model.dart';
@@ -54,9 +55,10 @@ class AppDatabase {
         await db.execute(_createWorkoutsTableSQL());
         await db.execute(_createWorkoutTemplatesTableSQL());
         await db.execute(_createExerciseTypesTableSQL());
-        await db.execute(_createExerciseTemplatesTableSQL());
         await db.execute(_createExercisesTableSQL());
+        await db.execute(_createExerciseTemplatesTableSQL());
         await db.execute(_createSetsTableSQL());
+        await db.execute(_createSetTemplatesTableSQL());
         await db.execute(_createMuscleGroupsTableSQL());
         await db.execute(_createMuscleGroupsToWorkoutsTableSQL());
         await db.execute(_createMuscleGroupsToExerciseTypeTableSQL());
@@ -80,9 +82,10 @@ class AppDatabase {
       _createWorkoutsTableSQL(),
       _createWorkoutTemplatesTableSQL(),
       _createExerciseTypesTableSQL(),
-      _createExerciseTemplatesTableSQL(),
       _createExercisesTableSQL(),
+      _createExerciseTemplatesTableSQL(),
       _createSetsTableSQL(),
+      _createSetTemplatesTableSQL(),
       _createMuscleGroupsTableSQL(),
       _createMuscleGroupsToWorkoutsTableSQL(),
       _createMuscleGroupsToExerciseTypeTableSQL(),
@@ -169,6 +172,19 @@ class AppDatabase {
       FOREIGN KEY (${ExerciseSetFields.exerciseId}) REFERENCES $exercisesTable(${ExerciseFields.id}) ON DELETE CASCADE
     )
     ''';
+  }
+
+  String _createSetTemplatesTableSQL() {
+    return '''
+    CREATE TABLE $setTemplateTable(
+      ${ExerciseSetTemplateFields.id} TEXT PRIMARY KEY,
+      ${ExerciseSetTemplateFields.order} INTEGER NOT NULL,
+      ${ExerciseSetTemplateFields.exerciseTemplateId} TEXT NOT NULL,
+      ${ExerciseSetTemplateFields.units} TEXT,
+      ${ExerciseSetTemplateFields.setType} TEXT,
+      FOREIGN KEY (${ExerciseSetTemplateFields.exerciseTemplateId}) REFERENCES $exerciseTemplatesTable(${ExerciseTemplateFields.id}) ON DELETE CASCADE
+    )
+  ''';
   }
 
   String _createMuscleGroupsTableSQL() {
