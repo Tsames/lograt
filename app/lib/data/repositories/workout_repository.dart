@@ -69,7 +69,7 @@ class WorkoutRepository {
   Future<List<Workout>> getWorkoutSummaries({int? limit, int? offset}) async {
     try {
       final workoutModels = await _workoutDao
-          .getListOfWorkoutsOrderedByCreationDate(limit: limit, offset: offset);
+          .getAllPaginatedOrderedByCreationDate(limit: limit, offset: offset);
 
       final workoutEntities = workoutModels
           .map((workoutModel) => workoutModel.toEntity())
@@ -265,7 +265,7 @@ class WorkoutRepository {
     await _exerciseSetDao.update(exerciseSetModel);
   }
 
-  Future<int> deleteWorkout(String id) async {
+  Future<void> deleteWorkout(String id) async {
     return await _workoutDao.delete(id);
   }
 
