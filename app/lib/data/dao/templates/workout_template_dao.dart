@@ -20,7 +20,7 @@ class WorkoutTemplateDao {
   }
 
   /// Retrieves a list of workout templates ordered by date (DESC) without any associated exercise or set templates
-  Future<List<WorkoutTemplateModel>> getTemplateSummaries({
+  Future<List<WorkoutTemplateModel>> getTemplatePaginatedOrderedByDate({
     int? limit,
     int? offset,
     Transaction? txn,
@@ -49,26 +49,94 @@ class WorkoutTemplateDao {
     );
   }
 
-  Future<int> update(WorkoutTemplateModel template, [Transaction? txn]) async {
+  Future<void> batchInsert(
+    List<WorkoutTemplateModel> templates, [
+    Transaction? txn,
+  ]) async {
+    if (templates.isEmpty) return;
+
     final DatabaseExecutor executor = txn ?? await _db.database;
-    return await executor.update(
+    final batch = executor.batch();
+
+    for (final template in templates) {
+      batch.insert(
+        workoutTemplatesTable,
+        template.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.fail,
+      );
+    }
+
+    await batch.commit(noResult: true);
+  }
+
+  Future<void> update(WorkoutTemplateModel template, [Transaction? txn]) async {
+    final DatabaseExecutor executor = txn ?? await _db.database;
+    final rowsUpdated = await executor.update(
       workoutTemplatesTable,
       template.toMap(),
       where: '${WorkoutTemplateFields.id} = ?',
       whereArgs: [template.id],
     );
+
+    if (rowsUpdated == 0) {
+      throw Exception(
+        'Cannot update workout template $template: does not exist',
+      );
+    }
   }
 
-  Future<int> delete(String id, [Transaction? txn]) async {
+  Future<void> batchUpdate(
+    List<WorkoutTemplateModel> templates, [
+    Transaction? txn,
+  ]) async {
+    if (templates.isEmpty) return;
+
+    Future<void> executeUpdate(Transaction transaction) async {
+      for (final template in templates) {
+        final exists = await getById(template.id, transaction);
+        if (exists == null) {
+          throw Exception(
+            'Cannot update workout template $template: does not exist',
+          );
+        }
+      }
+
+      final batch = transaction.batch();
+      for (final template in templates) {
+        batch.update(
+          workoutTemplatesTable,
+          template.toMap(),
+          where: '${WorkoutTemplateFields.id} = ?',
+          whereArgs: [template.id],
+        );
+      }
+      await batch.commit(noResult: true);
+    }
+
+    // If no transaction provided, create one
+    if (txn != null) {
+      await executeUpdate(txn);
+    } else {
+      final db = await _db.database;
+      await db.transaction((transaction) async {
+        await executeUpdate(transaction);
+      });
+    }
+  }
+
+  Future<void> delete(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    return await executor.delete(
+    final rowsDeleted = await executor.delete(
       workoutTemplatesTable,
       where: '${WorkoutTemplateFields.id} = ?',
       whereArgs: [id],
     );
+    if (rowsDeleted == 0) {
+      throw Exception('Cannot delete workout template $id: does not exist');
+    }
   }
 
-  Future<void> clearTable(Transaction? txn) async {
+  Future<void> clearTable([Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     await executor.delete(workoutTemplatesTable);
   }
