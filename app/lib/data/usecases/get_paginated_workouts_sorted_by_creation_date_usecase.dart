@@ -9,7 +9,7 @@ class GetPaginatedWorkoutsSortedByCreationDateUsecase {
   GetPaginatedWorkoutsSortedByCreationDateUsecase(this._repository);
 
   Future<PaginatedResults<List<Workout>>> call(int? offset) async {
-    final workoutsToReturn = await _repository.getWorkoutSummaries(
+    final workoutsToReturn = await _repository.getWorkoutSummariesPaginated(
       limit: pageSize,
       offset: offset,
     );

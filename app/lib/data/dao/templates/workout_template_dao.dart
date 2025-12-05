@@ -20,6 +20,30 @@ class WorkoutTemplateDao {
     return WorkoutTemplateModel.fromMap(maps.first);
   }
 
+  Future<List<WorkoutTemplateModel>> getWorkoutTemplatesByIds(
+    List<String> templateIds, [
+    Transaction? txn,
+  ]) async {
+    if (templateIds.isEmpty) {
+      throw Exception(
+        'Cannot retrieve workout templates by ids if no ids are given.',
+      );
+    }
+    final DatabaseExecutor executor = txn ?? await _db.database;
+
+    final placeholders = List.filled(templateIds.length, '?').join(', ');
+    final records = await executor.query(
+      _tableName,
+      where: '${WorkoutTemplateFields.id} IN ($placeholders)',
+      whereArgs: [...templateIds],
+    );
+
+    return records
+        .map((record) => WorkoutTemplateModel.fromMap(record))
+        .nonNulls
+        .toList();
+  }
+
   /// Retrieves a list of workout templates ordered by date (DESC) without any associated exercise or set templates
   Future<List<WorkoutTemplateModel>> getTemplatePaginatedOrderedByDate({
     int? limit,

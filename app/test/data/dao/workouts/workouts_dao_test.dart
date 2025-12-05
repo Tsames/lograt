@@ -108,8 +108,7 @@ void main() {
 
         await workoutDao.batchInsert(workouts);
 
-        final allWorkouts = await workoutDao
-            .getAllPaginatedOrderedByCreationDate();
+        final allWorkouts = await workoutDao.getAllPaginatedOrderedByDate();
         expect(allWorkouts.length, equals(3));
         expect(allWorkouts, everyElement(isA<WorkoutModel>()));
 
@@ -122,8 +121,7 @@ void main() {
       test('should handle empty list gracefully in batch insert', () async {
         await workoutDao.batchInsert([]);
 
-        final allWorkouts = await workoutDao
-            .getAllPaginatedOrderedByCreationDate();
+        final allWorkouts = await workoutDao.getAllPaginatedOrderedByDate();
         expect(allWorkouts, isEmpty);
       });
 
@@ -143,8 +141,7 @@ void main() {
             throwsA(isA<DatabaseException>()),
           );
 
-          final allWorkouts = await workoutDao
-              .getAllPaginatedOrderedByCreationDate();
+          final allWorkouts = await workoutDao.getAllPaginatedOrderedByDate();
           expect(allWorkouts.length, equals(1));
           expectWorkoutsEqual(allWorkouts.first, testWorkout);
         },
@@ -191,8 +188,7 @@ void main() {
           await workoutDao.insert(workout2);
           await workoutDao.insert(workout3);
 
-          final allWorkouts = await workoutDao
-              .getAllPaginatedOrderedByCreationDate();
+          final allWorkouts = await workoutDao.getAllPaginatedOrderedByDate();
 
           expect(allWorkouts.length, equals(4)); // Including testWorkout
           expect(allWorkouts, everyElement(isA<WorkoutModel>()));
@@ -208,8 +204,7 @@ void main() {
       test('should return empty list when no workouts exist', () async {
         await workoutDao.delete(testWorkout.id);
 
-        final workouts = await workoutDao
-            .getAllPaginatedOrderedByCreationDate();
+        final workouts = await workoutDao.getAllPaginatedOrderedByDate();
 
         expect(workouts, isEmpty);
         expect(workouts, isA<List<WorkoutModel>>());
@@ -242,7 +237,7 @@ void main() {
         await workoutDao.batchInsert(workouts);
 
         // Get first 2 (most recent)
-        final page1 = await workoutDao.getAllPaginatedOrderedByCreationDate(
+        final page1 = await workoutDao.getAllPaginatedOrderedByDate(
           limit: 2,
           offset: 0,
         );
@@ -251,7 +246,7 @@ void main() {
         expectWorkoutsEqual(page1[1], workouts[3]);
 
         // Get next 2
-        final page2 = await workoutDao.getAllPaginatedOrderedByCreationDate(
+        final page2 = await workoutDao.getAllPaginatedOrderedByDate(
           limit: 2,
           offset: 2,
         );

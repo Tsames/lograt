@@ -2,7 +2,6 @@ import 'package:lograt/data/entities/muscle_group.dart';
 import 'package:lograt/util/uuidv7.dart';
 
 const muscleGroupTable = 'muscle_groups';
-const muscleGroupToWorkoutTable = 'muscle_group_to_workout';
 const muscleGroupToWorkoutTemplateTable = 'muscle_group_to_workout_template';
 const muscleGroupToExerciseTypeTable = 'muscle_group_to_exercise_type';
 
@@ -12,14 +11,6 @@ class MuscleGroupFields {
   static final String id = 'id';
   static final String label = 'label';
   static final String description = 'description';
-}
-
-class MuscleGroupToWorkoutFields {
-  static final List<String> values = [id, muscleGroupId, workoutId];
-
-  static final String id = 'id';
-  static final String muscleGroupId = 'muscle_group_id';
-  static final String workoutId = 'workout_id';
 }
 
 class MuscleGroupToWorkoutTemplateFields {

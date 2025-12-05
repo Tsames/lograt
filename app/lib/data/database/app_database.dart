@@ -1,3 +1,4 @@
+import 'package:lograt/data/models/muscle_group/muscle_group_to_workout_model.dart';
 import 'package:lograt/data/models/muscle_group_model.dart';
 import 'package:lograt/data/models/templates/exercise_set_template_model.dart';
 import 'package:lograt/data/models/templates/exercise_template_model.dart';
