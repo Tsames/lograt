@@ -4,13 +4,14 @@ import 'package:sqflite/sqflite.dart';
 
 class ExerciseTypeDao {
   final AppDatabase _db;
+  static const String _tableName = exerciseTypesTable;
 
   ExerciseTypeDao(this._db);
 
   Future<ExerciseTypeModel?> getById(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final maps = await executor.query(
-      exerciseTypesTable,
+      _tableName,
       where: '${ExerciseTypeFields.id} = ?',
       whereArgs: [id],
     );
@@ -23,7 +24,7 @@ class ExerciseTypeDao {
     final DatabaseExecutor executor = txn ?? await _db.database;
 
     final maps = await executor.query(
-      exerciseTypesTable,
+      _tableName,
       where: '${ExerciseTypeFields.name} = ?',
       whereArgs: [name],
     );
@@ -40,7 +41,7 @@ class ExerciseTypeDao {
     final DatabaseExecutor executor = txn ?? await _db.database;
 
     final maps = await executor.query(
-      exerciseTypesTable,
+      _tableName,
       orderBy: '${ExerciseTypeFields.name} ASC',
       limit: limit,
       offset: offset,
@@ -52,7 +53,7 @@ class ExerciseTypeDao {
   Future<int> insert(ExerciseTypeModel exerciseType, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     return await executor.insert(
-      exerciseTypesTable,
+      _tableName,
       exerciseType.toMap(),
       conflictAlgorithm: ConflictAlgorithm.fail, // Prevent duplicate names
     );
@@ -69,7 +70,7 @@ class ExerciseTypeDao {
 
     for (final exerciseType in exerciseTypes) {
       batch.insert(
-        exerciseTypesTable,
+        _tableName,
         exerciseType.toMap(),
         conflictAlgorithm: ConflictAlgorithm.fail,
       );
@@ -84,7 +85,7 @@ class ExerciseTypeDao {
   ]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsUpdated = await executor.update(
-      exerciseTypesTable,
+      _tableName,
       exerciseType.toMap(),
       where: '${ExerciseTypeFields.id} = ?',
       whereArgs: [exerciseType.id],
@@ -116,7 +117,7 @@ class ExerciseTypeDao {
       final batch = transaction.batch();
       for (final exerciseType in exerciseTypes) {
         batch.update(
-          exerciseTypesTable,
+          _tableName,
           exerciseType.toMap(),
           where: '${ExerciseTypeFields.id} = ?',
           whereArgs: [exerciseType.id],
@@ -139,7 +140,7 @@ class ExerciseTypeDao {
   Future<void> delete(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsDeleted = await executor.delete(
-      exerciseTypesTable,
+      _tableName,
       where: '${ExerciseTypeFields.id} = ?',
       whereArgs: [id],
     );
@@ -150,6 +151,6 @@ class ExerciseTypeDao {
 
   Future<void> clearTable([Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    await executor.delete(exerciseTypesTable);
+    await executor.delete(_tableName);
   }
 }

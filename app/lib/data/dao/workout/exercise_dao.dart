@@ -5,13 +5,14 @@ import 'package:sqflite/sqflite.dart';
 
 class ExerciseDao {
   final AppDatabase _db;
+  static const String _tableName = exercisesTable;
 
   ExerciseDao(this._db);
 
   Future<ExerciseModel?> getById(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final maps = await executor.query(
-      exercisesTable,
+      _tableName,
       where: '${ExerciseFields.id} = ?',
       whereArgs: [id],
     );
@@ -26,7 +27,7 @@ class ExerciseDao {
   ]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final maps = await executor.query(
-      exercisesTable,
+      _tableName,
       where: '${ExerciseFields.workoutId} = ?',
       whereArgs: [workoutId],
     );
@@ -43,7 +44,7 @@ class ExerciseDao {
     final maps = await executor.rawQuery(
       '''
     SELECT e.*
-    FROM $exercisesTable e
+    FROM $_tableName e
     INNER JOIN $workoutsTable w ON e.${ExerciseFields.workoutId} = w.${WorkoutFields.id}
     WHERE e.${ExerciseFields.exerciseTypeId} = ?
     ORDER BY w.${WorkoutFields.date} DESC, e.${ExerciseFields.order} DESC
@@ -59,7 +60,7 @@ class ExerciseDao {
   Future<int> insert(ExerciseModel exercise, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     return await executor.insert(
-      exercisesTable,
+      _tableName,
       exercise.toMap(),
       conflictAlgorithm: ConflictAlgorithm.fail,
     );
@@ -76,7 +77,7 @@ class ExerciseDao {
 
     for (final exercise in exercises) {
       batch.insert(
-        exercisesTable,
+        _tableName,
         exercise.toMap(),
         conflictAlgorithm: ConflictAlgorithm.fail,
       );
@@ -88,7 +89,7 @@ class ExerciseDao {
   Future<void> update(ExerciseModel exercise, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsUpdated = await executor.update(
-      exercisesTable,
+      _tableName,
       exercise.toMap(),
       where: '${ExerciseFields.id} = ?',
       whereArgs: [exercise.id],
@@ -116,7 +117,7 @@ class ExerciseDao {
       final batch = transaction.batch();
       for (final exercise in exercises) {
         batch.update(
-          exercisesTable,
+          _tableName,
           exercise.toMap(),
           where: '${ExerciseFields.id} = ?',
           whereArgs: [exercise.id],
@@ -139,7 +140,7 @@ class ExerciseDao {
   Future<void> delete(String exerciseId, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsDeleted = await executor.delete(
-      exercisesTable,
+      _tableName,
       where: '${ExerciseFields.id} = ?',
       whereArgs: [exerciseId],
     );
@@ -151,6 +152,6 @@ class ExerciseDao {
 
   Future<void> clearTable([Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    await executor.delete(exercisesTable);
+    await executor.delete(_tableName);
   }
 }
