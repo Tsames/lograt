@@ -1,4 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lograt/data/dao/muscle_group/muscle_group_to_workout_dao.dart';
+import 'package:lograt/data/dao/muscle_group/muscle_groups_dao.dart';
+import 'package:lograt/data/dao/templates/workout_template_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_set_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_type_dao.dart';
@@ -32,12 +35,19 @@ void main() {
       final exerciseTypeDao = ExerciseTypeDao(testDatabase);
       final exerciseSetDao = ExerciseSetDao(testDatabase);
 
+      final workoutTemplateDao = WorkoutTemplateDao(testDatabase);
+      final muscleGroupDao = MuscleGroupDao(testDatabase);
+      final muscleGroupToWorkoutDao = MuscleGroupToWorkoutDao(testDatabase);
+
       repository = WorkoutRepository(
         databaseConnection: testDatabase,
         workoutDao: workoutDao,
         exerciseDao: exerciseDao,
         exerciseTypeDao: exerciseTypeDao,
         exerciseSetDao: exerciseSetDao,
+        workoutTemplateDao: workoutTemplateDao,
+        muscleGroupDao: muscleGroupDao,
+        muscleGroupToWorkoutDao: muscleGroupToWorkoutDao,
       );
 
       seedDataUsecase = SeedDataUsecase(repository);
@@ -82,7 +92,7 @@ void main() {
       expect(exerciseSetCount, equals(expectedExerciseSetCount));
 
       // Verify content - fetch all workouts with full details
-      final seededWorkouts = await repository.getWorkoutSummaries(
+      final seededWorkouts = await repository.getWorkoutSummariesPaginated(
         limit: expectedWorkoutCount,
       );
 

@@ -22,7 +22,7 @@ class WorkoutDao {
 
   /// Get a list of the workouts of length [limit] starting from [offset]
   /// Workouts returned will be in order of creation date DESC
-  Future<List<WorkoutModel>> getAllPaginatedOrderedByCreationDate({
+  Future<List<WorkoutModel>> getAllPaginatedOrderedByDate({
     int? limit,
     int? offset,
     Transaction? txn,

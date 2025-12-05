@@ -1,14 +1,21 @@
+import 'package:lograt/data/dao/muscle_group/muscle_group_to_workout_dao.dart';
+import 'package:lograt/data/dao/muscle_group/muscle_groups_dao.dart';
+import 'package:lograt/data/dao/templates/workout_template_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_set_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_type_dao.dart';
 import 'package:lograt/data/dao/workout/workout_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/database/seed_data.dart';
+import 'package:lograt/data/entities/muscle_group.dart';
+import 'package:lograt/data/entities/templates/workout_template.dart';
 import 'package:lograt/data/entities/workouts/exercise.dart';
 import 'package:lograt/data/entities/workouts/exercise_set.dart';
 import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/data/exceptions/workout_exceptions.dart';
+import 'package:lograt/data/models/muscle_group_model.dart';
+import 'package:lograt/data/models/templates/workout_template_model.dart';
 import 'package:lograt/data/models/workouts/exercise_model.dart';
 import 'package:lograt/data/models/workouts/exercise_set_model.dart';
 import 'package:lograt/data/models/workouts/exercise_type_model.dart';
@@ -17,10 +24,22 @@ import 'package:sqflite/sqflite.dart';
 
 class WorkoutRepository {
   final AppDatabase _db;
+
   final WorkoutDao _workoutDao;
   final ExerciseDao _exerciseDao;
   final ExerciseTypeDao _exerciseTypeDao;
   final ExerciseSetDao _exerciseSetDao;
+
+  final WorkoutTemplateDao _workoutTemplateDao;
+
+  // final ExerciseTemplateDao _exerciseTemplateDao;
+  // final ExerciseSetTemplateDao _exerciseSetTemplateDao;
+
+  final MuscleGroupDao _muscleGroupDao;
+  final MuscleGroupToWorkoutDao _muscleGroupToWorkoutDao;
+
+  // final MuscleGroupToWorkoutTemplateDao _muscleGroupToWorkoutTemplateDao;
+  // final MuscleGroupToExerciseTypeDao _muscleGroupToExerciseTypeDao;
 
   WorkoutRepository({
     required AppDatabase databaseConnection,
@@ -28,11 +47,26 @@ class WorkoutRepository {
     required ExerciseDao exerciseDao,
     required ExerciseTypeDao exerciseTypeDao,
     required ExerciseSetDao exerciseSetDao,
+    required WorkoutTemplateDao workoutTemplateDao,
+    // required ExerciseTemplateDao exerciseTemplateDao,
+    // required ExerciseSetTemplateDao exerciseSetTemplateDao,
+    required MuscleGroupDao muscleGroupDao,
+    required MuscleGroupToWorkoutDao muscleGroupToWorkoutDao,
+    // required MuscleGroupToWorkoutTemplateDao muscleGroupToWorkoutTemplateDao,
+    // required MuscleGroupToExerciseTypeDao muscleGroupToExerciseTypeDao,
   }) : _db = databaseConnection,
        _workoutDao = workoutDao,
        _exerciseDao = exerciseDao,
        _exerciseTypeDao = exerciseTypeDao,
-       _exerciseSetDao = exerciseSetDao;
+       _exerciseSetDao = exerciseSetDao,
+       _workoutTemplateDao = workoutTemplateDao,
+       // _exerciseTemplateDao = exerciseTemplateDao,
+       // _exerciseSetTemplateDao = exerciseSetTemplateDao,
+       _muscleGroupDao = muscleGroupDao,
+       _muscleGroupToWorkoutDao = muscleGroupToWorkoutDao;
+
+  // _muscleGroupToWorkoutTemplateDao = muscleGroupToWorkoutTemplateDao,
+  // _muscleGroupToExerciseTypeDao = muscleGroupToExerciseTypeDao;
 
   /// Get a [Workout] without its corresponding exercises.
   /// Returns null if the workout does not exist in the database.
@@ -64,18 +98,76 @@ class WorkoutRepository {
     }
   }
 
-  /// Get a list of length [limit] of [Workout]s without their corresponding exercises
-  /// ordered by creation date descending.
-  Future<List<Workout>> getWorkoutSummaries({int? limit, int? offset}) async {
+  /// Get a list of maximum length [limit] of [Workout]s order by creation date (descending)
+  /// Each workout has its corresponding [WorkoutTemplate] if it exists as well as any [MuscleGroup]s assigned to the workout.
+  /// The full [Exercise] and [ExerciseSet] data is omitted.
+  Future<List<Workout>> getWorkoutSummariesPaginated({
+    int? limit,
+    int? offset,
+    Transaction? txn,
+  }) async {
     try {
-      final workoutModels = await _workoutDao
-          .getAllPaginatedOrderedByCreationDate(limit: limit, offset: offset);
+      final workoutModels = await _workoutDao.getAllPaginatedOrderedByDate(
+        limit: limit,
+        offset: offset,
+        txn: txn,
+      );
+      if (workoutModels.isEmpty) return const <Workout>[];
 
-      final workoutEntities = workoutModels
-          .map((workoutModel) => workoutModel.toEntity())
+      final templateIds = workoutModels
+          .map((workoutModel) => workoutModel.templateId)
+          .nonNulls
           .toList();
+      final workoutTemplateModels = templateIds.isNotEmpty
+          ? await _workoutTemplateDao.getWorkoutTemplatesByIds(templateIds, txn)
+          : const <WorkoutTemplateModel>[];
 
-      return workoutEntities;
+      final muscleGroupToWorkoutModels = await _muscleGroupToWorkoutDao
+          .getRelationshipsByWorkoutIds(
+            workoutModels
+                .map((workoutModel) => workoutModel.id)
+                .nonNulls
+                .toList(),
+            txn,
+          );
+
+      final muscleGroupsModels = muscleGroupToWorkoutModels.isNotEmpty
+          ? await _muscleGroupDao.getMuscleGroupsByIds(
+              muscleGroupToWorkoutModels
+                  .map((relationship) => relationship.muscleGroupId)
+                  .toList(),
+              txn,
+            )
+          : const <MuscleGroupModel>[];
+
+      final Map<String, WorkoutTemplate> workoutTemplates = {
+        for (var model in workoutTemplateModels) model.id: model.toEntity(),
+      };
+      final Map<String, List<String>> workoutToMuscleGroupIds = {};
+      for (var rel in muscleGroupToWorkoutModels) {
+        workoutToMuscleGroupIds
+            .putIfAbsent(rel.workoutId, () => [])
+            .add(rel.muscleGroupId);
+      }
+
+      final Map<String, MuscleGroup> muscleGroups = {
+        for (var model in muscleGroupsModels) model.id: model.toEntity(),
+      };
+
+      return workoutModels
+          .map(
+            (workoutModel) => workoutModel.toEntity(
+              template: workoutTemplates.containsKey(workoutModel.templateId)
+                  ? workoutTemplates[workoutModel.templateId]
+                  : null,
+              muscleGroups: (workoutToMuscleGroupIds[workoutModel.id] ?? [])
+                  .map((mgId) => muscleGroups[mgId])
+                  .whereType<MuscleGroup>()
+                  .toList(),
+            ),
+          )
+          .nonNulls
+          .toList();
     } on DatabaseException catch (e) {
       throw WorkoutDataException('Failed to load recent workout summaries: $e');
     } catch (e) {
@@ -291,8 +383,6 @@ class WorkoutRepository {
   }
 
   Future<void> clearWorkouts() async {
-    await _exerciseSetDao.clearTable();
-    await _exerciseDao.clearTable();
     await _exerciseTypeDao.clearTable();
     await _workoutDao.clearTable();
   }

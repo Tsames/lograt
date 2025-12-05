@@ -1,3 +1,4 @@
+import 'package:lograt/data/entities/muscle_group.dart';
 import 'package:lograt/data/entities/templates/workout_template.dart';
 import 'package:lograt/data/entities/workouts/exercise.dart';
 import 'package:lograt/data/entities/workouts/workout.dart';
@@ -57,11 +58,13 @@ class WorkoutModel {
 
   Workout toEntity({
     WorkoutTemplate? template,
+    List<MuscleGroup> muscleGroups = const [],
     List<Exercise> exercises = const [],
   }) {
     return Workout(
       id: id,
       date: date,
+      muscleGroups: muscleGroups,
       exercises: exercises,
       title: title,
       template: template,

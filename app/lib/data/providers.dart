@@ -1,4 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/data/dao/muscle_group/muscle_group_to_workout_dao.dart';
+import 'package:lograt/data/dao/muscle_group/muscle_groups_dao.dart';
+import 'package:lograt/data/dao/templates/workout_template_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_set_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_type_dao.dart';
@@ -39,14 +42,37 @@ final exerciseSetDaoProvider = Provider<ExerciseSetDao>((ref) {
   return ExerciseSetDao(database);
 });
 
+final workoutTemplateDaoProvider = Provider<WorkoutTemplateDao>((ref) {
+  final database = ref.read(appDatabaseProvider);
+  return WorkoutTemplateDao(database);
+});
+
+final muscleGroupDaoProvider = Provider<MuscleGroupDao>((ref) {
+  final database = ref.read(appDatabaseProvider);
+  return MuscleGroupDao(database);
+});
+
+final muscleGroupToWorkoutDaoProvider = Provider<MuscleGroupToWorkoutDao>((
+  ref,
+) {
+  final database = ref.read(appDatabaseProvider);
+  return MuscleGroupToWorkoutDao(database);
+});
+
 // --- Repository provider ---
 
 final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
   final database = ref.read(appDatabaseProvider);
+
   final workoutDao = ref.read(workoutDaoProvider);
   final exerciseDao = ref.read(exerciseDaoProvider);
   final exerciseTypeDao = ref.read(exerciseTypeDaoProvider);
   final exerciseSetDao = ref.read(exerciseSetDaoProvider);
+
+  final workoutTemplateDao = ref.read(workoutTemplateDaoProvider);
+
+  final muscleGroupDao = ref.read(muscleGroupDaoProvider);
+  final muscleGroupToWorkoutDao = ref.read(muscleGroupToWorkoutDaoProvider);
 
   return WorkoutRepository(
     databaseConnection: database,
@@ -54,6 +80,9 @@ final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
     exerciseDao: exerciseDao,
     exerciseTypeDao: exerciseTypeDao,
     exerciseSetDao: exerciseSetDao,
+    workoutTemplateDao: workoutTemplateDao,
+    muscleGroupDao: muscleGroupDao,
+    muscleGroupToWorkoutDao: muscleGroupToWorkoutDao,
   );
 });
 

@@ -33,6 +33,30 @@ class MuscleGroupDao {
     return MuscleGroupModel.fromMap(maps.first);
   }
 
+  Future<List<MuscleGroupModel>> getMuscleGroupsByIds(
+    List<String> workoutIds, [
+    Transaction? txn,
+  ]) async {
+    if (workoutIds.isEmpty) {
+      throw Exception(
+        'Cannot retrieve muscle groups by ids if no ids are given.',
+      );
+    }
+    final DatabaseExecutor executor = txn ?? await _db.database;
+
+    final placeholders = List.filled(workoutIds.length, '?').join(', ');
+    final records = await executor.query(
+      _tableName,
+      where: '${MuscleGroupFields.id} IN ($placeholders)',
+      whereArgs: [...workoutIds],
+    );
+
+    return records
+        .map((record) => MuscleGroupModel.fromMap(record))
+        .nonNulls
+        .toList();
+  }
+
   Future<List<MuscleGroupModel>> getAllMuscleGroupsPaginated({
     int? limit,
     int? offset,

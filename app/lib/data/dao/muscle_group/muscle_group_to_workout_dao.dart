@@ -1,5 +1,5 @@
 import 'package:lograt/data/database/app_database.dart';
-import 'package:lograt/data/models/muscle_group_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_to_workout_model.dart';
 import 'package:lograt/util/uuidv7.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -25,6 +25,30 @@ class MuscleGroupToWorkoutDao {
     );
 
     return maps.isNotEmpty;
+  }
+
+  Future<List<MuscleGroupToWorkoutModel>> getRelationshipsByWorkoutIds(
+    List<String> workoutIds, [
+    Transaction? txn,
+  ]) async {
+    if (workoutIds.isEmpty) {
+      throw Exception(
+        'Cannot retrieve muscle group to workout relationships by workoutIds if no workoutIds are given.',
+      );
+    }
+    final DatabaseExecutor executor = txn ?? await _db.database;
+
+    final placeholders = List.filled(workoutIds.length, '?').join(', ');
+    final records = await executor.query(
+      _tableName,
+      where: '${MuscleGroupToWorkoutFields.workoutId} IN ($placeholders)',
+      whereArgs: [...workoutIds],
+    );
+
+    return records
+        .map((record) => MuscleGroupToWorkoutModel.fromMap(record))
+        .nonNulls
+        .toList();
   }
 
   Future<void> insertRelationship({
