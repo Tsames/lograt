@@ -61,6 +61,7 @@ class AppDatabase {
         await db.execute(_createSetTemplatesTableSQL());
         await db.execute(_createMuscleGroupsTableSQL());
         await db.execute(_createMuscleGroupsToWorkoutsTableSQL());
+        await db.execute(_createMuscleGroupsToTemplatesTableSQL());
         await db.execute(_createMuscleGroupsToExerciseTypeTableSQL());
       },
       onOpen: (Database db) async {
@@ -88,6 +89,7 @@ class AppDatabase {
       _createSetTemplatesTableSQL(),
       _createMuscleGroupsTableSQL(),
       _createMuscleGroupsToWorkoutsTableSQL(),
+      _createMuscleGroupsToTemplatesTableSQL(),
       _createMuscleGroupsToExerciseTypeTableSQL(),
     ];
   }
@@ -206,6 +208,19 @@ class AppDatabase {
       FOREIGN KEY (${MuscleGroupToWorkoutFields.workoutId}) REFERENCES $workoutsTable(${WorkoutFields.id}) ON DELETE CASCADE,
       FOREIGN KEY (${MuscleGroupToWorkoutFields.muscleGroupId}) REFERENCES $muscleGroupTable(${MuscleGroupFields.id}) ON DELETE CASCADE,
       UNIQUE(${MuscleGroupToWorkoutFields.workoutId}, ${MuscleGroupToWorkoutFields.muscleGroupId})
+    )
+  ''';
+  }
+
+  String _createMuscleGroupsToTemplatesTableSQL() {
+    return '''
+    CREATE TABLE $muscleGroupToWorkoutTemplateTable(
+      ${MuscleGroupToWorkoutTemplateFields.id} TEXT PRIMARY KEY,
+      ${MuscleGroupToWorkoutTemplateFields.muscleGroupId} TEXT NOT NULL,
+      ${MuscleGroupToWorkoutTemplateFields.workoutTemplateId} TEXT NOT NULL,
+      FOREIGN KEY (${MuscleGroupToWorkoutTemplateFields.workoutTemplateId}) REFERENCES $workoutTemplatesTable(${WorkoutTemplateFields.id}) ON DELETE CASCADE,
+      FOREIGN KEY (${MuscleGroupToWorkoutTemplateFields.muscleGroupId}) REFERENCES $muscleGroupTable(${MuscleGroupFields.id}) ON DELETE CASCADE,
+      UNIQUE(${MuscleGroupToWorkoutTemplateFields.workoutTemplateId}, ${MuscleGroupToWorkoutTemplateFields.muscleGroupId})
     )
   ''';
   }

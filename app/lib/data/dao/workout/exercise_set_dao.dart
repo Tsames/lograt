@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 
 class ExerciseSetDao {
   final AppDatabase _db;
+  static const String _tableName = setsTable;
 
   ExerciseSetDao(this._db);
 
@@ -11,7 +12,7 @@ class ExerciseSetDao {
     final DatabaseExecutor executor = txn ?? await _db.database;
 
     final maps = await executor.query(
-      setsTable,
+      _tableName,
       where: '${ExerciseSetFields.id} = ?',
       whereArgs: [id],
     );
@@ -26,7 +27,7 @@ class ExerciseSetDao {
   ]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final maps = await executor.query(
-      setsTable,
+      _tableName,
       where: '${ExerciseSetFields.exerciseId} = ?',
       whereArgs: [exerciseId],
       orderBy: '${ExerciseSetFields.order} ASC',
@@ -38,7 +39,7 @@ class ExerciseSetDao {
   Future<int> insert(ExerciseSetModel set, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     return await executor.insert(
-      setsTable,
+      _tableName,
       set.toMap(),
       conflictAlgorithm: ConflictAlgorithm.fail,
     );
@@ -55,7 +56,7 @@ class ExerciseSetDao {
 
     for (final set in sets) {
       batch.insert(
-        setsTable,
+        _tableName,
         set.toMap(),
         conflictAlgorithm: ConflictAlgorithm.fail,
       );
@@ -67,7 +68,7 @@ class ExerciseSetDao {
   Future<void> update(ExerciseSetModel set, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsUpdated = await executor.update(
-      setsTable,
+      _tableName,
       set.toMap(),
       where: '${ExerciseSetFields.id} = ?',
       whereArgs: [set.id],
@@ -94,7 +95,7 @@ class ExerciseSetDao {
       final batch = transaction.batch();
       for (final set in sets) {
         batch.update(
-          setsTable,
+          _tableName,
           set.toMap(),
           where: '${ExerciseSetFields.id} = ?',
           whereArgs: [set.id],
@@ -117,7 +118,7 @@ class ExerciseSetDao {
   Future<void> delete(String setId, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsDeleted = await executor.delete(
-      setsTable,
+      _tableName,
       where: '${ExerciseSetFields.id} = ?',
       whereArgs: [setId],
     );
@@ -128,6 +129,6 @@ class ExerciseSetDao {
 
   Future<void> clearTable([Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    await executor.delete(setsTable);
+    await executor.delete(_tableName);
   }
 }

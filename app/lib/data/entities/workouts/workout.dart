@@ -7,8 +7,8 @@ import 'package:lograt/util/uuidv7.dart';
 class Workout {
   final String id;
   final DateTime date;
-  final List<Exercise> exercises;
   final List<MuscleGroup> muscleGroups;
+  final List<Exercise> exercises;
   final WorkoutTemplate? template;
   final String? title;
   final String? notes;
@@ -16,21 +16,21 @@ class Workout {
   Workout({
     String? id,
     DateTime? date,
-    List<Exercise>? exercises,
     List<MuscleGroup>? muscleGroups,
+    List<Exercise>? exercises,
     this.template,
     this.title,
     this.notes,
   }) : id = id ?? uuidV7(),
        date = date ?? DateTime.now(),
-       exercises = exercises ?? const <Exercise>[],
-       muscleGroups = muscleGroups ?? const <MuscleGroup>[];
+       muscleGroups = muscleGroups ?? const <MuscleGroup>[],
+       exercises = exercises ?? const <Exercise>[];
 
   Workout copyWith({
     String? id,
     DateTime? date,
-    List<Exercise>? exercises,
     List<MuscleGroup>? muscleGroups,
+    List<Exercise>? exercises,
     WorkoutTemplate? template,
     String? title,
     String? notes,
@@ -38,8 +38,8 @@ class Workout {
     return Workout(
       id: id ?? this.id,
       date: date ?? this.date,
-      exercises: exercises ?? this.exercises,
       muscleGroups: muscleGroups ?? this.muscleGroups,
+      exercises: exercises ?? this.exercises,
       template: template ?? this.template,
       title: title ?? this.title,
       notes: notes ?? this.notes,
@@ -57,5 +57,5 @@ class Workout {
 
   @override
   String toString() =>
-      'Workout(id: $id, date: ${date.toHumanFriendlyFormat()}, exercises: $exercises, muscleGroups: $muscleGroups, template: $template, title: $title, notes: $notes)';
+      'Workout(id: $id, date: ${date.toHumanFriendlyFormat()}, muscleGroups: $muscleGroups, exercises: $exercises, template: $template, title: $title, notes: $notes)';
 }

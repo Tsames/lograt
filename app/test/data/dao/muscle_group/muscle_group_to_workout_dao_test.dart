@@ -383,10 +383,10 @@ void main() {
         ]);
 
         final deletedCount = await muscleGroupToWorkoutDao
-            .deleteMuscleGroupsForWorkout(testWorkout1.id, [
-              testMuscleGroup1.id,
-              testMuscleGroup2.id,
-            ]);
+            .deleteMuscleGroupsForWorkout(
+              testWorkout1.id,
+              muscleGroupIds: [testMuscleGroup1.id, testMuscleGroup2.id],
+            );
 
         expect(deletedCount, equals(2));
 
@@ -415,29 +415,7 @@ void main() {
         );
 
         final deletedCount = await muscleGroupToWorkoutDao
-            .deleteMuscleGroupsForWorkout(testWorkout1.id, []);
-
-        expect(deletedCount, equals(0));
-
-        // Original relationship still exists
-        final exists = await muscleGroupToWorkoutDao.relationshipExists(
-          testMuscleGroup1.id,
-          testWorkout1.id,
-        );
-        expect(exists, isTrue);
-      });
-
-      test('should return 0 when no matching relationships exist', () async {
-        await muscleGroupToWorkoutDao.insertRelationship(
-          muscleGroupId: testMuscleGroup1.id,
-          workoutId: testWorkout1.id,
-        );
-
-        final deletedCount = await muscleGroupToWorkoutDao
-            .deleteMuscleGroupsForWorkout(testWorkout1.id, [
-              testMuscleGroup2.id,
-              testMuscleGroup3.id,
-            ]);
+            .deleteMuscleGroupsForWorkout(testWorkout1.id, muscleGroupIds: []);
 
         expect(deletedCount, equals(0));
 
@@ -450,6 +428,25 @@ void main() {
       });
 
       test(
+        'should throw exception when no matching relationships exist',
+        () async {
+          await muscleGroupToWorkoutDao.insertRelationship(
+            muscleGroupId: testMuscleGroup1.id,
+            workoutId: testWorkout1.id,
+          );
+
+          expect(
+            () async =>
+                await muscleGroupToWorkoutDao.deleteMuscleGroupsForWorkout(
+                  testWorkout1.id,
+                  muscleGroupIds: [testMuscleGroup2.id, testMuscleGroup3.id],
+                ),
+            throwsA(isA<Exception>()),
+          );
+        },
+      );
+
+      test(
         'should only delete relationships for the specified workout',
         () async {
           await muscleGroupToWorkoutDao.batchInsertRelationships([
@@ -458,9 +455,10 @@ void main() {
           ]);
 
           final deletedCount = await muscleGroupToWorkoutDao
-              .deleteMuscleGroupsForWorkout(testWorkout1.id, [
-                testMuscleGroup1.id,
-              ]);
+              .deleteMuscleGroupsForWorkout(
+                testWorkout1.id,
+                muscleGroupIds: [testMuscleGroup1.id],
+              );
 
           expect(deletedCount, equals(1));
 
@@ -478,21 +476,55 @@ void main() {
         },
       );
 
-      test('should handle partial matches correctly', () async {
+      test(
+        'should throw exception when at least one relationship does not exist and rollback deletions.',
+        () async {
+          await muscleGroupToWorkoutDao.batchInsertRelationships([
+            (muscleGroupId: testMuscleGroup1.id, workoutId: testWorkout1.id),
+            (muscleGroupId: testMuscleGroup2.id, workoutId: testWorkout1.id),
+          ]);
+
+          // Try to delete 3 muscle groups, but only 2 exist
+          expect(
+            () async =>
+                await muscleGroupToWorkoutDao.deleteMuscleGroupsForWorkout(
+                  testWorkout1.id,
+                  muscleGroupIds: [
+                    testMuscleGroup1.id,
+                    testMuscleGroup2.id,
+                    testMuscleGroup3.id,
+                  ],
+                ),
+            throwsA(isA<Exception>()),
+          );
+
+          final exists1 = await muscleGroupToWorkoutDao.relationshipExists(
+            testMuscleGroup1.id,
+            testWorkout1.id,
+          );
+          final exists2 = await muscleGroupToWorkoutDao.relationshipExists(
+            testMuscleGroup2.id,
+            testWorkout1.id,
+          );
+
+          expect(exists1, isTrue);
+          expect(exists2, isTrue);
+        },
+      );
+    });
+
+    group('Delete All Muscle Groups for Workout', () {
+      test('should delete all muscle groups for a workout', () async {
         await muscleGroupToWorkoutDao.batchInsertRelationships([
           (muscleGroupId: testMuscleGroup1.id, workoutId: testWorkout1.id),
           (muscleGroupId: testMuscleGroup2.id, workoutId: testWorkout1.id),
+          (muscleGroupId: testMuscleGroup3.id, workoutId: testWorkout1.id),
         ]);
 
-        // Try to delete 3 muscle groups, but only 2 exist
         final deletedCount = await muscleGroupToWorkoutDao
-            .deleteMuscleGroupsForWorkout(testWorkout1.id, [
-              testMuscleGroup1.id,
-              testMuscleGroup2.id,
-              testMuscleGroup3.id,
-            ]);
+            .deleteMuscleGroupsForWorkout(testWorkout1.id);
 
-        expect(deletedCount, equals(2)); // Only 2 existed
+        expect(deletedCount, equals(3));
 
         final exists1 = await muscleGroupToWorkoutDao.relationshipExists(
           testMuscleGroup1.id,
@@ -502,10 +534,53 @@ void main() {
           testMuscleGroup2.id,
           testWorkout1.id,
         );
+        final exists3 = await muscleGroupToWorkoutDao.relationshipExists(
+          testMuscleGroup3.id,
+          testWorkout1.id,
+        );
 
         expect(exists1, isFalse);
         expect(exists2, isFalse);
+        expect(exists3, isFalse);
       });
+
+      test(
+        'should throw exception when deleting all for workout with no relationships',
+        () async {
+          expect(
+            () async => await muscleGroupToWorkoutDao
+                .deleteMuscleGroupsForWorkout(testWorkout1.id),
+            throwsA(isA<Exception>()),
+          );
+        },
+      );
+
+      test(
+        'should only delete relationships for the specified workout when deleting all',
+        () async {
+          await muscleGroupToWorkoutDao.batchInsertRelationships([
+            (muscleGroupId: testMuscleGroup1.id, workoutId: testWorkout1.id),
+            (muscleGroupId: testMuscleGroup2.id, workoutId: testWorkout1.id),
+            (muscleGroupId: testMuscleGroup1.id, workoutId: testWorkout2.id),
+          ]);
+
+          final deletedCount = await muscleGroupToWorkoutDao
+              .deleteMuscleGroupsForWorkout(testWorkout1.id);
+
+          expect(deletedCount, equals(2));
+
+          final workout1Exists1 = await muscleGroupToWorkoutDao
+              .relationshipExists(testMuscleGroup1.id, testWorkout1.id);
+          final workout1Exists2 = await muscleGroupToWorkoutDao
+              .relationshipExists(testMuscleGroup2.id, testWorkout1.id);
+          final workout2Exists = await muscleGroupToWorkoutDao
+              .relationshipExists(testMuscleGroup1.id, testWorkout2.id);
+
+          expect(workout1Exists1, isFalse);
+          expect(workout1Exists2, isFalse);
+          expect(workout2Exists, isTrue); // Different workout unchanged
+        },
+      );
     });
 
     group('Foreign Key Constraints', () {

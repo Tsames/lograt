@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 
 class ExerciseSetTemplateDao {
   final AppDatabase _db;
+  static const String _tableName = setTemplateTable;
 
   ExerciseSetTemplateDao(this._db);
 
@@ -13,7 +14,7 @@ class ExerciseSetTemplateDao {
   ]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final maps = await executor.query(
-      setTemplateTable,
+      _tableName,
       where: '${ExerciseSetTemplateFields.id} = ?',
       whereArgs: [id],
     );
@@ -29,7 +30,7 @@ class ExerciseSetTemplateDao {
   ]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final maps = await executor.query(
-      setTemplateTable,
+      _tableName,
       where: '${ExerciseSetTemplateFields.exerciseTemplateId} = ?',
       whereArgs: [exerciseTemplateId],
     );
@@ -46,7 +47,7 @@ class ExerciseSetTemplateDao {
   ]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     return await executor.insert(
-      setTemplateTable,
+      _tableName,
       exercise.toMap(),
       conflictAlgorithm: ConflictAlgorithm.fail,
     );
@@ -63,7 +64,7 @@ class ExerciseSetTemplateDao {
 
     for (final template in exerciseSetTemplates) {
       batch.insert(
-        setTemplateTable,
+        _tableName,
         template.toMap(),
         conflictAlgorithm: ConflictAlgorithm.fail,
       );
@@ -78,7 +79,7 @@ class ExerciseSetTemplateDao {
   ]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsUpdated = await executor.update(
-      setTemplateTable,
+      _tableName,
       exerciseSetTemplate.toMap(),
       where: '${ExerciseSetTemplateFields.id} = ?',
       whereArgs: [exerciseSetTemplate.id],
@@ -109,7 +110,7 @@ class ExerciseSetTemplateDao {
       final batch = transaction.batch();
       for (final exercise in exerciseSetTemplates) {
         batch.update(
-          setTemplateTable,
+          _tableName,
           exercise.toMap(),
           where: '${ExerciseSetTemplateFields.id} = ?',
           whereArgs: [exercise.id],
@@ -132,7 +133,7 @@ class ExerciseSetTemplateDao {
   Future<void> delete(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsDeleted = await executor.delete(
-      setTemplateTable,
+      _tableName,
       where: '${ExerciseSetTemplateFields.id} = ?',
       whereArgs: [id],
     );
@@ -145,6 +146,6 @@ class ExerciseSetTemplateDao {
 
   Future<void> clearTable([Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    await executor.delete(setTemplateTable);
+    await executor.delete(_tableName);
   }
 }

@@ -3,15 +3,15 @@ import 'package:lograt/data/models/muscle_group_model.dart';
 import 'package:lograt/util/uuidv7.dart';
 import 'package:sqflite/sqflite.dart';
 
-class MuscleGroupToWorkoutDao {
+class MuscleGroupToWorkoutTemplateDao {
   final AppDatabase _db;
-  static const String _tableName = muscleGroupToWorkoutTable;
+  static const String _tableName = muscleGroupToWorkoutTemplateTable;
 
-  MuscleGroupToWorkoutDao(this._db);
+  MuscleGroupToWorkoutTemplateDao(this._db);
 
   Future<bool> relationshipExists(
     String muscleGroupId,
-    String workoutId, [
+    String workoutTemplateId, [
     Transaction? txn,
   ]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
@@ -19,8 +19,8 @@ class MuscleGroupToWorkoutDao {
     final maps = await executor.query(
       _tableName,
       where:
-          '${MuscleGroupToWorkoutFields.muscleGroupId} = ? AND ${MuscleGroupToWorkoutFields.workoutId} = ?',
-      whereArgs: [muscleGroupId, workoutId],
+          '${MuscleGroupToWorkoutTemplateFields.muscleGroupId} = ? AND ${MuscleGroupToWorkoutTemplateFields.workoutTemplateId} = ?',
+      whereArgs: [muscleGroupId, workoutTemplateId],
       limit: 1,
     );
 
@@ -29,19 +29,19 @@ class MuscleGroupToWorkoutDao {
 
   Future<void> insertRelationship({
     required String muscleGroupId,
-    required String workoutId,
+    required String workoutTemplateId,
     Transaction? txn,
   }) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     await executor.insert(_tableName, {
-      MuscleGroupToWorkoutFields.id: uuidV7(),
-      MuscleGroupToWorkoutFields.muscleGroupId: muscleGroupId,
-      MuscleGroupToWorkoutFields.workoutId: workoutId,
+      MuscleGroupToWorkoutTemplateFields.id: uuidV7(),
+      MuscleGroupToWorkoutTemplateFields.muscleGroupId: muscleGroupId,
+      MuscleGroupToWorkoutTemplateFields.workoutTemplateId: workoutTemplateId,
     }, conflictAlgorithm: ConflictAlgorithm.fail);
   }
 
   Future<void> batchInsertRelationships(
-    List<({String workoutId, String muscleGroupId})> relationships, [
+    List<({String workoutTemplateId, String muscleGroupId})> relationships, [
     Transaction? txn,
   ]) async {
     if (relationships.isEmpty) return;
@@ -51,9 +51,11 @@ class MuscleGroupToWorkoutDao {
 
     for (final relationship in relationships) {
       batch.insert(_tableName, {
-        MuscleGroupToWorkoutFields.id: uuidV7(),
-        MuscleGroupToWorkoutFields.muscleGroupId: relationship.muscleGroupId,
-        MuscleGroupToWorkoutFields.workoutId: relationship.workoutId,
+        MuscleGroupToWorkoutTemplateFields.id: uuidV7(),
+        MuscleGroupToWorkoutTemplateFields.muscleGroupId:
+            relationship.muscleGroupId,
+        MuscleGroupToWorkoutTemplateFields.workoutTemplateId:
+            relationship.workoutTemplateId,
       }, conflictAlgorithm: ConflictAlgorithm.fail);
     }
 
@@ -62,7 +64,7 @@ class MuscleGroupToWorkoutDao {
 
   Future<void> delete(
     String muscleGroupId,
-    String workoutId, [
+    String workoutTemplateId, [
     Transaction? txn,
   ]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
@@ -70,42 +72,42 @@ class MuscleGroupToWorkoutDao {
     final rowsDeleted = await executor.delete(
       _tableName,
       where:
-          '${MuscleGroupToWorkoutFields.muscleGroupId} = ? AND ${MuscleGroupToWorkoutFields.workoutId} = ?',
-      whereArgs: [muscleGroupId, workoutId],
+          '${MuscleGroupToWorkoutTemplateFields.muscleGroupId} = ? AND ${MuscleGroupToWorkoutTemplateFields.workoutTemplateId} = ?',
+      whereArgs: [muscleGroupId, workoutTemplateId],
     );
 
     if (rowsDeleted == 0) {
       throw Exception(
-        'Cannot delete muscle group ($muscleGroupId) to workout ($workoutId) relationship: does not exist',
+        'Cannot delete muscle group ($muscleGroupId) to workout template ($workoutTemplateId) relationship: does not exist',
       );
     }
   }
 
-  /// Deletes muscle group relationships for a workout.
+  /// Deletes muscle group relationships for a workout template.
   ///
-  /// If [muscleGroupIds] is null, deletes ALL muscle groups for the workout.
+  /// If [muscleGroupIds] is null, deletes ALL muscle groups for the workout template.
   /// If [muscleGroupIds] is provided, deletes only those specific muscle groups.
   ///
   /// Throws an exception if:
-  /// - No relationships exist for the workout (when deleting all)
+  /// - No relationships exist for the workout template (when deleting all)
   /// - Any specified muscle group relationship doesn't exist (when deleting specific ones)
-  Future<int> deleteMuscleGroupsForWorkout(
-    String workoutId, {
+  Future<int> deleteMuscleGroupsForWorkoutTemplate(
+    String workoutTemplateId, {
     List<String>? muscleGroupIds,
     Transaction? txn,
   }) async {
     Future<int> executeDelete(Transaction transaction) async {
-      // Case 1: Delete all muscle groups for the workout
+      // Case 1: Delete all muscle groups for the workout template
       if (muscleGroupIds == null) {
         final rowsDeleted = await transaction.delete(
           _tableName,
-          where: '${MuscleGroupToWorkoutFields.workoutId} = ?',
-          whereArgs: [workoutId],
+          where: '${MuscleGroupToWorkoutTemplateFields.workoutTemplateId} = ?',
+          whereArgs: [workoutTemplateId],
         );
 
         if (rowsDeleted == 0) {
           throw Exception(
-            'Cannot delete muscle groups for workout ($workoutId): no relationships exist',
+            'Cannot delete muscle groups for workout template ($workoutTemplateId): no relationships exist',
           );
         }
 
@@ -119,12 +121,12 @@ class MuscleGroupToWorkoutDao {
       for (final muscleGroupId in muscleGroupIds) {
         final exists = await relationshipExists(
           muscleGroupId,
-          workoutId,
+          workoutTemplateId,
           transaction,
         );
         if (!exists) {
           throw Exception(
-            'Cannot delete muscle group ($muscleGroupId) to workout ($workoutId) relationship: does not exist',
+            'Cannot delete muscle group ($muscleGroupId) to workout template ($workoutTemplateId) relationship: does not exist',
           );
         }
       }
@@ -134,8 +136,8 @@ class MuscleGroupToWorkoutDao {
       return await transaction.delete(
         _tableName,
         where:
-            '${MuscleGroupToWorkoutFields.workoutId} = ? AND ${MuscleGroupToWorkoutFields.muscleGroupId} IN ($placeholders)',
-        whereArgs: [workoutId, ...muscleGroupIds],
+            '${MuscleGroupToWorkoutTemplateFields.workoutTemplateId} = ? AND ${MuscleGroupToWorkoutTemplateFields.muscleGroupId} IN ($placeholders)',
+        whereArgs: [workoutTemplateId, ...muscleGroupIds],
       );
     }
 

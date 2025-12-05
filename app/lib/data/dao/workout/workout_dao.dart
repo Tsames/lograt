@@ -4,13 +4,14 @@ import 'package:sqflite/sqflite.dart';
 
 class WorkoutDao {
   final AppDatabase _db;
+  static const String _tableName = workoutsTable;
 
   WorkoutDao(this._db);
 
   Future<WorkoutModel?> getById(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final maps = await executor.query(
-      workoutsTable,
+      _tableName,
       where: '${WorkoutFields.id} = ?',
       whereArgs: [id],
     );
@@ -29,7 +30,7 @@ class WorkoutDao {
     final DatabaseExecutor executor = txn ?? await _db.database;
 
     final maps = await executor.query(
-      workoutsTable,
+      _tableName,
       orderBy: '${WorkoutFields.date} DESC',
       limit: limit,
       offset: offset,
@@ -41,7 +42,7 @@ class WorkoutDao {
   Future<void> insert(WorkoutModel workout, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     await executor.insert(
-      workoutsTable,
+      _tableName,
       workout.toMap(),
       conflictAlgorithm: ConflictAlgorithm.fail,
     );
@@ -58,7 +59,7 @@ class WorkoutDao {
 
     for (final workout in workouts) {
       batch.insert(
-        workoutsTable,
+        _tableName,
         workout.toMap(),
         conflictAlgorithm: ConflictAlgorithm.fail,
       );
@@ -70,7 +71,7 @@ class WorkoutDao {
   Future<void> update(WorkoutModel workout, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsUpdated = await executor.update(
-      workoutsTable,
+      _tableName,
       workout.toMap(),
       where: '${WorkoutFields.id} = ?',
       whereArgs: [workout.id],
@@ -98,7 +99,7 @@ class WorkoutDao {
       final batch = transaction.batch();
       for (final workout in workouts) {
         batch.update(
-          workoutsTable,
+          _tableName,
           workout.toMap(),
           where: '${WorkoutFields.id} = ?',
           whereArgs: [workout.id],
@@ -121,7 +122,7 @@ class WorkoutDao {
   Future<void> delete(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsDeleted = await executor.delete(
-      workoutsTable,
+      _tableName,
       where: '${WorkoutFields.id} = ?',
       whereArgs: [id],
     );
@@ -133,6 +134,6 @@ class WorkoutDao {
 
   Future<void> clearTable([Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    await executor.delete(workoutsTable);
+    await executor.delete(_tableName);
   }
 }

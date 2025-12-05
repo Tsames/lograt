@@ -1,3 +1,4 @@
+import 'package:lograt/data/entities/muscle_group.dart';
 import 'package:lograt/data/entities/templates/exercise_template.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 import 'package:lograt/util/uuidv7.dart';
@@ -5,6 +6,7 @@ import 'package:lograt/util/uuidv7.dart';
 class WorkoutTemplate {
   final String id;
   final DateTime date;
+  final List<MuscleGroup> muscleGroups;
   final List<ExerciseTemplate> exercises;
   final String? title;
   final String? description;
@@ -12,16 +14,19 @@ class WorkoutTemplate {
   WorkoutTemplate({
     String? id,
     DateTime? date,
+    List<MuscleGroup>? muscleGroups,
     List<ExerciseTemplate>? exercises,
     this.title,
     this.description,
   }) : id = id ?? uuidV7(),
        date = date ?? DateTime.now(),
+       muscleGroups = muscleGroups ?? const <MuscleGroup>[],
        exercises = exercises ?? const <ExerciseTemplate>[];
 
   WorkoutTemplate copyWith({
     String? id,
     DateTime? date,
+    List<MuscleGroup>? muscleGroups,
     List<ExerciseTemplate>? exercises,
     String? title,
     String? description,
@@ -29,6 +34,7 @@ class WorkoutTemplate {
     return WorkoutTemplate(
       id: id ?? this.id,
       date: date ?? this.date,
+      muscleGroups: muscleGroups ?? this.muscleGroups,
       exercises: exercises ?? this.exercises,
       title: title ?? this.title,
       description: description ?? this.description,

@@ -4,13 +4,14 @@ import 'package:sqflite/sqflite.dart';
 
 class MuscleGroupDao {
   final AppDatabase _db;
+  static const String _tableName = muscleGroupTable;
 
   MuscleGroupDao(this._db);
 
   Future<MuscleGroupModel?> getById(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final maps = await executor.query(
-      muscleGroupTable,
+      _tableName,
       where: '${MuscleGroupFields.id} = ?',
       whereArgs: [id],
     );
@@ -23,7 +24,7 @@ class MuscleGroupDao {
     final DatabaseExecutor executor = txn ?? await _db.database;
 
     final maps = await executor.query(
-      muscleGroupTable,
+      _tableName,
       where: '${MuscleGroupFields.label} = ?',
       whereArgs: [label],
     );
@@ -40,7 +41,7 @@ class MuscleGroupDao {
     final DatabaseExecutor executor = txn ?? await _db.database;
 
     final maps = await executor.query(
-      muscleGroupTable,
+      _tableName,
       orderBy: '${MuscleGroupFields.label} ASC',
       limit: limit,
       offset: offset,
@@ -52,7 +53,7 @@ class MuscleGroupDao {
   Future<void> insert(MuscleGroupModel muscleGroup, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     await executor.insert(
-      muscleGroupTable,
+      _tableName,
       muscleGroup.toMap(),
       conflictAlgorithm: ConflictAlgorithm.fail,
     );
@@ -69,7 +70,7 @@ class MuscleGroupDao {
 
     for (final muscleGroup in muscleGroups) {
       batch.insert(
-        muscleGroupTable,
+        _tableName,
         muscleGroup.toMap(),
         conflictAlgorithm: ConflictAlgorithm.fail,
       );
@@ -81,7 +82,7 @@ class MuscleGroupDao {
   Future<void> update(MuscleGroupModel muscleGroup, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsUpdated = await executor.update(
-      muscleGroupTable,
+      _tableName,
       muscleGroup.toMap(),
       where: '${MuscleGroupFields.id} = ?',
       whereArgs: [muscleGroup.id],
@@ -113,7 +114,7 @@ class MuscleGroupDao {
       final batch = transaction.batch();
       for (final muscleGroup in muscleGroups) {
         batch.update(
-          muscleGroupTable,
+          _tableName,
           muscleGroup.toMap(),
           where: '${MuscleGroupFields.id} = ?',
           whereArgs: [muscleGroup.id],
@@ -136,7 +137,7 @@ class MuscleGroupDao {
   Future<void> delete(String id, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
     final rowsDeleted = await executor.delete(
-      muscleGroupTable,
+      _tableName,
       where: '${MuscleGroupFields.id} = ?',
       whereArgs: [id],
     );
@@ -148,6 +149,6 @@ class MuscleGroupDao {
 
   Future<void> clearTable([Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await _db.database;
-    await executor.delete(muscleGroupTable);
+    await executor.delete(_tableName);
   }
 }
