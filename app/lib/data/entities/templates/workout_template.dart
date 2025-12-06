@@ -7,7 +7,7 @@ class WorkoutTemplate {
   final String id;
   final DateTime date;
   final List<MuscleGroup> muscleGroups;
-  final List<ExerciseTemplate> exercises;
+  final List<ExerciseTemplate> exerciseTemplates;
   final String? title;
   final String? description;
 
@@ -15,19 +15,19 @@ class WorkoutTemplate {
     String? id,
     DateTime? date,
     List<MuscleGroup>? muscleGroups,
-    List<ExerciseTemplate>? exercises,
+    List<ExerciseTemplate>? exerciseTemplates,
     this.title,
     this.description,
   }) : id = id ?? uuidV7(),
        date = date ?? DateTime.now(),
        muscleGroups = muscleGroups ?? const <MuscleGroup>[],
-       exercises = exercises ?? const <ExerciseTemplate>[];
+       exerciseTemplates = exerciseTemplates ?? const <ExerciseTemplate>[];
 
   WorkoutTemplate copyWith({
     String? id,
     DateTime? date,
     List<MuscleGroup>? muscleGroups,
-    List<ExerciseTemplate>? exercises,
+    List<ExerciseTemplate>? exerciseTemplates,
     String? title,
     String? description,
   }) {
@@ -35,7 +35,7 @@ class WorkoutTemplate {
       id: id ?? this.id,
       date: date ?? this.date,
       muscleGroups: muscleGroups ?? this.muscleGroups,
-      exercises: exercises ?? this.exercises,
+      exerciseTemplates: exerciseTemplates ?? this.exerciseTemplates,
       title: title ?? this.title,
       description: description ?? this.description,
     );
@@ -52,5 +52,5 @@ class WorkoutTemplate {
 
   @override
   String toString() =>
-      'WorkoutTemplate(id: $id, date: ${date.toHumanFriendlyFormat()}, exercises: $exercises, title: $title, description: $description)';
+      'WorkoutTemplate(id: $id, date: ${date.toHumanFriendlyFormat()}, exerciseTemplates: $exerciseTemplates, title: $title, description: $description)';
 }

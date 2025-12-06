@@ -1,12 +1,15 @@
+import 'package:lograt/data/dao/muscle_group/muscle_group_to_exercise_type_dao.dart';
 import 'package:lograt/data/dao/muscle_group/muscle_group_to_workout_dao.dart';
+import 'package:lograt/data/dao/muscle_group/muscle_group_to_workout_template_dao.dart';
 import 'package:lograt/data/dao/muscle_group/muscle_groups_dao.dart';
+import 'package:lograt/data/dao/templates/exercise_set_template_dao.dart';
+import 'package:lograt/data/dao/templates/exercise_template_dao.dart';
 import 'package:lograt/data/dao/templates/workout_template_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_set_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_type_dao.dart';
 import 'package:lograt/data/dao/workout/workout_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
-import 'package:lograt/data/database/seed_data.dart';
 import 'package:lograt/data/entities/muscle_group.dart';
 import 'package:lograt/data/entities/templates/workout_template.dart';
 import 'package:lograt/data/entities/workouts/exercise.dart';
@@ -14,7 +17,12 @@ import 'package:lograt/data/entities/workouts/exercise_set.dart';
 import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/data/exceptions/workout_exceptions.dart';
-import 'package:lograt/data/models/muscle_group_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_to_exercise_type_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_to_workout_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_to_workout_template_model.dart';
+import 'package:lograt/data/models/templates/exercise_set_template_model.dart';
+import 'package:lograt/data/models/templates/exercise_template_model.dart';
 import 'package:lograt/data/models/templates/workout_template_model.dart';
 import 'package:lograt/data/models/workouts/exercise_model.dart';
 import 'package:lograt/data/models/workouts/exercise_set_model.dart';
@@ -31,15 +39,13 @@ class WorkoutRepository {
   final ExerciseSetDao _exerciseSetDao;
 
   final WorkoutTemplateDao _workoutTemplateDao;
-
-  // final ExerciseTemplateDao _exerciseTemplateDao;
-  // final ExerciseSetTemplateDao _exerciseSetTemplateDao;
+  final ExerciseTemplateDao _exerciseTemplateDao;
+  final ExerciseSetTemplateDao _exerciseSetTemplateDao;
 
   final MuscleGroupDao _muscleGroupDao;
   final MuscleGroupToWorkoutDao _muscleGroupToWorkoutDao;
-
-  // final MuscleGroupToWorkoutTemplateDao _muscleGroupToWorkoutTemplateDao;
-  // final MuscleGroupToExerciseTypeDao _muscleGroupToExerciseTypeDao;
+  final MuscleGroupToWorkoutTemplateDao _muscleGroupToWorkoutTemplateDao;
+  final MuscleGroupToExerciseTypeDao _muscleGroupToExerciseTypeDao;
 
   WorkoutRepository({
     required AppDatabase databaseConnection,
@@ -48,55 +54,24 @@ class WorkoutRepository {
     required ExerciseTypeDao exerciseTypeDao,
     required ExerciseSetDao exerciseSetDao,
     required WorkoutTemplateDao workoutTemplateDao,
-    // required ExerciseTemplateDao exerciseTemplateDao,
-    // required ExerciseSetTemplateDao exerciseSetTemplateDao,
+    required ExerciseTemplateDao exerciseTemplateDao,
+    required ExerciseSetTemplateDao exerciseSetTemplateDao,
     required MuscleGroupDao muscleGroupDao,
     required MuscleGroupToWorkoutDao muscleGroupToWorkoutDao,
-    // required MuscleGroupToWorkoutTemplateDao muscleGroupToWorkoutTemplateDao,
-    // required MuscleGroupToExerciseTypeDao muscleGroupToExerciseTypeDao,
+    required MuscleGroupToWorkoutTemplateDao muscleGroupToWorkoutTemplateDao,
+    required MuscleGroupToExerciseTypeDao muscleGroupToExerciseTypeDao,
   }) : _db = databaseConnection,
        _workoutDao = workoutDao,
        _exerciseDao = exerciseDao,
        _exerciseTypeDao = exerciseTypeDao,
        _exerciseSetDao = exerciseSetDao,
        _workoutTemplateDao = workoutTemplateDao,
-       // _exerciseTemplateDao = exerciseTemplateDao,
-       // _exerciseSetTemplateDao = exerciseSetTemplateDao,
+       _exerciseTemplateDao = exerciseTemplateDao,
+       _exerciseSetTemplateDao = exerciseSetTemplateDao,
        _muscleGroupDao = muscleGroupDao,
-       _muscleGroupToWorkoutDao = muscleGroupToWorkoutDao;
-
-  // _muscleGroupToWorkoutTemplateDao = muscleGroupToWorkoutTemplateDao,
-  // _muscleGroupToExerciseTypeDao = muscleGroupToExerciseTypeDao;
-
-  /// Get a [Workout] without its corresponding exercises.
-  /// Returns null if the workout does not exist in the database.
-  Future<Workout?> getWorkoutSummary(String workoutId) async {
-    try {
-      final workoutModel = await _workoutDao.getById(workoutId);
-
-      return workoutModel?.toEntity();
-    } on DatabaseException catch (e) {
-      throw WorkoutDataException('Failed to load recent workout summaries: $e');
-    } catch (e) {
-      throw WorkoutDataException(
-        'Unexpected error loading recent workout summaries: $e',
-      );
-    }
-  }
-
-  Future<ExerciseSet?> getExerciseSet(String setId) async {
-    try {
-      final setModel = await _exerciseSetDao.getById(setId);
-
-      return setModel?.toEntity();
-    } on DatabaseException catch (e) {
-      throw WorkoutDataException('Failed to load recent workout summaries: $e');
-    } catch (e) {
-      throw WorkoutDataException(
-        'Unexpected error loading recent workout summaries: $e',
-      );
-    }
-  }
+       _muscleGroupToWorkoutDao = muscleGroupToWorkoutDao,
+       _muscleGroupToWorkoutTemplateDao = muscleGroupToWorkoutTemplateDao,
+       _muscleGroupToExerciseTypeDao = muscleGroupToExerciseTypeDao;
 
   /// Get a list of maximum length [limit] of [Workout]s order by creation date (descending)
   /// Each workout has its corresponding [WorkoutTemplate] if it exists as well as any [MuscleGroup]s assigned to the workout.
@@ -249,60 +224,6 @@ class WorkoutRepository {
     await _workoutDao.insert(workoutModel);
   }
 
-  Future<void> batchCreateWorkouts(List<Workout> workouts) async {
-    if (workouts.isEmpty) return;
-
-    try {
-      final db = await _db.database;
-      // Pass the transaction to each DAO operation
-      return await db.transaction<void>((txn) async {
-        for (final workout in workouts) {
-          // Create Workout
-          await _workoutDao.insert(WorkoutModel.fromEntity(workout), txn);
-
-          for (final exercise in workout.exercises) {
-            // If the exercise has an exercise type, check if it already exists in the database, if it doesn't create it
-            if (exercise.exerciseType != null) {
-              final existingExerciseTypeById = await _exerciseTypeDao.getByName(
-                exercise.exerciseType!.name,
-                txn,
-              );
-              if (existingExerciseTypeById == null) {
-                await _exerciseTypeDao.insert(
-                  ExerciseTypeModel.fromEntity(exercise.exerciseType!),
-                  txn,
-                );
-              }
-            }
-
-            // Create exercise
-            await _exerciseDao.insert(
-              ExerciseModel.fromEntity(exercise, workout.id),
-              txn,
-            );
-
-            // Create Sets
-            if (exercise.sets.isNotEmpty) {
-              final setModels = exercise.sets
-                  .map(
-                    (set) => ExerciseSetModel.fromEntity(
-                      entity: set,
-                      exerciseId: exercise.id,
-                    ),
-                  )
-                  .toList();
-              await _exerciseSetDao.batchInsert(setModels, txn);
-            }
-          }
-        }
-      });
-    } on DatabaseException catch (e) {
-      throw WorkoutDataException('Failed to create workouts: $e');
-    } catch (e) {
-      throw WorkoutDataException('Unexpected error creating workouts: $e');
-    }
-  }
-
   Future<int> createExercise({
     required Exercise exercise,
     required String workoutId,
@@ -382,12 +303,170 @@ class WorkoutRepository {
     }
   }
 
-  Future<void> clearWorkouts() async {
-    await _exerciseTypeDao.clearTable();
-    await _workoutDao.clearTable();
-  }
+  Future<void> seedWorkoutData(List<Workout> workouts) async {
+    try {
+      final db = await _db.database;
+      return await db.transaction<void>((txn) async {
+        await _workoutDao.clearTable(txn);
+        await _exerciseTypeDao.clearTable(txn);
+        await _muscleGroupDao.clearTable(txn);
+        await _workoutTemplateDao.clearTable(txn);
 
-  Future<void> seedWorkouts() async {
-    await batchCreateWorkouts(SeedData.sampleWorkouts);
+        if (workouts.isEmpty) return;
+
+        final Set<ExerciseType> exerciseTypes = {}
+          ..addAll(
+            workouts
+                .expand((workout) => workout.exercises)
+                .map((exercise) => exercise.exerciseType)
+                .nonNulls,
+          )
+          ..addAll(
+            workouts
+                .map((workout) => workout.template)
+                .nonNulls
+                .expand((template) => template.exerciseTemplates)
+                .map((exerciseTemplate) => exerciseTemplate.exerciseType)
+                .nonNulls,
+          );
+        await _exerciseTypeDao.batchInsert(
+          exerciseTypes
+              .map((exerciseType) => ExerciseTypeModel.fromEntity(exerciseType))
+              .toList(),
+          txn,
+        );
+
+        final Set<MuscleGroup> muscleGroups = {}
+          ..addAll(workouts.expand((workout) => workout.muscleGroups))
+          ..addAll(
+            exerciseTypes.expand((exerciseType) => exerciseType.muscleGroups),
+          );
+        await _muscleGroupDao.batchInsert(
+          muscleGroups
+              .map((muscleGroup) => MuscleGroupModel.fromEntity(muscleGroup))
+              .toList(),
+          txn,
+        );
+
+        final Set<WorkoutTemplate> workoutTemplates = {}
+          ..addAll(workouts.map((workout) => workout.template).nonNulls);
+        await _workoutTemplateDao.batchInsert(
+          workoutTemplates
+              .map(
+                (workoutTemplate) =>
+                    WorkoutTemplateModel.fromEntity(workoutTemplate),
+              )
+              .toList(),
+          txn,
+        );
+
+        await _workoutDao.batchInsert(
+          workouts.map((workout) => WorkoutModel.fromEntity(workout)).toList(),
+          txn,
+        );
+
+        await _exerciseDao.batchInsert(
+          workouts
+              .expand(
+                (workout) => workout.exercises.map(
+                  (exercise) => ExerciseModel.fromEntity(exercise, workout.id),
+                ),
+              )
+              .toList(),
+          txn,
+        );
+
+        await _exerciseSetDao.batchInsert(
+          workouts
+              .expand((workout) => workout.exercises)
+              .expand(
+                (exercise) => exercise.sets.map(
+                  (set) => ExerciseSetModel.fromEntity(
+                    entity: set,
+                    exerciseId: exercise.id,
+                  ),
+                ),
+              )
+              .toList(),
+          txn,
+        );
+
+        await _exerciseTemplateDao.batchInsert(
+          workoutTemplates
+              .expand(
+                (workoutTemplate) => workoutTemplate.exerciseTemplates.map(
+                  (exerciseTemplate) => ExerciseTemplateModel.fromEntity(
+                    exerciseTemplate,
+                    workoutTemplate.id,
+                  ),
+                ),
+              )
+              .toList(),
+          txn,
+        );
+
+        await _exerciseSetTemplateDao.batchInsert(
+          workoutTemplates
+              .expand((workoutTemplate) => workoutTemplate.exerciseTemplates)
+              .expand(
+                (exerciseTemplate) => exerciseTemplate.setTemplates.map(
+                  (setTemplate) => ExerciseSetTemplateModel.fromEntity(
+                    entity: setTemplate,
+                    exerciseTemplateId: exerciseTemplate.id,
+                  ),
+                ),
+              )
+              .toList(),
+          txn,
+        );
+
+        await _muscleGroupToWorkoutDao.batchInsertRelationships(
+          workouts
+              .expand(
+                (workout) => workout.muscleGroups.map(
+                  (muscleGroup) => MuscleGroupToWorkoutModel.createWithId(
+                    workoutId: workout.id,
+                    muscleGroupId: muscleGroup.id,
+                  ),
+                ),
+              )
+              .toList(),
+          txn,
+        );
+
+        await _muscleGroupToWorkoutTemplateDao.batchInsertRelationships(
+          workoutTemplates
+              .expand(
+                (template) => template.muscleGroups.map(
+                  (muscleGroup) =>
+                      MuscleGroupToWorkoutTemplateModel.createWithId(
+                        workoutTemplateId: template.id,
+                        muscleGroupId: muscleGroup.id,
+                      ),
+                ),
+              )
+              .toList(),
+          txn,
+        );
+
+        await _muscleGroupToExerciseTypeDao.batchInsertRelationships(
+          exerciseTypes
+              .expand(
+                (exerciseType) => exerciseType.muscleGroups.map(
+                  (muscleGroup) => MuscleGroupToExerciseTypeModel.createWithId(
+                    muscleGroupId: muscleGroup.id,
+                    exerciseTypeId: exerciseType.id,
+                  ),
+                ),
+              )
+              .toList(),
+          txn,
+        );
+      });
+    } on DatabaseException catch (e) {
+      throw Exception('Failed to seed database: $e');
+    } catch (e) {
+      throw WorkoutDataException('Unexpected error creating workouts: $e');
+    }
   }
 }

@@ -1,10 +1,10 @@
 import 'package:lograt/data/database/app_database.dart';
-import 'package:lograt/data/models/muscle_group_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class MuscleGroupDao {
   final AppDatabase _db;
-  static const String _tableName = muscleGroupTable;
+  static const String _tableName = muscleGroupsTable;
 
   MuscleGroupDao(this._db);
 

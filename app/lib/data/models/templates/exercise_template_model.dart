@@ -55,12 +55,12 @@ class ExerciseTemplateModel {
 
   ExerciseTemplate toEntity(
     ExerciseType? exerciseType, [
-    List<ExerciseSetTemplate> sets = const [],
+    List<ExerciseSetTemplate> setTemplates = const [],
   ]) {
     return ExerciseTemplate(
       id: id,
       order: order,
-      sets: sets,
+      setTemplates: setTemplates,
       exerciseType: exerciseType,
     );
   }

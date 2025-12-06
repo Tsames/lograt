@@ -1,32 +1,32 @@
-import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/data/entities/templates/exercise_set_template.dart';
+import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/util/uuidv7.dart';
 
 class ExerciseTemplate {
   final String id;
   final int order;
-  final List<ExerciseSetTemplate> sets;
+  final List<ExerciseSetTemplate> setTemplates;
   final ExerciseType? exerciseType;
 
   ExerciseTemplate({
     String? id,
     int? order,
-    List<ExerciseSetTemplate>? sets,
+    List<ExerciseSetTemplate>? setTemplates,
     this.exerciseType,
   }) : id = id ?? uuidV7(),
        order = order ?? 0,
-       sets = sets ?? const <ExerciseSetTemplate>[];
+       setTemplates = setTemplates ?? const <ExerciseSetTemplate>[];
 
   ExerciseTemplate copyWith({
     String? id,
     int? order,
-    List<ExerciseSetTemplate>? sets,
+    List<ExerciseSetTemplate>? setTemplates,
     ExerciseType? exerciseType,
   }) {
     return ExerciseTemplate(
       id: id ?? this.id,
       order: order ?? this.order,
-      sets: sets ?? this.sets,
+      setTemplates: setTemplates ?? this.setTemplates,
       exerciseType: exerciseType ?? this.exerciseType,
     );
   }
@@ -42,5 +42,5 @@ class ExerciseTemplate {
 
   @override
   String toString() =>
-      'ExerciseTemplate(id: $id, order: $order, sets: $sets, exerciseType: ${exerciseType?.toString()})';
+      'ExerciseTemplate(id: $id, order: $order, setTemplates: $setTemplates, exerciseType: ${exerciseType?.toString()})';
 }

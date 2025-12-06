@@ -3,7 +3,8 @@ import 'package:lograt/data/dao/muscle_group/muscle_group_to_exercise_type_dao.d
 import 'package:lograt/data/dao/muscle_group/muscle_groups_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_type_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
-import 'package:lograt/data/models/muscle_group_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_to_exercise_type_model.dart';
 import 'package:lograt/data/models/workouts/exercise_type_model.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -174,15 +175,15 @@ void main() {
     group('Batch Insert Operations', () {
       test('should batch insert multiple relationships correctly', () async {
         final relationships = [
-          (
+          MuscleGroupToExerciseTypeModel.createWithId(
             muscleGroupId: testMuscleGroup1.id,
             exerciseTypeId: testExerciseType1.id,
           ),
-          (
+          MuscleGroupToExerciseTypeModel.createWithId(
             muscleGroupId: testMuscleGroup2.id,
             exerciseTypeId: testExerciseType1.id,
           ),
-          (
+          MuscleGroupToExerciseTypeModel.createWithId(
             muscleGroupId: testMuscleGroup3.id,
             exerciseTypeId: testExerciseType1.id,
           ),
@@ -225,15 +226,15 @@ void main() {
         'should batch insert relationships across multiple exercise types',
         () async {
           final relationships = [
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               exerciseTypeId: testExerciseType1.id,
             ),
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup2.id,
               exerciseTypeId: testExerciseType1.id,
             ),
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               exerciseTypeId: testExerciseType2.id,
             ),
@@ -265,15 +266,15 @@ void main() {
           );
 
           final relationships = [
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup2.id,
               exerciseTypeId: testExerciseType1.id,
             ),
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               exerciseTypeId: testExerciseType1.id,
             ), // Duplicate
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup3.id,
               exerciseTypeId: testExerciseType1.id,
             ),
@@ -418,15 +419,15 @@ void main() {
         'should delete multiple muscle groups for an exercise type',
         () async {
           await muscleGroupToExerciseTypeDao.batchInsertRelationships([
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               exerciseTypeId: testExerciseType1.id,
             ),
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup2.id,
               exerciseTypeId: testExerciseType1.id,
             ),
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup3.id,
               exerciseTypeId: testExerciseType1.id,
             ),
@@ -504,11 +505,11 @@ void main() {
         'should only delete relationships for the specified exercise type',
         () async {
           await muscleGroupToExerciseTypeDao.batchInsertRelationships([
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               exerciseTypeId: testExerciseType1.id,
             ),
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               exerciseTypeId: testExerciseType2.id,
             ),
@@ -540,11 +541,11 @@ void main() {
         'should throw exception when at least one relationship does not exist and rollback deletions',
         () async {
           await muscleGroupToExerciseTypeDao.batchInsertRelationships([
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               exerciseTypeId: testExerciseType1.id,
             ),
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup2.id,
               exerciseTypeId: testExerciseType1.id,
             ),
@@ -582,15 +583,15 @@ void main() {
     group('Delete All Muscle Groups for Exercise Type', () {
       test('should delete all muscle groups for an exercise type', () async {
         await muscleGroupToExerciseTypeDao.batchInsertRelationships([
-          (
+          MuscleGroupToExerciseTypeModel.createWithId(
             muscleGroupId: testMuscleGroup1.id,
             exerciseTypeId: testExerciseType1.id,
           ),
-          (
+          MuscleGroupToExerciseTypeModel.createWithId(
             muscleGroupId: testMuscleGroup2.id,
             exerciseTypeId: testExerciseType1.id,
           ),
-          (
+          MuscleGroupToExerciseTypeModel.createWithId(
             muscleGroupId: testMuscleGroup3.id,
             exerciseTypeId: testExerciseType1.id,
           ),
@@ -634,15 +635,15 @@ void main() {
         'should only delete relationships for the specified exercise type when deleting all',
         () async {
           await muscleGroupToExerciseTypeDao.batchInsertRelationships([
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               exerciseTypeId: testExerciseType1.id,
             ),
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup2.id,
               exerciseTypeId: testExerciseType1.id,
             ),
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               exerciseTypeId: testExerciseType2.id,
             ),
@@ -672,11 +673,11 @@ void main() {
         'should CASCADE delete relationships when exercise type is deleted',
         () async {
           await muscleGroupToExerciseTypeDao.batchInsertRelationships([
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               exerciseTypeId: testExerciseType1.id,
             ),
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup2.id,
               exerciseTypeId: testExerciseType1.id,
             ),
@@ -707,11 +708,11 @@ void main() {
         'should CASCADE delete relationships when muscle group is deleted',
         () async {
           await muscleGroupToExerciseTypeDao.batchInsertRelationships([
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               exerciseTypeId: testExerciseType1.id,
             ),
-            (
+            MuscleGroupToExerciseTypeModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               exerciseTypeId: testExerciseType2.id,
             ),

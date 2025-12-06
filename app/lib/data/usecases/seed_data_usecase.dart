@@ -1,3 +1,4 @@
+import 'package:lograt/data/database/seed_data.dart';
 import 'package:lograt/data/repositories/workout_repository.dart';
 
 class SeedDataUsecase {
@@ -6,7 +7,6 @@ class SeedDataUsecase {
   SeedDataUsecase(this._repository);
 
   Future<void> call() async {
-    await _repository.clearWorkouts();
-    await _repository.seedWorkouts();
+    await _repository.seedWorkoutData(SeedData.sampleWorkouts);
   }
 }
