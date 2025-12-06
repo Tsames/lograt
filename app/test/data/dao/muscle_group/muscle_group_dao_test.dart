@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lograt/data/dao/muscle_group/muscle_groups_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
-import 'package:lograt/data/models/muscle_group_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_model.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {

@@ -1,13 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lograt/data/dao/muscle_group/muscle_group_to_exercise_type_dao.dart';
 import 'package:lograt/data/dao/muscle_group/muscle_group_to_workout_dao.dart';
+import 'package:lograt/data/dao/muscle_group/muscle_group_to_workout_template_dao.dart';
 import 'package:lograt/data/dao/muscle_group/muscle_groups_dao.dart';
+import 'package:lograt/data/dao/templates/exercise_set_template_dao.dart';
+import 'package:lograt/data/dao/templates/exercise_template_dao.dart';
 import 'package:lograt/data/dao/templates/workout_template_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_set_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_type_dao.dart';
 import 'package:lograt/data/dao/workout/workout_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
-import 'package:lograt/data/models/muscle_group_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_to_workout_model.dart';
 import 'package:lograt/data/models/templates/workout_template_model.dart';
 import 'package:lograt/data/models/workouts/workout_model.dart';
 import 'package:lograt/data/repositories/workout_repository.dart';
@@ -23,30 +28,50 @@ void main() {
     late AppDatabase testDatabase;
     late WorkoutRepository repository;
     late WorkoutDao workoutDao;
+    late ExerciseTypeDao exerciseTypeDao;
+    late ExerciseDao exerciseDao;
+    late ExerciseSetDao exerciseSetDao;
+
     late WorkoutTemplateDao workoutTemplateDao;
+    late ExerciseTemplateDao exerciseTemplateDao;
+    late ExerciseSetTemplateDao exerciseSetTemplateDao;
+
     late MuscleGroupDao muscleGroupDao;
     late MuscleGroupToWorkoutDao muscleGroupToWorkoutDao;
+    late MuscleGroupToWorkoutTemplateDao muscleGroupToWorkoutTemplateDao;
+    late MuscleGroupToExerciseTypeDao muscleGroupToExerciseTypeDao;
 
     setUp(() async {
       testDatabase = AppDatabase.inMemory();
       workoutDao = WorkoutDao(testDatabase);
+      exerciseTypeDao = ExerciseTypeDao(testDatabase);
+      exerciseDao = ExerciseDao(testDatabase);
+      exerciseSetDao = ExerciseSetDao(testDatabase);
+
       workoutTemplateDao = WorkoutTemplateDao(testDatabase);
+      exerciseTemplateDao = ExerciseTemplateDao(testDatabase);
+      exerciseSetTemplateDao = ExerciseSetTemplateDao(testDatabase);
+
       muscleGroupDao = MuscleGroupDao(testDatabase);
       muscleGroupToWorkoutDao = MuscleGroupToWorkoutDao(testDatabase);
+      muscleGroupToWorkoutTemplateDao = MuscleGroupToWorkoutTemplateDao(
+        testDatabase,
+      );
+      muscleGroupToExerciseTypeDao = MuscleGroupToExerciseTypeDao(testDatabase);
 
       repository = WorkoutRepository(
         databaseConnection: testDatabase,
         workoutDao: workoutDao,
-        exerciseDao: ExerciseDao(testDatabase),
-        exerciseTypeDao: ExerciseTypeDao(testDatabase),
-        exerciseSetDao: ExerciseSetDao(testDatabase),
+        exerciseDao: exerciseDao,
+        exerciseTypeDao: exerciseTypeDao,
+        exerciseSetDao: exerciseSetDao,
         workoutTemplateDao: workoutTemplateDao,
-        // exerciseTemplateDao: ExerciseTemplateDao(testDatabase),
-        // exerciseSetTemplateDao: ExerciseSetTemplateDao(testDatabase),
+        exerciseTemplateDao: exerciseTemplateDao,
+        exerciseSetTemplateDao: exerciseSetTemplateDao,
         muscleGroupDao: muscleGroupDao,
         muscleGroupToWorkoutDao: muscleGroupToWorkoutDao,
-        // muscleGroupToWorkoutTemplateDao: MuscleGroupToWorkoutTemplateDao(testDatabase),
-        // muscleGroupToExerciseTypeDao: MuscleGroupToExerciseTypeDao(testDatabase),
+        muscleGroupToWorkoutTemplateDao: muscleGroupToWorkoutTemplateDao,
+        muscleGroupToExerciseTypeDao: muscleGroupToExerciseTypeDao,
       );
     });
 
@@ -76,8 +101,14 @@ void main() {
       await workoutDao.insert(workout);
 
       await muscleGroupToWorkoutDao.batchInsertRelationships([
-        (muscleGroupId: muscleGroup1.id, workoutId: workout.id),
-        (muscleGroupId: muscleGroup2.id, workoutId: workout.id),
+        MuscleGroupToWorkoutModel.createWithId(
+          muscleGroupId: muscleGroup1.id,
+          workoutId: workout.id,
+        ),
+        MuscleGroupToWorkoutModel.createWithId(
+          muscleGroupId: muscleGroup2.id,
+          workoutId: workout.id,
+        ),
       ]);
 
       // Test

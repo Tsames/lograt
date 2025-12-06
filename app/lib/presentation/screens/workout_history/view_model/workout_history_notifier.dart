@@ -43,7 +43,7 @@ class WorkoutHistoryNotifier
     return state.workouts
         .where(
           (w) =>
-              w.date.isAfter(now.beginningOfTheMonth) &&
+              w.date.isAfter(now.inTheLastMonth) &&
               w.date.isBefore(now.beginningOfTheWeek),
         )
         .toList();
@@ -53,8 +53,8 @@ class WorkoutHistoryNotifier
     return state.workouts
         .where(
           (w) =>
-              w.date.isAfter(now.beginningOfThreeMonthsAgo) &&
-              w.date.isBefore(now.beginningOfTheMonth),
+              w.date.isAfter(now.inTheLastThreeMonths) &&
+              w.date.isBefore(now.inTheLastMonth),
         )
         .toList();
   }

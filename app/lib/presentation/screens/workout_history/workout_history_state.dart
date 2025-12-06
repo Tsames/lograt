@@ -59,9 +59,9 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
 
         final items = [
           if (thisWeek.isNotEmpty) ...['This Week', ...thisWeek],
-          if (thisMonth.isNotEmpty) ...['This Month', ...thisMonth],
+          if (thisMonth.isNotEmpty) ...['In the last Month', ...thisMonth],
           if (lastThreeMonths.isNotEmpty) ...[
-            'Last 3 Months',
+            'In the last 3 Months',
             ...lastThreeMonths,
           ],
         ];
@@ -84,6 +84,10 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
                         subtitle: Text(
                           workout.date.toHumanFriendlyFormat(),
                           style: theme.textTheme.labelSmall,
+                        ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [Text('Template'), Text('Back, Arms')],
                         ),
                         onTap: () {
                           Navigator.push(

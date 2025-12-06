@@ -65,7 +65,7 @@ class MuscleGroupToWorkoutDao {
   }
 
   Future<void> batchInsertRelationships(
-    List<({String workoutId, String muscleGroupId})> relationships, [
+    List<MuscleGroupToWorkoutModel> relationships, [
     Transaction? txn,
   ]) async {
     if (relationships.isEmpty) return;

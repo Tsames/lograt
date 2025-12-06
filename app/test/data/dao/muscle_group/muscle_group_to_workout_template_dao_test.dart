@@ -3,7 +3,8 @@ import 'package:lograt/data/dao/muscle_group/muscle_group_to_workout_template_da
 import 'package:lograt/data/dao/muscle_group/muscle_groups_dao.dart';
 import 'package:lograt/data/dao/templates/workout_template_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
-import 'package:lograt/data/models/muscle_group_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_to_workout_template_model.dart';
 import 'package:lograt/data/models/templates/workout_template_model.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -168,15 +169,15 @@ void main() {
     group('Batch Insert Operations', () {
       test('should batch insert multiple relationships correctly', () async {
         final relationships = [
-          (
+          MuscleGroupToWorkoutTemplateModel.createWithId(
             muscleGroupId: testMuscleGroup1.id,
             workoutTemplateId: testWorkoutTemplate1.id,
           ),
-          (
+          MuscleGroupToWorkoutTemplateModel.createWithId(
             muscleGroupId: testMuscleGroup2.id,
             workoutTemplateId: testWorkoutTemplate1.id,
           ),
-          (
+          MuscleGroupToWorkoutTemplateModel.createWithId(
             muscleGroupId: testMuscleGroup3.id,
             workoutTemplateId: testWorkoutTemplate1.id,
           ),
@@ -213,15 +214,15 @@ void main() {
         'should batch insert relationships across multiple workout templates',
         () async {
           final relationships = [
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup2.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               workoutTemplateId: testWorkoutTemplate2.id,
             ),
@@ -253,15 +254,15 @@ void main() {
           );
 
           final relationships = [
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup2.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ), // Duplicate
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup3.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
@@ -396,15 +397,15 @@ void main() {
         'should delete multiple muscle groups for a workout template',
         () async {
           await muscleGroupToWorkoutTemplateDao.batchInsertRelationships([
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup2.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup3.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
@@ -476,11 +477,11 @@ void main() {
         'should only delete relationships for the specified workout template',
         () async {
           await muscleGroupToWorkoutTemplateDao.batchInsertRelationships([
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               workoutTemplateId: testWorkoutTemplate2.id,
             ),
@@ -508,11 +509,11 @@ void main() {
         'should throw exception when at least one relationship does not exist and rollback deletions',
         () async {
           await muscleGroupToWorkoutTemplateDao.batchInsertRelationships([
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup2.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
@@ -546,15 +547,15 @@ void main() {
     group('Delete All Muscle Groups for Workout Template', () {
       test('should delete all muscle groups for a workout template', () async {
         await muscleGroupToWorkoutTemplateDao.batchInsertRelationships([
-          (
+          MuscleGroupToWorkoutTemplateModel.createWithId(
             muscleGroupId: testMuscleGroup1.id,
             workoutTemplateId: testWorkoutTemplate1.id,
           ),
-          (
+          MuscleGroupToWorkoutTemplateModel.createWithId(
             muscleGroupId: testMuscleGroup2.id,
             workoutTemplateId: testWorkoutTemplate1.id,
           ),
-          (
+          MuscleGroupToWorkoutTemplateModel.createWithId(
             muscleGroupId: testMuscleGroup3.id,
             workoutTemplateId: testWorkoutTemplate1.id,
           ),
@@ -592,15 +593,15 @@ void main() {
         'should only delete relationships for the specified template when deleting all',
         () async {
           await muscleGroupToWorkoutTemplateDao.batchInsertRelationships([
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup2.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               workoutTemplateId: testWorkoutTemplate2.id,
             ),
@@ -630,11 +631,11 @@ void main() {
         'should CASCADE delete relationships when workout template is deleted',
         () async {
           await muscleGroupToWorkoutTemplateDao.batchInsertRelationships([
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup2.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
@@ -665,11 +666,11 @@ void main() {
         'should CASCADE delete relationships when muscle group is deleted',
         () async {
           await muscleGroupToWorkoutTemplateDao.batchInsertRelationships([
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               workoutTemplateId: testWorkoutTemplate1.id,
             ),
-            (
+            MuscleGroupToWorkoutTemplateModel.createWithId(
               muscleGroupId: testMuscleGroup1.id,
               workoutTemplateId: testWorkoutTemplate2.id,
             ),

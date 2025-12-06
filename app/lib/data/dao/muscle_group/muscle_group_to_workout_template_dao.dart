@@ -1,5 +1,5 @@
 import 'package:lograt/data/database/app_database.dart';
-import 'package:lograt/data/models/muscle_group_model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_to_workout_template_model.dart';
 import 'package:lograt/util/uuidv7.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -41,7 +41,7 @@ class MuscleGroupToWorkoutTemplateDao {
   }
 
   Future<void> batchInsertRelationships(
-    List<({String workoutTemplateId, String muscleGroupId})> relationships, [
+    List<MuscleGroupToWorkoutTemplateModel> relationships, [
     Transaction? txn,
   ]) async {
     if (relationships.isEmpty) return;

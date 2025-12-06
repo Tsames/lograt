@@ -54,7 +54,7 @@ class WorkoutTemplateModel {
     return WorkoutTemplate(
       id: id,
       date: date,
-      exercises: exerciseTemplates,
+      exerciseTemplates: exerciseTemplates,
       title: title,
       description: description,
     );

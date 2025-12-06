@@ -15,16 +15,16 @@ class MuscleGroupToWorkoutModel {
   final String muscleGroupId;
   final String workoutId;
 
-  const MuscleGroupToWorkoutModel({
+  const MuscleGroupToWorkoutModel._({
     required this.id,
     required this.muscleGroupId,
     required this.workoutId,
   });
 
-  MuscleGroupToWorkoutModel.forTest({
+  MuscleGroupToWorkoutModel.createWithId({
     required String muscleGroupId,
     required String workoutId,
-  }) : this(id: uuidV7(), muscleGroupId: muscleGroupId, workoutId: workoutId);
+  }) : this._(id: uuidV7(), muscleGroupId: muscleGroupId, workoutId: workoutId);
 
   static MuscleGroupToWorkoutModel? fromMap(Map<String, dynamic> map) {
     final id = map[MuscleGroupToWorkoutFields.id];
@@ -33,7 +33,7 @@ class MuscleGroupToWorkoutModel {
     if (muscleGroupId == null || muscleGroupId is! String) return null;
     final workoutId = map[MuscleGroupToWorkoutFields.workoutId];
     if (workoutId != null && workoutId is! String) return null;
-    return MuscleGroupToWorkoutModel(
+    return MuscleGroupToWorkoutModel._(
       id: id,
       muscleGroupId: muscleGroupId,
       workoutId: workoutId,

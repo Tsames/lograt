@@ -1,6 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/data/dao/muscle_group/muscle_group_to_exercise_type_dao.dart';
 import 'package:lograt/data/dao/muscle_group/muscle_group_to_workout_dao.dart';
+import 'package:lograt/data/dao/muscle_group/muscle_group_to_workout_template_dao.dart';
 import 'package:lograt/data/dao/muscle_group/muscle_groups_dao.dart';
+import 'package:lograt/data/dao/templates/exercise_set_template_dao.dart';
+import 'package:lograt/data/dao/templates/exercise_template_dao.dart';
 import 'package:lograt/data/dao/templates/workout_template_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_dao.dart';
 import 'package:lograt/data/dao/workout/exercise_set_dao.dart';
@@ -47,6 +51,16 @@ final workoutTemplateDaoProvider = Provider<WorkoutTemplateDao>((ref) {
   return WorkoutTemplateDao(database);
 });
 
+final exerciseTemplateDaoProvider = Provider<ExerciseTemplateDao>((ref) {
+  final database = ref.read(appDatabaseProvider);
+  return ExerciseTemplateDao(database);
+});
+
+final exerciseSetTemplateDaoProvider = Provider<ExerciseSetTemplateDao>((ref) {
+  final database = ref.read(appDatabaseProvider);
+  return ExerciseSetTemplateDao(database);
+});
+
 final muscleGroupDaoProvider = Provider<MuscleGroupDao>((ref) {
   final database = ref.read(appDatabaseProvider);
   return MuscleGroupDao(database);
@@ -59,6 +73,18 @@ final muscleGroupToWorkoutDaoProvider = Provider<MuscleGroupToWorkoutDao>((
   return MuscleGroupToWorkoutDao(database);
 });
 
+final muscleGroupToWorkoutTemplateDaoProvider =
+    Provider<MuscleGroupToWorkoutTemplateDao>((ref) {
+      final database = ref.read(appDatabaseProvider);
+      return MuscleGroupToWorkoutTemplateDao(database);
+    });
+
+final muscleGroupToExerciseTypeDaoProvider =
+    Provider<MuscleGroupToExerciseTypeDao>((ref) {
+      final database = ref.read(appDatabaseProvider);
+      return MuscleGroupToExerciseTypeDao(database);
+    });
+
 // --- Repository provider ---
 
 final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
@@ -70,9 +96,17 @@ final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
   final exerciseSetDao = ref.read(exerciseSetDaoProvider);
 
   final workoutTemplateDao = ref.read(workoutTemplateDaoProvider);
+  final exerciseTemplateDao = ref.read(exerciseTemplateDaoProvider);
+  final exerciseSetTemplateDao = ref.read(exerciseSetTemplateDaoProvider);
 
   final muscleGroupDao = ref.read(muscleGroupDaoProvider);
   final muscleGroupToWorkoutDao = ref.read(muscleGroupToWorkoutDaoProvider);
+  final muscleGroupToWorkoutTemplateDao = ref.read(
+    muscleGroupToWorkoutTemplateDaoProvider,
+  );
+  final muscleGroupToExerciseTypeDao = ref.read(
+    muscleGroupToExerciseTypeDaoProvider,
+  );
 
   return WorkoutRepository(
     databaseConnection: database,
@@ -81,8 +115,12 @@ final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
     exerciseTypeDao: exerciseTypeDao,
     exerciseSetDao: exerciseSetDao,
     workoutTemplateDao: workoutTemplateDao,
+    exerciseTemplateDao: exerciseTemplateDao,
+    exerciseSetTemplateDao: exerciseSetTemplateDao,
     muscleGroupDao: muscleGroupDao,
     muscleGroupToWorkoutDao: muscleGroupToWorkoutDao,
+    muscleGroupToWorkoutTemplateDao: muscleGroupToWorkoutTemplateDao,
+    muscleGroupToExerciseTypeDao: muscleGroupToExerciseTypeDao,
   );
 });
 
