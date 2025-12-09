@@ -85,10 +85,33 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
                           workout.date.toHumanFriendlyFormat(),
                           style: theme.textTheme.labelSmall,
                         ),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [Text('Template'), Text('Back, Arms')],
-                        ),
+                        trailing: switch (workout.muscleGroups.isEmpty) {
+                          false => ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: 100),
+                            child: Wrap(
+                              spacing: 4,
+                              runSpacing: 4,
+                              alignment: WrapAlignment.end,
+                              clipBehavior: Clip.hardEdge,
+                              children: [
+                                ...workout.muscleGroups
+                                    .take(2)
+                                    .map(
+                                      (muscleGroup) => _buildMuscleGroupTag(
+                                        muscleGroup.label,
+                                        theme,
+                                      ),
+                                    ),
+                                if (workout.muscleGroups.length > 2)
+                                  _buildMuscleGroupTag(
+                                    '+${workout.muscleGroups.length - 2}',
+                                    theme,
+                                  ),
+                              ],
+                            ),
+                          ),
+                          true => null,
+                        },
                         onTap: () {
                           Navigator.push(
                             context,
@@ -123,5 +146,30 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
         );
       }(),
     };
+  }
+
+  Widget _buildMuscleGroupTag(String label, ThemeData theme) {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: switch (label) {
+            'Chest' => Color(0xFF733D3B),
+            'Shoulders' => Color(0xFF9E6F3C),
+            'Arms' => Color(0xFF887634),
+            'Back' => Color(0xFF3F7135),
+            'Core' => Color(0xFF2A4B65),
+            'Legs' => Color(0xFF492D60),
+            _ => Color(0xFF2E2D2D),
+          },
+        ),
+        child: Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
+        ),
+      ),
+    );
   }
 }
