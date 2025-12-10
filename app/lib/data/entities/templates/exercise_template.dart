@@ -1,4 +1,5 @@
 import 'package:lograt/data/entities/templates/exercise_set_template.dart';
+import 'package:lograt/data/entities/workouts/exercise.dart';
 import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/util/uuidv7.dart';
 
@@ -28,6 +29,16 @@ class ExerciseTemplate {
       order: order ?? this.order,
       setTemplates: setTemplates ?? this.setTemplates,
       exerciseType: exerciseType ?? this.exerciseType,
+    );
+  }
+
+  Exercise createFromTemplate() {
+    return Exercise(
+      order: order,
+      exerciseType: exerciseType,
+      sets: setTemplates
+          .map((setTemplate) => setTemplate.createFromTemplate())
+          .toList(),
     );
   }
 
