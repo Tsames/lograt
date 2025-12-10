@@ -6,6 +6,7 @@ import 'package:lograt/presentation/screens/workout_history/view_model/workout_h
 import 'package:lograt/presentation/screens/workout_history/workout_history_widget.dart';
 import 'package:lograt/presentation/screens/workout_log/workout_log_widget.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
+import 'package:lograt/util/workout_history_section_header.dart';
 
 class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
   late final notifier = ref.read(workoutHistoryProvider.notifier);
@@ -45,36 +46,22 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
           ),
         ),
       ),
-      WorkoutHistoryNotifierState(isLoading: true, workouts: []) => Center(
-        child: const CircularProgressIndicator(),
-      ),
-      WorkoutHistoryNotifierState(workouts: []) => Center(
+      WorkoutHistoryNotifierState(isLoading: true, workoutsWithMarkers: []) =>
+        Center(child: const CircularProgressIndicator()),
+      WorkoutHistoryNotifierState(workoutsWithMarkers: []) => Center(
         child: const Text('No workouts yet.', style: TextStyle(fontSize: 18)),
       ),
       _ => () {
-        final thisWeek = notifier.getWorkoutsThisWeek();
-        final thisMonth = notifier.getWorkoutsThisMonthExcludingThisWeek();
-        final lastThreeMonths = notifier
-            .getWorkoutsLastThreeMonthsExcludingThisMonth();
-
-        final items = [
-          if (thisWeek.isNotEmpty) ...['This Week', ...thisWeek],
-          if (thisMonth.isNotEmpty) ...['In the last Month', ...thisMonth],
-          if (lastThreeMonths.isNotEmpty) ...[
-            'In the last 3 Months',
-            ...lastThreeMonths,
-          ],
-        ];
-
+        final workouts = workoutHistoryState.workoutsWithMarkers;
         return Column(
           children: [
             Expanded(
               child: ListView.builder(
                 shrinkWrap: true,
                 padding: const EdgeInsets.all(16),
-                itemCount: items.length,
+                itemCount: workouts.length,
                 itemBuilder: (context, index) {
-                  switch (items[index]) {
+                  switch (workouts[index]) {
                     case Workout workout:
                       return ListTile(
                         title: Text(
@@ -82,7 +69,7 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
                           style: theme.textTheme.bodyLarge,
                         ),
                         subtitle: Text(
-                          workout.date.toHumanFriendlyFormat(),
+                          workout.date.toLongFriendlyFormat(),
                           style: theme.textTheme.labelSmall,
                         ),
                         trailing: switch (workout.muscleGroups.isEmpty) {
@@ -121,12 +108,23 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
                           );
                         },
                       );
-                    case String title:
+                    case WeekWorkoutHistorySectionHeader header:
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8, bottom: 2),
+                        child: Text(
+                          header.title,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                      );
+                    case WorkoutHistorySectionHeader header:
                       return Column(
                         children: [
-                          if (index > 0) SizedBox(height: 45),
+                          if (index > 0) SizedBox(height: 20),
                           Text(
-                            title,
+                            header.title,
                             textAlign: TextAlign.center,
                             style: theme.textTheme.titleLarge?.copyWith(
                               color: theme.colorScheme.primary,

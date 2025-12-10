@@ -23,7 +23,7 @@ extension HumanFriendlyDateFormat on DateTime {
     'December',
   ];
 
-  String toHumanFriendlyFormat() {
+  String toDayFriendlyFormat() {
     String suffix;
     if (day >= 11 && day <= 13) {
       suffix = 'th';
@@ -35,7 +35,14 @@ extension HumanFriendlyDateFormat on DateTime {
         _ => 'th',
       };
     }
+    return '$day$suffix';
+  }
 
-    return '${_days[weekday - 1]}, ${_months[month - 1]} $day$suffix, $year';
+  String toDayAndMonthFriendlyFormatDay() {
+    return '${_months[month - 1]} ${toDayFriendlyFormat()}';
+  }
+
+  String toLongFriendlyFormat() {
+    return '${_days[weekday - 1]}, ${_months[month - 1]} ${toDayFriendlyFormat()}, $year';
   }
 }
