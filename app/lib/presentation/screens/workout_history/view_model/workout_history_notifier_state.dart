@@ -1,5 +1,5 @@
 class WorkoutHistoryNotifierState {
-  final List<dynamic> workoutsWithMarkers;
+  final List<dynamic> workoutsWithSectionHeaders;
   final bool hasWorkoutsThisWeekMarker;
   final bool hasWorkoutsInLastMonthMarker;
   final bool hasWorkoutsInLastThreeMonthsMarker;
@@ -12,7 +12,7 @@ class WorkoutHistoryNotifierState {
   final bool hasMore;
 
   const WorkoutHistoryNotifierState({
-    this.workoutsWithMarkers = const [],
+    this.workoutsWithSectionHeaders = const [],
     this.hasWorkoutsThisWeekMarker = false,
     this.hasWorkoutsInLastMonthMarker = false,
     this.hasWorkoutsInLastThreeMonthsMarker = false,
@@ -24,7 +24,7 @@ class WorkoutHistoryNotifierState {
   });
 
   WorkoutHistoryNotifierState copyWith({
-    List<dynamic>? workoutsWithMarkers,
+    List<dynamic>? workoutsWithSectionHeaders,
     bool? hasWorkoutsThisWeekMarker,
     bool? hasWorkoutsInLastMonthMarker,
     bool? hasWorkoutsInLastThreeMonthsMarker,
@@ -35,7 +35,8 @@ class WorkoutHistoryNotifierState {
     bool? hasMore,
   }) {
     return WorkoutHistoryNotifierState(
-      workoutsWithMarkers: workoutsWithMarkers ?? this.workoutsWithMarkers,
+      workoutsWithSectionHeaders:
+          workoutsWithSectionHeaders ?? this.workoutsWithSectionHeaders,
       hasWorkoutsThisWeekMarker:
           hasWorkoutsThisWeekMarker ?? this.hasWorkoutsThisWeekMarker,
       hasWorkoutsInLastMonthMarker:

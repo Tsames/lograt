@@ -46,13 +46,16 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
           ),
         ),
       ),
-      WorkoutHistoryNotifierState(isLoading: true, workoutsWithMarkers: []) =>
+      WorkoutHistoryNotifierState(
+        isLoading: true,
+        workoutsWithSectionHeaders: [],
+      ) =>
         Center(child: const CircularProgressIndicator()),
-      WorkoutHistoryNotifierState(workoutsWithMarkers: []) => Center(
+      WorkoutHistoryNotifierState(workoutsWithSectionHeaders: []) => Center(
         child: const Text('No workouts yet.', style: TextStyle(fontSize: 18)),
       ),
       _ => () {
-        final workouts = workoutHistoryState.workoutsWithMarkers;
+        final workouts = workoutHistoryState.workoutsWithSectionHeaders;
         return Column(
           children: [
             Expanded(
