@@ -1,5 +1,6 @@
 import 'package:lograt/data/entities/muscle_group.dart';
 import 'package:lograt/data/entities/templates/exercise_template.dart';
+import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 import 'package:lograt/util/uuidv7.dart';
 
@@ -38,6 +39,16 @@ class WorkoutTemplate {
       exerciseTemplates: exerciseTemplates ?? this.exerciseTemplates,
       title: title ?? this.title,
       description: description ?? this.description,
+    );
+  }
+
+  Workout createFromTemplate() {
+    return Workout(
+      muscleGroups: muscleGroups,
+      exercises: exerciseTemplates
+          .map((exerciseTemplate) => exerciseTemplate.createFromTemplate())
+          .toList(),
+      title: title,
     );
   }
 
