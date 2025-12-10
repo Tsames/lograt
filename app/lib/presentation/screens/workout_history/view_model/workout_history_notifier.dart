@@ -12,7 +12,7 @@ class WorkoutHistoryNotifier
   _getPaginatedSortedWorkouts;
   late final now = DateTime.now();
   late DateTime beginningOfTheIterationWeek =
-      state.workoutsWithMarkers.first.date.beginningOfTheWeek;
+      state.workoutsWithSectionHeaders.first.date.beginningOfTheWeek;
   late List<Workout> iterationWeek = [];
 
   WorkoutHistoryNotifier(this._getPaginatedSortedWorkouts)
@@ -26,7 +26,7 @@ class WorkoutHistoryNotifier
 
     try {
       final paginatedResults = await _getPaginatedSortedWorkouts(state.offset);
-      _addWorkoutsToWorkoutHistoryWithMarkers(
+      addWorkoutsToWorkoutHistoryWithSectionHeaders(
         paginatedResults.results,
         paginatedResults.nextOffset,
         paginatedResults.hasMore,
@@ -36,7 +36,7 @@ class WorkoutHistoryNotifier
     }
   }
 
-  void _addWorkoutsToWorkoutHistoryWithMarkers(
+  void addWorkoutsToWorkoutHistoryWithSectionHeaders(
     List<Workout> workouts,
     int offset,
     bool hasMore,
@@ -102,7 +102,8 @@ class WorkoutHistoryNotifier
     }
 
     state = state.copyWith(
-      workoutsWithMarkers: state.workoutsWithMarkers + addToWorkoutHistory,
+      workoutsWithSectionHeaders:
+          state.workoutsWithSectionHeaders + addToWorkoutHistory,
       hasWorkoutsThisWeekMarker: hasWorkoutsThisWeekMarker,
       hasWorkoutsInLastMonthMarker: hasWorkoutsInLastMonthMarker,
       hasWorkoutsInLastThreeMonthsMarker: hasWorkoutsInLastThreeMonthsMarker,
