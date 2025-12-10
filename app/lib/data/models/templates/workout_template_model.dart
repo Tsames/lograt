@@ -111,5 +111,5 @@ class WorkoutTemplateModel {
 
   @override
   String toString() =>
-      'WorkoutTemplateModel(id: $id, date: ${date.toHumanFriendlyFormat()}, title: $title, description: $description)';
+      'WorkoutTemplateModel(id: $id, date: ${date.toLongFriendlyFormat()}, title: $title, description: $description)';
 }

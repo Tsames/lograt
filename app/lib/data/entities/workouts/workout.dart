@@ -57,5 +57,5 @@ class Workout {
 
   @override
   String toString() =>
-      'Workout(id: $id, date: ${date.toHumanFriendlyFormat()}, muscleGroups: $muscleGroups, exercises: $exercises, template: $template, title: $title, notes: $notes)';
+      'Workout(id: $id, date: ${date.toLongFriendlyFormat()}, muscleGroups: $muscleGroups, exercises: $exercises, template: $template, title: $title, notes: $notes)';
 }

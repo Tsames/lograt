@@ -35,7 +35,7 @@ class WorkoutLogWidget extends ConsumerWidget {
           preferredSize: Size.fromHeight(16),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
-            child: Text(workout.date.toHumanFriendlyFormat()),
+            child: Text(workout.date.toLongFriendlyFormat()),
           ),
         ),
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz))],
