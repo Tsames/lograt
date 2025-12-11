@@ -1,8 +1,8 @@
 class WorkoutHistoryNotifierState {
   final List<dynamic> workoutsWithSectionHeaders;
-  final bool hasWorkoutsThisWeekMarker;
-  final bool hasWorkoutsInLastMonthMarker;
-  final bool hasWorkoutsInLastThreeMonthsMarker;
+  final bool hasWorkoutsThisWeekSectionHeader;
+  final bool hasWorkoutsInLastMonthSectionHeader;
+  final bool hasWorkoutsInLastThreeMonthsSectionHeader;
   final DateTime? beginningOfIterationWeek;
 
   final bool isLoading;
@@ -13,9 +13,9 @@ class WorkoutHistoryNotifierState {
 
   const WorkoutHistoryNotifierState({
     this.workoutsWithSectionHeaders = const [],
-    this.hasWorkoutsThisWeekMarker = false,
-    this.hasWorkoutsInLastMonthMarker = false,
-    this.hasWorkoutsInLastThreeMonthsMarker = false,
+    this.hasWorkoutsThisWeekSectionHeader = false,
+    this.hasWorkoutsInLastMonthSectionHeader = false,
+    this.hasWorkoutsInLastThreeMonthsSectionHeader = false,
     this.beginningOfIterationWeek,
     this.isLoading = false,
     this.error,
@@ -37,13 +37,13 @@ class WorkoutHistoryNotifierState {
     return WorkoutHistoryNotifierState(
       workoutsWithSectionHeaders:
           workoutsWithSectionHeaders ?? this.workoutsWithSectionHeaders,
-      hasWorkoutsThisWeekMarker:
-          hasWorkoutsThisWeekMarker ?? this.hasWorkoutsThisWeekMarker,
-      hasWorkoutsInLastMonthMarker:
-          hasWorkoutsInLastMonthMarker ?? this.hasWorkoutsInLastMonthMarker,
-      hasWorkoutsInLastThreeMonthsMarker:
+      hasWorkoutsThisWeekSectionHeader:
+          hasWorkoutsThisWeekMarker ?? hasWorkoutsThisWeekSectionHeader,
+      hasWorkoutsInLastMonthSectionHeader:
+          hasWorkoutsInLastMonthMarker ?? hasWorkoutsInLastMonthSectionHeader,
+      hasWorkoutsInLastThreeMonthsSectionHeader:
           hasWorkoutsInLastThreeMonthsMarker ??
-          this.hasWorkoutsInLastThreeMonthsMarker,
+          hasWorkoutsInLastThreeMonthsSectionHeader,
       beginningOfIterationWeek:
           beginningOfIterationWeek ?? this.beginningOfIterationWeek,
       isLoading: isLoading ?? this.isLoading,
