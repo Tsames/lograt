@@ -76,7 +76,7 @@ class WorkoutRepository {
   /// Get a list of maximum length [limit] of [Workout]s order by creation date (descending)
   /// Each workout has its corresponding [WorkoutTemplate] if it exists as well as any [MuscleGroup]s assigned to the workout.
   /// The full [Exercise] and [ExerciseSet] data is omitted.
-  Future<List<Workout>> getWorkoutSummariesPaginated({
+  Future<List<Workout>> getPaginatedSortedWorkoutSummaries({
     int? limit,
     int? offset,
     Transaction? txn,

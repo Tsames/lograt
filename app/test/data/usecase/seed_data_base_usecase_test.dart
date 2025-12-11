@@ -201,9 +201,8 @@ void main() {
       );
 
       // Verify content - fetch all workouts with full details
-      final seededWorkouts = await repository.getWorkoutSummariesPaginated(
-        limit: expectedWorkoutCount,
-      );
+      final seededWorkouts = await repository
+          .getPaginatedSortedWorkoutSummaries(limit: expectedWorkoutCount);
 
       expect(seededWorkouts.length, equals(expectedWorkoutCount));
 

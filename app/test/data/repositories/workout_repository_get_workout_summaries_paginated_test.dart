@@ -80,7 +80,7 @@ void main() {
     });
 
     test('should return empty list when no workouts exist', () async {
-      final results = await repository.getWorkoutSummariesPaginated();
+      final results = await repository.getPaginatedSortedWorkoutSummaries();
 
       expect(results, isEmpty);
     });
@@ -112,7 +112,7 @@ void main() {
       ]);
 
       // Test
-      final results = await repository.getWorkoutSummariesPaginated();
+      final results = await repository.getPaginatedSortedWorkoutSummaries();
 
       expect(results.length, equals(1));
       expect(results[0].id, equals(workout.id));
@@ -144,7 +144,7 @@ void main() {
           workoutId: workout.id,
         );
 
-        final results = await repository.getWorkoutSummariesPaginated();
+        final results = await repository.getPaginatedSortedWorkoutSummaries();
 
         expect(results.length, equals(1));
         expect(results[0].template, isNull);
@@ -165,7 +165,7 @@ void main() {
         );
         await workoutDao.insert(workout);
 
-        final results = await repository.getWorkoutSummariesPaginated();
+        final results = await repository.getPaginatedSortedWorkoutSummaries();
 
         expect(results.length, equals(1));
         expect(results[0].template, isNotNull);
@@ -201,7 +201,7 @@ void main() {
           workoutId: workoutWithTemplate.id,
         );
 
-        final results = await repository.getWorkoutSummariesPaginated();
+        final results = await repository.getPaginatedSortedWorkoutSummaries();
 
         expect(results.length, equals(2));
 
@@ -236,7 +236,9 @@ void main() {
         );
       }
 
-      final results = await repository.getWorkoutSummariesPaginated(limit: 3);
+      final results = await repository.getPaginatedSortedWorkoutSummaries(
+        limit: 3,
+      );
 
       expect(results.length, equals(3));
     });
@@ -253,11 +255,11 @@ void main() {
         workoutIds.add(workout.id);
       }
 
-      final firstPage = await repository.getWorkoutSummariesPaginated(
+      final firstPage = await repository.getPaginatedSortedWorkoutSummaries(
         limit: 2,
         offset: 0,
       );
-      final secondPage = await repository.getWorkoutSummariesPaginated(
+      final secondPage = await repository.getPaginatedSortedWorkoutSummaries(
         limit: 2,
         offset: 2,
       );
@@ -290,7 +292,7 @@ void main() {
       await workoutDao.insert(oldWorkout);
       await workoutDao.insert(newestWorkout);
 
-      final results = await repository.getWorkoutSummariesPaginated();
+      final results = await repository.getPaginatedSortedWorkoutSummaries();
 
       expect(results.length, equals(3));
       expect(results[0].title, equals('Newest'));
@@ -315,7 +317,7 @@ void main() {
       await workoutDao.insert(workout1);
       await workoutDao.insert(workout2);
 
-      final results = await repository.getWorkoutSummariesPaginated();
+      final results = await repository.getPaginatedSortedWorkoutSummaries();
 
       expect(results.length, equals(2));
       expect(results[0].template, isNotNull);
@@ -348,7 +350,7 @@ void main() {
           workoutId: workout2.id,
         );
 
-        final results = await repository.getWorkoutSummariesPaginated();
+        final results = await repository.getPaginatedSortedWorkoutSummaries();
 
         expect(results.length, equals(2));
         expect(results[0].muscleGroups.length, equals(1));
@@ -384,7 +386,7 @@ void main() {
           workoutId: workout.id,
         );
 
-        final results = await repository.getWorkoutSummariesPaginated();
+        final results = await repository.getPaginatedSortedWorkoutSummaries();
 
         expect(results.length, equals(1));
         expect(results[0].muscleGroups.length, equals(3));
@@ -399,7 +401,7 @@ void main() {
       final workout = WorkoutModel.forTest(title: 'Test Workout');
       await workoutDao.insert(workout);
 
-      final results = await repository.getWorkoutSummariesPaginated();
+      final results = await repository.getPaginatedSortedWorkoutSummaries();
 
       expect(results.length, equals(1));
       expect(results[0].exercises, isEmpty);
@@ -412,7 +414,9 @@ void main() {
         await workoutDao.insert(workout);
       }
 
-      final results = await repository.getWorkoutSummariesPaginated(limit: 3);
+      final results = await repository.getPaginatedSortedWorkoutSummaries(
+        limit: 3,
+      );
 
       expect(results.length, equals(3));
     });
@@ -436,7 +440,7 @@ void main() {
       await workoutDao.insert(workout2);
       await workoutDao.insert(workout3);
 
-      final results = await repository.getWorkoutSummariesPaginated(
+      final results = await repository.getPaginatedSortedWorkoutSummaries(
         limit: 2,
         offset: 1,
       );
@@ -464,7 +468,7 @@ void main() {
       await workoutDao.insert(newerWorkout);
       await workoutDao.insert(newestWorkout);
 
-      final results = await repository.getWorkoutSummariesPaginated();
+      final results = await repository.getPaginatedSortedWorkoutSummaries();
 
       expect(results.length, equals(3));
       expect(results[0].title, equals('Newest'));
@@ -496,7 +500,7 @@ void main() {
         workoutId: workout.id,
       );
 
-      final results = await repository.getWorkoutSummariesPaginated();
+      final results = await repository.getPaginatedSortedWorkoutSummaries();
 
       expect(results.length, equals(1));
       expect(results[0].muscleGroups.length, equals(3));
@@ -521,7 +525,7 @@ void main() {
       await workoutDao.insert(workout1);
       await workoutDao.insert(workout2);
 
-      final results = await repository.getWorkoutSummariesPaginated();
+      final results = await repository.getPaginatedSortedWorkoutSummaries();
 
       expect(results.length, equals(2));
       expect(results[0].template, isNotNull);
@@ -550,7 +554,7 @@ void main() {
           workoutId: workout2.id,
         );
 
-        final results = await repository.getWorkoutSummariesPaginated();
+        final results = await repository.getPaginatedSortedWorkoutSummaries();
 
         expect(results.length, equals(2));
         expect(results[0].muscleGroups.length, equals(1));
@@ -568,7 +572,7 @@ void main() {
       );
       await workoutDao.insert(workout);
 
-      final results = await repository.getWorkoutSummariesPaginated();
+      final results = await repository.getPaginatedSortedWorkoutSummaries();
 
       expect(results.length, equals(1));
       expect(results[0].title, equals('Test Workout'));
