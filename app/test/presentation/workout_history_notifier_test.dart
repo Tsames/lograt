@@ -151,8 +151,8 @@ void main() {
       'notifier state should not include in the last month section header when no workouts happened in that time',
       () async {
         await testRepository.seedWorkoutData([
-          Workout(date: now.subtract(Duration(days: 2))),
-          Workout(date: now.subtract(Duration(days: 35))),
+          Workout(date: now.beginningOfTheWeek.add(Duration(days: 2))),
+          Workout(date: now.beginningOfTheWeek.subtract(Duration(days: 35))),
         ]);
         await testNotifier.loadPaginatedWorkouts();
 
@@ -185,9 +185,9 @@ void main() {
       'notifier state should not include in the last three months section header when no workouts happened in that time',
       () async {
         await testRepository.seedWorkoutData([
-          Workout(date: now.subtract(Duration(days: 2))),
-          Workout(date: now.subtract(Duration(days: 15))),
-          Workout(date: now.subtract(Duration(days: 100))),
+          Workout(date: now.beginningOfTheWeek.add(Duration(days: 2))),
+          Workout(date: now.beginningOfTheWeek.subtract(Duration(days: 15))),
+          Workout(date: now.beginningOfTheWeek.subtract(Duration(days: 100))),
         ]);
 
         await testNotifier.loadPaginatedWorkouts();
