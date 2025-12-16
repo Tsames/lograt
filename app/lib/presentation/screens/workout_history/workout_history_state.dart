@@ -24,6 +24,10 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
         notifier.loadPaginatedWorkouts();
       }
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(workoutHistoryProvider.notifier).loadPaginatedWorkouts();
+    });
   }
 
   @override
@@ -48,12 +52,18 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
       ),
       WorkoutHistoryNotifierState(
         isLoading: true,
-        workoutsWithSectionHeaders: [],
-      ) =>
+        workoutsWithSectionHeaders: final workouts,
+      )
+          when workouts.isEmpty =>
         Center(child: const CircularProgressIndicator()),
-      WorkoutHistoryNotifierState(workoutsWithSectionHeaders: []) => Center(
-        child: const Text('No workouts yet.', style: TextStyle(fontSize: 18)),
-      ),
+      WorkoutHistoryNotifierState(
+        isLoading: false,
+        workoutsWithSectionHeaders: final workouts,
+      )
+          when workouts.isEmpty =>
+        Center(
+          child: const Text('No workouts yet.', style: TextStyle(fontSize: 18)),
+        ),
       _ => () {
         final workouts = workoutHistoryState.workoutsWithSectionHeaders;
         return Column(

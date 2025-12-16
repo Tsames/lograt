@@ -7,7 +7,7 @@ import 'package:lograt/presentation/screens/home/home_widget.dart';
 import 'package:lograt/presentation/screens/workout_history/workout_history_drawer_page.dart';
 
 class HomeState extends State<HomeWidget> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   late final List<AppDrawerPage> _pages = [
     CreateWorkoutDrawerPage(),
     WorkoutHistoryDrawerPage(),
