@@ -76,42 +76,7 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
                 itemBuilder: (context, index) {
                   switch (workouts[index]) {
                     case Workout workout:
-                      return ListTile(
-                        title: Text(
-                          workout.title ?? 'New Workout',
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                        subtitle: Text(
-                          workout.date.toLongFriendlyFormat(),
-                          style: theme.textTheme.labelSmall,
-                        ),
-                        trailing: switch (workout.muscleGroups.isEmpty) {
-                          false => ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: 100),
-                            child: Wrap(
-                              spacing: 4,
-                              runSpacing: 4,
-                              alignment: WrapAlignment.end,
-                              clipBehavior: Clip.hardEdge,
-                              children: [
-                                ...workout.muscleGroups
-                                    .take(2)
-                                    .map(
-                                      (muscleGroup) => _buildMuscleGroupTag(
-                                        muscleGroup.label,
-                                        theme,
-                                      ),
-                                    ),
-                                if (workout.muscleGroups.length > 2)
-                                  _buildMuscleGroupTag(
-                                    '+${workout.muscleGroups.length - 2}',
-                                    theme,
-                                  ),
-                              ],
-                            ),
-                          ),
-                          true => null,
-                        },
+                      return InkWell(
                         onTap: () {
                           Navigator.push(
                             context,
@@ -120,10 +85,129 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
                             ),
                           );
                         },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 12,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    workout.title ?? 'Unnamed Workout',
+                                    style: theme.textTheme.bodyLarge,
+                                  ),
+                                  Text(
+                                    workout.date.toLongFriendlyFormat(),
+                                    style: theme.textTheme.labelSmall,
+                                  ),
+                                ],
+                              ),
+                              if (workout.muscleGroups.isNotEmpty)
+                                Expanded(
+                                  flex: 4,
+                                  child: LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      const minChipWidth = 40.0;
+                                      const chipSpacing = 4.0;
+
+                                      // Calculate how many chips can fit
+                                      final maxPossibleChips =
+                                          ((constraints.maxWidth +
+                                                      chipSpacing) /
+                                                  (minChipWidth + chipSpacing))
+                                              .floor();
+                                      final chipsToShow = maxPossibleChips
+                                          .clamp(
+                                            1,
+                                            workout.muscleGroups.length,
+                                          );
+
+                                      // Determine chip texts
+                                      final List<String> chipTexts;
+                                      if (chipsToShow <
+                                          workout.muscleGroups.length) {
+                                        // Show some chips + overflow indicator
+                                        chipTexts =
+                                            workout.muscleGroups
+                                                .take(chipsToShow - 1)
+                                                .map((mg) => mg.label)
+                                                .toList()
+                                              ..add(
+                                                '+${workout.muscleGroups.length - (chipsToShow - 1)}',
+                                              );
+                                      } else {
+                                        // Show all chips
+                                        chipTexts = workout.muscleGroups
+                                            .map((mg) => mg.label)
+                                            .toList();
+                                      }
+
+                                      // Max width for each chip (distribute available space)
+                                      final maxChipWidth =
+                                          (constraints.maxWidth -
+                                              (chipTexts.length - 1) *
+                                                  chipSpacing) /
+                                          chipTexts.length;
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        spacing: 4,
+                                        children: chipTexts
+                                            .map(
+                                              (chipText) => Container(
+                                                constraints: BoxConstraints(
+                                                  maxWidth: maxChipWidth,
+                                                ),
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 6,
+                                                  vertical: 4,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  color: switch (chipText) {
+                                                    'Chest' => Color(
+                                                      0xFF733D3B,
+                                                    ),
+                                                    'Shoulders' => Color(
+                                                      0xFF9E6F3C,
+                                                    ),
+                                                    'Arms' => Color(0xFF887634),
+                                                    'Back' => Color(0xFF3F7135),
+                                                    'Core' => Color(0xFF2A4B65),
+                                                    'Legs' => Color(0xFF492D60),
+                                                    _ => Color(0xFF2E2D2D),
+                                                  },
+                                                ),
+                                                child: Text(
+                                                  chipText,
+                                                  style: theme
+                                                      .textTheme
+                                                      .bodySmall
+                                                      ?.copyWith(fontSize: 10),
+                                                  textAlign: TextAlign.center,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                      );
+                                    },
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
                       );
                     case WeekWorkoutHistorySectionHeader header:
                       return Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 2),
+                        padding: const EdgeInsets.only(top: 30, bottom: 4),
                         child: Text(
                           header.title,
                           textAlign: TextAlign.center,
@@ -135,7 +219,7 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
                     case WorkoutHistorySectionHeader header:
                       return Column(
                         children: [
-                          if (index > 0) SizedBox(height: 20),
+                          if (index > 0) SizedBox(height: 30),
                           Text(
                             header.title,
                             textAlign: TextAlign.center,
@@ -144,6 +228,7 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
                             ),
                           ),
                           Divider(thickness: 1, indent: 40, endIndent: 40),
+                          if (index == 0) SizedBox(height: 30),
                         ],
                       );
                     default:
@@ -157,30 +242,5 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
         );
       }(),
     };
-  }
-
-  Widget _buildMuscleGroupTag(String label, ThemeData theme) {
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: switch (label) {
-            'Chest' => Color(0xFF733D3B),
-            'Shoulders' => Color(0xFF9E6F3C),
-            'Arms' => Color(0xFF887634),
-            'Back' => Color(0xFF3F7135),
-            'Core' => Color(0xFF2A4B65),
-            'Legs' => Color(0xFF492D60),
-            _ => Color(0xFF2E2D2D),
-          },
-        ),
-        child: Text(
-          label,
-          style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
-        ),
-      ),
-    );
   }
 }
