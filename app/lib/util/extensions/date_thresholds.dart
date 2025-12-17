@@ -23,6 +23,14 @@ extension DateThresholds on DateTime {
     ).add(Duration(days: 7 - weekday));
   }
 
+  bool weekInNewMonth() {
+    return beginningOfTheWeek.month < endOfTheWeek.month;
+  }
+
+  bool weekInNewYear() {
+    return beginningOfTheWeek.year < endOfTheWeek.year;
+  }
+
   DateTime get beginningOfTheLastMonth {
     return DateTime(
       year,
