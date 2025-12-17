@@ -40,6 +40,6 @@ class InTheLastThreeMonthsWorkoutHistorySectionHeader
 class WeekWorkoutHistorySectionHeader extends WorkoutHistorySectionHeader {
   WeekWorkoutHistorySectionHeader(DateTime workoutDate)
     : super(
-        'Week of ${workoutDate.beginningOfTheWeek.toDayAndMonthFriendlyFormatDay()} to ${workoutDate.endOfTheWeek.toDayFriendlyFormat()}',
+        'Week of ${workoutDate.beginningOfTheWeek.toDayAndMonthFriendlyFormat()} to ${workoutDate.weekInNewMonth() ? '${workoutDate.toMonthFriendlyFormat()} ' : ''}${workoutDate.endOfTheWeek.toDayFriendlyFormat()}${workoutDate.weekInNewYear() ? ' ${workoutDate.year}' : ''}',
       );
 }

@@ -38,7 +38,11 @@ extension HumanFriendlyDateFormat on DateTime {
     return '$day$suffix';
   }
 
-  String toDayAndMonthFriendlyFormatDay() {
+  String toMonthFriendlyFormat() {
+    return _months[month - 1];
+  }
+
+  String toDayAndMonthFriendlyFormat() {
     return '${_months[month - 1]} ${toDayFriendlyFormat()}';
   }
 
