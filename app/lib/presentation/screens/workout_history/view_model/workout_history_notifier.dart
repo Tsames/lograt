@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/data/providers.dart';
-import 'package:lograt/data/usecases/get_paginated_sorted_workouts_usecase.dart';
+import 'package:lograt/data/usecases/workouts/get_paginated_sorted_workouts_usecase.dart';
 import 'package:lograt/presentation/screens/workout_history/view_model/workout_history_notifier_state.dart';
 import 'package:lograt/util/extensions/date_thresholds.dart';
 import 'package:lograt/util/workout_history_section_header.dart';
@@ -143,7 +143,7 @@ final workoutHistoryProvider =
       ref,
     ) {
       final getSortedWorkouts = ref.read(
-        getSortedPaginatedWorkoutsUsecaseProvider,
+        getPaginatedSortedWorkoutsUsecaseProvider,
       );
 
       return WorkoutHistoryNotifier(getSortedWorkouts);

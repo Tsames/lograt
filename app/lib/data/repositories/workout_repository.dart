@@ -1,3 +1,4 @@
+import 'package:lograt/data/dao/model_dao.dart';
 import 'package:lograt/data/dao/muscle_group/muscle_group_to_exercise_type_dao.dart';
 import 'package:lograt/data/dao/muscle_group/muscle_group_to_workout_dao.dart';
 import 'package:lograt/data/dao/muscle_group/muscle_group_to_workout_template_dao.dart';
@@ -17,6 +18,7 @@ import 'package:lograt/data/entities/workouts/exercise_set.dart';
 import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/data/exceptions/workout_exceptions.dart';
+import 'package:lograt/data/models/model.dart';
 import 'package:lograt/data/models/muscle_group/muscle_group_model.dart';
 import 'package:lograt/data/models/muscle_group/muscle_group_to_exercise_type_model.dart';
 import 'package:lograt/data/models/muscle_group/muscle_group_to_workout_model.dart';
@@ -72,6 +74,49 @@ class WorkoutRepository {
        _muscleGroupToWorkoutDao = muscleGroupToWorkoutDao,
        _muscleGroupToWorkoutTemplateDao = muscleGroupToWorkoutTemplateDao,
        _muscleGroupToExerciseTypeDao = muscleGroupToExerciseTypeDao;
+
+  ModelDao _getDaoForModelType<T extends Model>() {
+    return switch (T) {
+          const (WorkoutModel) => _workoutDao,
+          const (ExerciseModel) => _exerciseDao,
+          const (ExerciseTypeModel) => _exerciseTypeDao,
+          const (ExerciseSetModel) => _exerciseSetDao,
+          const (WorkoutTemplateModel) => _workoutTemplateDao,
+          const (ExerciseTemplateModel) => _exerciseTemplateDao,
+          const (ExerciseSetTemplateModel) => _exerciseSetTemplateDao,
+          const (MuscleGroupModel) => _muscleGroupDao,
+          _ => throw Exception('No DAO registered for type $T'),
+        }
+        as ModelDao<T>;
+  }
+
+  Future<T?> getModelById<T extends Model>(String id) async {
+    return await _getDaoForModelType<T>().getById(id) as T?;
+  }
+
+  Future<void> insertModel<T extends Model>(T model) async {
+    await _getDaoForModelType<T>().insert(model);
+  }
+
+  Future<void> batchInsertModels<T extends Model>(List<T> models) async {
+    await _getDaoForModelType<T>().batchInsert(models);
+  }
+
+  Future<void> updateModel<T extends Model>(T model) async {
+    await _getDaoForModelType<T>().update(model);
+  }
+
+  Future<void> batchUpdateModels<T extends Model>(List<T> models) async {
+    await _getDaoForModelType<T>().batchUpdate(models);
+  }
+
+  Future<void> deleteModel<T extends Model>(String id) async {
+    await _getDaoForModelType<T>().delete(id);
+  }
+
+  Future<void> clearModelTable<T extends Model>() async {
+    await _getDaoForModelType<T>().clearTable();
+  }
 
   /// Get a list of maximum length [limit] of [Workout]s order by creation date (descending)
   /// Each workout has its corresponding [WorkoutTemplate] if it exists as well as any [MuscleGroup]s assigned to the workout.
@@ -217,80 +262,6 @@ class WorkoutRepository {
       txn: txn,
     );
     return exerciseTypeModels.map((model) => model.toEntity()).toList();
-  }
-
-  Future<void> createWorkout(Workout workout) async {
-    final workoutModel = WorkoutModel.fromEntity(workout);
-    await _workoutDao.insert(workoutModel);
-  }
-
-  Future<int> createExercise({
-    required Exercise exercise,
-    required String workoutId,
-  }) async {
-    final exerciseModel = ExerciseModel.fromEntity(exercise, workoutId);
-    return await _exerciseDao.insert(exerciseModel);
-  }
-
-  Future<int> createExerciseType(ExerciseType type) async {
-    final typeModel = ExerciseTypeModel.fromEntity(type);
-    return await _exerciseTypeDao.insert(typeModel);
-  }
-
-  Future<int> createExerciseSet({
-    required ExerciseSet set,
-    required String exerciseId,
-  }) async {
-    final setModel = ExerciseSetModel.fromEntity(
-      entity: set,
-      exerciseId: exerciseId,
-    );
-    return await _exerciseSetDao.insert(setModel);
-  }
-
-  Future<void> updateWorkout(Workout entity) async {
-    final workoutModel = WorkoutModel.fromEntity(entity);
-    await _workoutDao.update(workoutModel);
-  }
-
-  Future<void> updateExercise({
-    required Exercise entity,
-    required String workoutId,
-  }) async {
-    final exerciseModel = ExerciseModel.fromEntity(entity, workoutId);
-    await _exerciseDao.update(exerciseModel);
-  }
-
-  Future<void> updateExerciseType(ExerciseType entity) async {
-    final exerciseTypeModel = ExerciseTypeModel.fromEntity(entity);
-    await _exerciseTypeDao.update(exerciseTypeModel);
-  }
-
-  Future<void> updateExerciseSet({
-    required ExerciseSet entity,
-    required String exerciseId,
-  }) async {
-    final exerciseSetModel = ExerciseSetModel.fromEntity(
-      entity: entity,
-      exerciseId: exerciseId,
-    );
-    await _exerciseSetDao.update(exerciseSetModel);
-  }
-
-  Future<void> deleteWorkout(String id) async {
-    return await _workoutDao.delete(id);
-  }
-
-  Future<void> deleteExercise(String id) async {
-    return await _exerciseDao.delete(id);
-  }
-
-  Future<void> deleteExerciseType(String id) async {
-    return await _exerciseTypeDao.delete(id);
-  }
-
-  Future<void> deleteExerciseSet(String id) async {
-    return await _exerciseSetDao.delete(id);
   }
 
   Future<int> count(String table) async {

@@ -12,11 +12,18 @@ import 'package:lograt/data/dao/workout/exercise_type_dao.dart';
 import 'package:lograt/data/dao/workout/workout_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/repositories/workout_repository.dart';
-import 'package:lograt/data/usecases/get_full_workout_data_by_id_usecase.dart';
-import 'package:lograt/data/usecases/get_paginated_exercise_types_usecase.dart';
-import 'package:lograt/data/usecases/get_paginated_sorted_workouts_usecase.dart';
+import 'package:lograt/data/usecases/exercise_sets/create_exercise_set_usecase.dart';
+import 'package:lograt/data/usecases/exercise_sets/delete_exercise_set_usecase.dart';
+import 'package:lograt/data/usecases/exercise_sets/update_exercise_set_usecase.dart';
+import 'package:lograt/data/usecases/exercise_types/get_paginated_exercise_types_usecase.dart';
+import 'package:lograt/data/usecases/exercises/create_exercise_usecase.dart';
+import 'package:lograt/data/usecases/exercises/delete_exercise_usecase.dart';
+import 'package:lograt/data/usecases/exercises/update_exercise_usecase.dart';
 import 'package:lograt/data/usecases/seed_data_usecase.dart';
-import 'package:lograt/data/usecases/update_or_create_workout_usecase.dart';
+import 'package:lograt/data/usecases/workouts/create_workout_usecase.dart';
+import 'package:lograt/data/usecases/workouts/delete_workout_usecase.dart';
+import 'package:lograt/data/usecases/workouts/get_full_workout_data_by_id_usecase.dart';
+import 'package:lograt/data/usecases/workouts/get_paginated_sorted_workouts_usecase.dart';
 
 // --- Database provider ---
 
@@ -126,7 +133,7 @@ final workoutRepositoryProvider = Provider<WorkoutRepository>((ref) {
 
 // --- Usecase providers ---
 
-final getSortedPaginatedWorkoutsUsecaseProvider =
+final getPaginatedSortedWorkoutsUsecaseProvider =
     Provider<GetPaginatedSortedWorkoutsUsecase>((ref) {
       final repository = ref.read(workoutRepositoryProvider);
       return GetPaginatedSortedWorkoutsUsecase(repository);
@@ -138,16 +145,56 @@ final getFullWorkoutDataByIdUsecaseProvider =
       return GetFullWorkoutDataByIdUsecase(repository);
     });
 
+final createWorkoutUsecaseProvider = Provider<CreateWorkoutUsecase>((ref) {
+  final repository = ref.read(workoutRepositoryProvider);
+  return CreateWorkoutUsecase(repository);
+});
+
+final deleteWorkoutUsecaseProvider = Provider<DeleteWorkoutUsecase>((ref) {
+  final repository = ref.read(workoutRepositoryProvider);
+  return DeleteWorkoutUsecase(repository);
+});
+
+final createExerciseUsecaseProvider = Provider<CreateExerciseUsecase>((ref) {
+  final repository = ref.read(workoutRepositoryProvider);
+  return CreateExerciseUsecase(repository);
+});
+
+final updateExerciseUsecaseProvider = Provider<UpdateExerciseUsecase>((ref) {
+  final repository = ref.read(workoutRepositoryProvider);
+  return UpdateExerciseUsecase(repository);
+});
+
+final deleteExerciseUsecaseProvider = Provider<DeleteExerciseUsecase>((ref) {
+  final repository = ref.read(workoutRepositoryProvider);
+  return DeleteExerciseUsecase(repository);
+});
+
+final createExerciseSetUsecaseProvider = Provider<CreateExerciseSetUsecase>((
+  ref,
+) {
+  final repository = ref.read(workoutRepositoryProvider);
+  return CreateExerciseSetUsecase(repository);
+});
+
+final updateExerciseSetUsecaseProvider = Provider<UpdateExerciseSetUsecase>((
+  ref,
+) {
+  final repository = ref.read(workoutRepositoryProvider);
+  return UpdateExerciseSetUsecase(repository);
+});
+
+final deleteExerciseSetUsecaseProvider = Provider<DeleteExerciseSetUsecase>((
+  ref,
+) {
+  final repository = ref.read(workoutRepositoryProvider);
+  return DeleteExerciseSetUsecase(repository);
+});
+
 final getExerciseTypesUsecaseProvider =
     Provider<GetPaginatedExerciseTypesUsecase>((ref) {
       final repository = ref.read(workoutRepositoryProvider);
       return GetPaginatedExerciseTypesUsecase(repository);
-    });
-
-final updateOrCreateWorkoutUsecaseProvider =
-    Provider<UpdateOrCreateWorkoutDataUsecase>((ref) {
-      final repository = ref.read(workoutRepositoryProvider);
-      return UpdateOrCreateWorkoutDataUsecase(repository);
     });
 
 final seedDataUsecaseProvider = Provider<SeedDataUsecase>((ref) {

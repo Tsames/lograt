@@ -13,7 +13,7 @@ import 'package:lograt/data/dao/workout/workout_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/data/repositories/workout_repository.dart';
-import 'package:lograt/data/usecases/get_paginated_sorted_workouts_usecase.dart';
+import 'package:lograt/data/usecases/workouts/get_paginated_sorted_workouts_usecase.dart';
 import 'package:lograt/presentation/screens/workout_history/view_model/workout_history_notifier.dart';
 import 'package:lograt/util/extensions/date_thresholds.dart';
 import 'package:lograt/util/workout_history_section_header.dart';

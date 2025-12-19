@@ -1,28 +1,50 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/data/entities/workouts/exercise_set.dart';
-import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/data/entities/set_type.dart';
 import 'package:lograt/data/entities/units.dart';
+import 'package:lograt/data/entities/workouts/exercise_set.dart';
+import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/data/providers.dart';
-import 'package:lograt/data/usecases/get_full_workout_data_by_id_usecase.dart';
-import 'package:lograt/data/usecases/update_or_create_workout_usecase.dart';
+import 'package:lograt/data/usecases/exercise_sets/create_exercise_set_usecase.dart';
+import 'package:lograt/data/usecases/exercise_sets/update_exercise_set_usecase.dart';
+import 'package:lograt/data/usecases/exercises/update_exercise_usecase.dart';
+import 'package:lograt/data/usecases/workouts/create_workout_usecase.dart';
+import 'package:lograt/data/usecases/workouts/get_full_workout_data_by_id_usecase.dart';
 import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier_state.dart';
 
 class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
   final GetFullWorkoutDataByIdUsecase _getFullWorkoutDataByIdUsecase;
-  final UpdateOrCreateWorkoutDataUsecase _updateOrCreateWorkoutUsecase;
+  final CreateWorkoutUsecase _createWorkoutUsecase;
+
+  // final DeleteWorkoutUsecase _deleteWorkoutUsecase;
+
+  // final CreateExerciseUsecase _createExerciseUsecase;
+  final UpdateExerciseUsecase _updateExerciseUsecase;
+
+  // final DeleteExerciseUsecase _deleteExerciseUsecase;
+
+  final CreateExerciseSetUsecase _createExerciseSetUsecase;
+  final UpdateExerciseSetUsecase _updateExerciseSetUsecase;
+
+  // final DeleteExerciseSetUsecase _deleteExerciseSetUsecase;
 
   WorkoutLogNotifier(
     this._getFullWorkoutDataByIdUsecase,
-    this._updateOrCreateWorkoutUsecase,
+    this._createWorkoutUsecase,
+    // this._deleteWorkoutUsecase,
+    // this._createExerciseUsecase,
+    this._updateExerciseUsecase,
+    // this._deleteExerciseUsecase,
+    this._createExerciseSetUsecase,
+    this._updateExerciseSetUsecase,
+    // this._deleteExerciseSetUsecase,
     Workout? workout,
   ) : super(WorkoutLogNotifierState(workout: workout ?? Workout())) {
     if (workout != null) {
       loadFullWorkoutData();
     } else {
-      _updateOrCreateWorkoutUsecase.createWorkout(state.workout);
+      _createWorkoutUsecase.call(state.workout);
     }
   }
 
@@ -62,7 +84,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
       ),
     );
     try {
-      _updateOrCreateWorkoutUsecase.updateExercise(
+      _updateExerciseUsecase.updateSingleExercise(
         newExercise,
         state.workout.id,
       );
@@ -104,7 +126,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     );
 
     try {
-      await _updateOrCreateWorkoutUsecase.updateSet(newSet, exerciseId);
+      await _updateExerciseSetUsecase.updateSingleSet(newSet, exerciseId);
     } catch (e) {
       state = state.copyWith(error: 'An error occurred while editing a set.');
     }
@@ -153,7 +175,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     );
 
     try {
-      _updateOrCreateWorkoutUsecase.createSet(newSet, exerciseId);
+      _createExerciseSetUsecase.call(newSet, exerciseId);
     } catch (error) {
       // todo: handle exceptions
       rethrow;
@@ -256,7 +278,7 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
     );
     try {
       //todo: update database
-      // _updateOrCreateWorkoutUsecase.removeSet(lastSetOfTargetExercise, exerciseId);
+      // _deleteExerciseSetUsecase.call(lastSetOfTargetExercise);
     } catch (error) {
       // todo: handle exceptions
       rethrow;
@@ -272,12 +294,31 @@ final workoutLogProvider = StateNotifierProvider.autoDispose
       final getFullWorkoutDataByIdUsecase = ref.read(
         getFullWorkoutDataByIdUsecaseProvider,
       );
-      final updateOrCreateWorkoutUsecase = ref.read(
-        updateOrCreateWorkoutUsecaseProvider,
+      final createWorkoutUsecase = ref.read(createWorkoutUsecaseProvider);
+      // final deleteWorkoutUsecase = ref.read(deleteWorkoutUsecaseProvider);
+
+      // final createExerciseUsecase = ref.read(createExerciseUsecaseProvider);
+      final updateExerciseUsecase = ref.read(updateExerciseUsecaseProvider);
+      // final deleteExerciseUsecase = ref.read(deleteExerciseUsecaseProvider);
+
+      final createExerciseSetUsecase = ref.read(
+        createExerciseSetUsecaseProvider,
       );
+      final updateExerciseSetUsecase = ref.read(
+        updateExerciseSetUsecaseProvider,
+      );
+      // final deleteExerciseSetUsecase = ref.read(deleteExerciseSetUsecaseProvider);
+
       return WorkoutLogNotifier(
         getFullWorkoutDataByIdUsecase,
-        updateOrCreateWorkoutUsecase,
+        createWorkoutUsecase,
+        // deleteWorkoutUsecase,
+        // createExerciseUsecase,
+        updateExerciseUsecase,
+        // deleteExerciseUsecase,
+        createExerciseSetUsecase,
+        updateExerciseSetUsecase,
+        // deleteExerciseSetUsecase,
         workout,
       );
     });
