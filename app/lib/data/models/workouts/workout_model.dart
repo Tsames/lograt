@@ -2,6 +2,7 @@ import 'package:lograt/data/entities/muscle_group.dart';
 import 'package:lograt/data/entities/templates/workout_template.dart';
 import 'package:lograt/data/entities/workouts/exercise.dart';
 import 'package:lograt/data/entities/workouts/workout.dart';
+import 'package:lograt/data/models/model.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 import 'package:lograt/util/uuidv7.dart';
 
@@ -17,7 +18,8 @@ class WorkoutFields {
   static final String notes = 'notes';
 }
 
-class WorkoutModel {
+class WorkoutModel implements Model {
+  @override
   final String id;
   final DateTime date;
   final String? title;
@@ -92,6 +94,7 @@ class WorkoutModel {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       WorkoutFields.id: id,

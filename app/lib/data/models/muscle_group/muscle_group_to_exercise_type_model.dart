@@ -1,3 +1,4 @@
+import 'package:lograt/data/models/model.dart';
 import 'package:lograt/util/uuidv7.dart';
 
 const muscleGroupToExerciseTypeTable = 'muscle_group_to_exercise_type';
@@ -10,7 +11,8 @@ class MuscleGroupToExerciseTypeFields {
   static final String exerciseTypeId = 'exercise_type_id';
 }
 
-class MuscleGroupToExerciseTypeModel {
+class MuscleGroupToExerciseTypeModel implements Model {
+  @override
   final String id;
   final String muscleGroupId;
   final String exerciseTypeId;
@@ -44,6 +46,7 @@ class MuscleGroupToExerciseTypeModel {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       MuscleGroupToExerciseTypeFields.id: id,

@@ -1,4 +1,5 @@
 import 'package:lograt/data/entities/workouts/exercise_type.dart';
+import 'package:lograt/data/models/model.dart';
 import 'package:lograt/util/uuidv7.dart';
 
 const exerciseTypesTable = 'exercise_types';
@@ -11,7 +12,8 @@ class ExerciseTypeFields {
   static final String description = 'description';
 }
 
-class ExerciseTypeModel {
+class ExerciseTypeModel implements Model {
+  @override
   final String id;
   final String name;
   final String? description;
@@ -42,6 +44,7 @@ class ExerciseTypeModel {
     return ExerciseTypeModel(id: id, name: name, description: description);
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       ExerciseTypeFields.id: id,
