@@ -1,6 +1,7 @@
 import 'package:lograt/data/entities/set_type.dart';
 import 'package:lograt/data/entities/templates/exercise_set_template.dart';
 import 'package:lograt/data/entities/units.dart';
+import 'package:lograt/data/models/model.dart';
 import 'package:lograt/util/uuidv7.dart';
 
 const setTemplateTable = 'set_templates';
@@ -21,7 +22,8 @@ class ExerciseSetTemplateFields {
   static final String units = 'units';
 }
 
-class ExerciseSetTemplateModel {
+class ExerciseSetTemplateModel implements Model {
+  @override
   final String id;
   final int order;
   final String exerciseTemplateId; // Foreign key to workout_exercises table
@@ -92,6 +94,7 @@ class ExerciseSetTemplateModel {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       ExerciseSetTemplateFields.id: id,
