@@ -258,7 +258,7 @@ void main() {
           description: 'Upper chest',
         );
 
-        await exerciseTypeDao.updateById(updatedExerciseType);
+        await exerciseTypeDao.update(updatedExerciseType);
 
         final retrieved = await exerciseTypeDao.getById(testExerciseType.id);
         expectExerciseTypesEqual(retrieved, updatedExerciseType);
@@ -273,8 +273,7 @@ void main() {
           );
 
           expect(
-            () async =>
-                await exerciseTypeDao.updateById(nonExistentExerciseType),
+            () async => await exerciseTypeDao.update(nonExistentExerciseType),
             throwsA(isA<Exception>()),
           );
         },
