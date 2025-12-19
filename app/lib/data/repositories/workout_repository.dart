@@ -263,7 +263,7 @@ class WorkoutRepository {
 
   Future<void> updateExerciseType(ExerciseType entity) async {
     final exerciseTypeModel = ExerciseTypeModel.fromEntity(entity);
-    await _exerciseTypeDao.updateById(exerciseTypeModel);
+    await _exerciseTypeDao.update(exerciseTypeModel);
   }
 
   Future<void> updateExerciseSet({
