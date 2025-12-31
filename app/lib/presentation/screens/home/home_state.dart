@@ -59,7 +59,7 @@ class HomeState extends State<HomeWidget> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          child: _pages[_selectedIndex].page,
+          child: Center(child: _pages[_selectedIndex].page),
         ),
       ),
     );
