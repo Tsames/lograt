@@ -1,3 +1,5 @@
+import 'package:lograt/util/extensions/date_thresholds.dart';
+
 extension HumanFriendlyDateFormat on DateTime {
   static const _days = [
     'Monday',
@@ -48,5 +50,11 @@ extension HumanFriendlyDateFormat on DateTime {
 
   String toLongFriendlyFormat() {
     return '${_days[weekday - 1]}, ${_months[month - 1]} ${toDayFriendlyFormat()}, $year';
+  }
+
+  String toWeekRangeFormat() {
+    final start = beginningOfTheWeek;
+    final end = endOfTheWeek;
+    return 'Week of ${start.toDayAndMonthFriendlyFormat()} to ${weekInNewMonth() ? '${toMonthFriendlyFormat()} ' : ''}${end.toDayFriendlyFormat()}${weekInNewYear() ? ' $year' : ''}';
   }
 }

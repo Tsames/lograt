@@ -1,45 +1,26 @@
-import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/util/extensions/date_thresholds.dart';
-import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 
-sealed class WorkoutHistorySectionHeader {
+enum WorkoutHistorySectionHeader {
+  thisWeek('This Week'),
+  lastMonth('In the Last Month'),
+  lastThreeMonths('In the Last Three Months');
+
   final String title;
 
-  WorkoutHistorySectionHeader(this.title);
-}
-
-class ThisWeekWorkoutHistorySectionHeader extends WorkoutHistorySectionHeader {
-  ThisWeekWorkoutHistorySectionHeader() : super('This Week');
-
-  static bool inRange(Workout workout, DateTime now) {
-    return workout.date.isAfter(now.beginningOfTheWeek);
-  }
-}
-
-class InTheLastMonthWorkoutHistorySectionHeader
-    extends WorkoutHistorySectionHeader {
-  InTheLastMonthWorkoutHistorySectionHeader() : super('In the Last Month');
-
-  static bool inRange(Workout workout, DateTime now) {
-    return workout.date.isBefore(now.beginningOfTheWeek) &&
-        workout.date.isAfter(now.beginningOfTheLastMonth);
-  }
-}
-
-class InTheLastThreeMonthsWorkoutHistorySectionHeader
-    extends WorkoutHistorySectionHeader {
-  InTheLastThreeMonthsWorkoutHistorySectionHeader()
-    : super('In the Last Three Months');
-
-  static bool inRange(Workout workout, DateTime now) {
-    return workout.date.isBefore(now.beginningOfTheLastMonth) &&
-        workout.date.isAfter(now.beginningOfTheLastThreeMonths);
-  }
-}
-
-class WeekWorkoutHistorySectionHeader extends WorkoutHistorySectionHeader {
-  WeekWorkoutHistorySectionHeader(DateTime workoutDate)
-    : super(
-        'Week of ${workoutDate.beginningOfTheWeek.toDayAndMonthFriendlyFormat()} to ${workoutDate.weekInNewMonth() ? '${workoutDate.toMonthFriendlyFormat()} ' : ''}${workoutDate.endOfTheWeek.toDayFriendlyFormat()}${workoutDate.weekInNewYear() ? ' ${workoutDate.year}' : ''}',
+  static WorkoutHistorySectionHeader getSection(DateTime date) {
+    final now = DateTime.now();
+    if (date.isAfter(now.beginningOfTheWeek)) {
+      return WorkoutHistorySectionHeader.thisWeek;
+    } else if (date.isAfter(now.beginningOfTheLastMonth)) {
+      return WorkoutHistorySectionHeader.lastMonth;
+    } else if (date.isAfter(now.beginningOfTheLastThreeMonths)) {
+      return WorkoutHistorySectionHeader.lastThreeMonths;
+    } else {
+      throw Exception(
+        'No appropriate WorkoutHistorySectionHeader for date older than three months from present.\n$date',
       );
+    }
+  }
+
+  const WorkoutHistorySectionHeader(this.title);
 }
