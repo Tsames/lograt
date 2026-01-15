@@ -58,7 +58,8 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
           const Text('No workouts yet.', style: TextStyle(fontSize: 18)),
         _ => ListView.builder(
           controller: scrollController,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 64),
+          shrinkWrap: true,
           itemCount: workouts.length,
           itemBuilder: (context, index) {
             final workout = workouts[index];

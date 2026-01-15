@@ -3,7 +3,8 @@ import 'package:lograt/util/extensions/date_thresholds.dart';
 enum WorkoutHistorySectionHeader {
   thisWeek('This Week'),
   lastMonth('In the Last Month'),
-  lastThreeMonths('In the Last Three Months');
+  lastThreeMonths('In the Last Three Months'),
+  ancientHistory('Ancient History');
 
   final String title;
 
@@ -16,9 +17,7 @@ enum WorkoutHistorySectionHeader {
     } else if (date.isAfter(now.beginningOfTheLastThreeMonths)) {
       return WorkoutHistorySectionHeader.lastThreeMonths;
     } else {
-      throw Exception(
-        'No appropriate WorkoutHistorySectionHeader for date older than three months from present.\n$date',
-      );
+      return WorkoutHistorySectionHeader.ancientHistory;
     }
   }
 
