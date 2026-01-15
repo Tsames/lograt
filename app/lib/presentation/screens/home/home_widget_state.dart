@@ -6,7 +6,7 @@ import 'package:lograt/presentation/screens/home/app_drawer_page.dart';
 import 'package:lograt/presentation/screens/home/home_widget.dart';
 import 'package:lograt/presentation/screens/workout_history/workout_history_drawer_page.dart';
 
-class HomeState extends State<HomeWidget> {
+class HomeWidgetState extends State<HomeWidget> {
   int _selectedIndex = 1;
   late final List<AppDrawerPage> _pages = [
     CreateWorkoutDrawerPage(),
@@ -18,6 +18,13 @@ class HomeState extends State<HomeWidget> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(_pages[_selectedIndex].appBarTitle)),
+      floatingActionButton: switch (_pages[_selectedIndex]) {
+        WorkoutHistoryDrawerPage _ => FloatingActionButton(
+          onPressed: () {},
+          child: Icon(Icons.create),
+        ),
+        _ => null,
+      },
       endDrawer: Drawer(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 150, horizontal: 16),
@@ -58,7 +65,7 @@ class HomeState extends State<HomeWidget> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: Center(child: _pages[_selectedIndex].page),
         ),
       ),
