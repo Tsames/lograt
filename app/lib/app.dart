@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lograt/presentation/screens/home/home_widget.dart';
 import 'package:lograt/presentation/screens/workout_history/workout_history_widget.dart';
+import 'package:lograt/util/extensions/muscle_groups_colors_theme_extension.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -16,6 +17,7 @@ class App extends StatelessWidget {
         brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow.shade700),
         useMaterial3: true,
+        extensions: [MuscleGroupColorsThemeExtension.light()],
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
@@ -24,6 +26,7 @@ class App extends StatelessWidget {
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
+        extensions: [MuscleGroupColorsThemeExtension.dark()],
       ),
       home: HomeWidget(),
     );
