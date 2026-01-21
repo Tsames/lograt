@@ -6,6 +6,7 @@ import 'package:lograt/presentation/screens/workout_history/workout_history_widg
 import 'package:lograt/presentation/screens/workout_log/workout_log_widget.dart';
 import 'package:lograt/util/extensions/date_thresholds.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
+import 'package:lograt/util/extensions/muscle_groups_colors_theme_extension.dart';
 import 'package:lograt/util/workout_history_section_header.dart';
 
 class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
@@ -275,21 +276,61 @@ class WorkoutHistoryState extends ConsumerState<WorkoutHistoryWidget> {
                                               borderRadius:
                                                   BorderRadius.circular(5),
                                               color: switch (chipText) {
-                                                'Chest' => Color(0xFF733D3B),
-                                                'Shoulders' => Color(
-                                                  0xFF9E6F3C,
-                                                ),
-                                                'Arms' => Color(0xFF887634),
-                                                'Back' => Color(0xFF3F7135),
-                                                'Core' => Color(0xFF2A4B65),
-                                                'Legs' => Color(0xFF492D60),
-                                                _ => Color(0xFF2E2D2D),
+                                                'Chest' =>
+                                                  theme
+                                                      .extension<
+                                                        MuscleGroupColorsThemeExtension
+                                                      >()!
+                                                      .chest,
+                                                'Shoulders' =>
+                                                  theme
+                                                      .extension<
+                                                        MuscleGroupColorsThemeExtension
+                                                      >()!
+                                                      .shoulders,
+                                                'Arms' =>
+                                                  theme
+                                                      .extension<
+                                                        MuscleGroupColorsThemeExtension
+                                                      >()!
+                                                      .arms,
+                                                'Back' =>
+                                                  theme
+                                                      .extension<
+                                                        MuscleGroupColorsThemeExtension
+                                                      >()!
+                                                      .back,
+                                                'Core' =>
+                                                  theme
+                                                      .extension<
+                                                        MuscleGroupColorsThemeExtension
+                                                      >()!
+                                                      .core,
+                                                'Legs' =>
+                                                  theme
+                                                      .extension<
+                                                        MuscleGroupColorsThemeExtension
+                                                      >()!
+                                                      .legs,
+                                                _ =>
+                                                  theme
+                                                      .extension<
+                                                        MuscleGroupColorsThemeExtension
+                                                      >()!
+                                                      .misc,
                                               },
                                             ),
                                             child: Text(
                                               chipText,
                                               style: theme.textTheme.bodySmall
-                                                  ?.copyWith(fontSize: 10),
+                                                  ?.copyWith(
+                                                    fontSize: 10,
+                                                    color: theme
+                                                        .extension<
+                                                          MuscleGroupColorsThemeExtension
+                                                        >()!
+                                                        .muscleGroupText,
+                                                  ),
                                               textAlign: TextAlign.center,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
