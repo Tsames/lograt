@@ -50,7 +50,7 @@ class MuscleGroupDao extends ModelDao<MuscleGroupModel> {
         .toList();
   }
 
-  Future<List<MuscleGroupModel>> getAllMuscleGroupsPaginated({
+  Future<List<MuscleGroupModel>> getAllMuscleGroupsPaginatedSorted({
     int? limit,
     int? offset,
     Transaction? txn,
