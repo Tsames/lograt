@@ -15,10 +15,11 @@ import 'package:lograt/data/repositories/workout_repository.dart';
 import 'package:lograt/data/usecases/exercise_sets/create_exercise_set_usecase.dart';
 import 'package:lograt/data/usecases/exercise_sets/delete_exercise_set_usecase.dart';
 import 'package:lograt/data/usecases/exercise_sets/update_exercise_set_usecase.dart';
-import 'package:lograt/data/usecases/exercise_types/get_paginated_exercise_types_usecase.dart';
+import 'package:lograt/data/usecases/exercise_types/get_paginated_sorted_exercise_types_usecase.dart';
 import 'package:lograt/data/usecases/exercises/create_exercise_usecase.dart';
 import 'package:lograt/data/usecases/exercises/delete_exercise_usecase.dart';
 import 'package:lograt/data/usecases/exercises/update_exercise_usecase.dart';
+import 'package:lograt/data/usecases/muscle_groups/get_paginated_sorted_muscle_groups_usecase.dart';
 import 'package:lograt/data/usecases/seed_data_usecase.dart';
 import 'package:lograt/data/usecases/workouts/create_workout_usecase.dart';
 import 'package:lograt/data/usecases/workouts/delete_workout_usecase.dart';
@@ -191,10 +192,16 @@ final deleteExerciseSetUsecaseProvider = Provider<DeleteExerciseSetUsecase>((
   return DeleteExerciseSetUsecase(repository);
 });
 
-final getExerciseTypesUsecaseProvider =
-    Provider<GetPaginatedExerciseTypesUsecase>((ref) {
+final getPaginatedSortedExerciseTypesUsecaseProvider =
+    Provider<GetPaginatedSortedExerciseTypesUsecase>((ref) {
       final repository = ref.read(workoutRepositoryProvider);
-      return GetPaginatedExerciseTypesUsecase(repository);
+      return GetPaginatedSortedExerciseTypesUsecase(repository);
+    });
+
+final getPaginatedSortedMuscleGroupsProvider =
+    Provider<GetPaginatedSortedMuscleGroupsUsecase>((ref) {
+      final repository = ref.read(workoutRepositoryProvider);
+      return GetPaginatedSortedMuscleGroupsUsecase(repository);
     });
 
 final seedDataUsecaseProvider = Provider<SeedDataUsecase>((ref) {
