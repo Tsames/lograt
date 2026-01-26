@@ -251,17 +251,40 @@ class WorkoutRepository {
     }
   }
 
+  Future<List<MuscleGroup>> getPaginatedSortedMuscleGroups({
+    int? limit,
+    int? offset,
+    Transaction? txn,
+  }) async {
+    try {
+      final muscleGroupModels = await _muscleGroupDao
+          .getAllMuscleGroupsPaginatedSorted(
+            limit: limit,
+            offset: offset,
+            txn: txn,
+          );
+      return muscleGroupModels.map((model) => model.toEntity()).toList();
+    } catch (e) {
+      throw Exception('Unexpected error loading muscle groups: $e');
+    }
+  }
+
   Future<List<ExerciseType>> getExerciseTypes({
     int? limit,
     int? offset,
     Transaction? txn,
   }) async {
-    final exerciseTypeModels = await _exerciseTypeDao.getAllPaginated(
-      limit: limit,
-      offset: offset,
-      txn: txn,
-    );
-    return exerciseTypeModels.map((model) => model.toEntity()).toList();
+    try {
+      final exerciseTypeModels = await _exerciseTypeDao
+          .getAllExerciseTypesPaginatedSorted(
+            limit: limit,
+            offset: offset,
+            txn: txn,
+          );
+      return exerciseTypeModels.map((model) => model.toEntity()).toList();
+    } catch (e) {
+      throw Exception('Unexpected error loading exercise types: $e');
+    }
   }
 
   Future<int> count(String table) async {
