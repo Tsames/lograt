@@ -110,7 +110,8 @@ void main() {
 
         await exerciseTypeDao.batchInsert(exerciseTypes);
 
-        final allExerciseTypes = await exerciseTypeDao.getAllPaginated();
+        final allExerciseTypes = await exerciseTypeDao
+            .getAllExerciseTypesPaginatedSorted();
         expect(allExerciseTypes.length, equals(3));
         expect(allExerciseTypes, everyElement(isA<ExerciseTypeModel>()));
 
@@ -123,7 +124,8 @@ void main() {
       test('should handle empty list gracefully in batch insert', () async {
         await exerciseTypeDao.batchInsert([]);
 
-        final allExerciseTypes = await exerciseTypeDao.getAllPaginated();
+        final allExerciseTypes = await exerciseTypeDao
+            .getAllExerciseTypesPaginatedSorted();
         expect(allExerciseTypes, isEmpty);
       });
 
@@ -143,7 +145,8 @@ void main() {
             throwsA(isA<DatabaseException>()),
           );
 
-          final allExerciseTypes = await exerciseTypeDao.getAllPaginated();
+          final allExerciseTypes = await exerciseTypeDao
+              .getAllExerciseTypesPaginatedSorted();
           expect(allExerciseTypes.length, equals(1));
           expectExerciseTypesEqual(allExerciseTypes.first, testExerciseType);
         },
@@ -197,7 +200,8 @@ void main() {
         await exerciseTypeDao.insert(squat);
         await exerciseTypeDao.insert(deadlift);
 
-        final allExerciseTypes = await exerciseTypeDao.getAllPaginated();
+        final allExerciseTypes = await exerciseTypeDao
+            .getAllExerciseTypesPaginatedSorted();
 
         expect(allExerciseTypes.length, equals(3));
         expect(allExerciseTypes, everyElement(isA<ExerciseTypeModel>()));
@@ -211,7 +215,8 @@ void main() {
       test('should return empty list when no exercise types exist', () async {
         await exerciseTypeDao.delete(testExerciseType.id);
 
-        final exerciseTypes = await exerciseTypeDao.getAllPaginated();
+        final exerciseTypes = await exerciseTypeDao
+            .getAllExerciseTypesPaginatedSorted();
 
         expect(exerciseTypes, isEmpty);
         expect(exerciseTypes, isA<List<ExerciseTypeModel>>());
@@ -228,7 +233,7 @@ void main() {
         await exerciseTypeDao.batchInsert(exerciseTypes);
 
         // Get first 2
-        final page1 = await exerciseTypeDao.getAllPaginated(
+        final page1 = await exerciseTypeDao.getAllExerciseTypesPaginatedSorted(
           limit: 2,
           offset: 0,
         );
@@ -237,7 +242,7 @@ void main() {
         expect(page1[1].name, equals('B Exercise'));
 
         // Get next 2
-        final page2 = await exerciseTypeDao.getAllPaginated(
+        final page2 = await exerciseTypeDao.getAllExerciseTypesPaginatedSorted(
           limit: 2,
           offset: 2,
         );

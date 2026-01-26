@@ -111,7 +111,7 @@ void main() {
         await muscleGroupDao.batchInsert(muscleGroups);
 
         final allMuscleGroups = await muscleGroupDao
-            .getAllMuscleGroupsPaginated();
+            .getAllMuscleGroupsPaginatedSorted();
         expect(allMuscleGroups.length, equals(3));
         expect(allMuscleGroups, everyElement(isA<MuscleGroupModel>()));
 
@@ -125,7 +125,7 @@ void main() {
         await muscleGroupDao.batchInsert([]);
 
         final allMuscleGroups = await muscleGroupDao
-            .getAllMuscleGroupsPaginated();
+            .getAllMuscleGroupsPaginatedSorted();
         expect(allMuscleGroups, isEmpty);
       });
 
@@ -146,7 +146,7 @@ void main() {
           );
 
           final allMuscleGroups = await muscleGroupDao
-              .getAllMuscleGroupsPaginated();
+              .getAllMuscleGroupsPaginatedSorted();
           expect(allMuscleGroups.length, equals(1));
           expectMuscleGroupsEqual(allMuscleGroups.first, testMuscleGroup);
         },
@@ -201,7 +201,7 @@ void main() {
         await muscleGroupDao.insert(legs);
 
         final allMuscleGroups = await muscleGroupDao
-            .getAllMuscleGroupsPaginated();
+            .getAllMuscleGroupsPaginatedSorted();
 
         expect(allMuscleGroups.length, equals(3));
         expect(allMuscleGroups, everyElement(isA<MuscleGroupModel>()));
@@ -215,7 +215,8 @@ void main() {
       test('should return empty list when no muscle groups exist', () async {
         await muscleGroupDao.delete(testMuscleGroup.id);
 
-        final muscleGroups = await muscleGroupDao.getAllMuscleGroupsPaginated();
+        final muscleGroups = await muscleGroupDao
+            .getAllMuscleGroupsPaginatedSorted();
 
         expect(muscleGroups, isEmpty);
         expect(muscleGroups, isA<List<MuscleGroupModel>>());
@@ -232,7 +233,7 @@ void main() {
         await muscleGroupDao.batchInsert(muscleGroups);
 
         // Get first 2
-        final page1 = await muscleGroupDao.getAllMuscleGroupsPaginated(
+        final page1 = await muscleGroupDao.getAllMuscleGroupsPaginatedSorted(
           limit: 2,
           offset: 0,
         );
@@ -241,7 +242,7 @@ void main() {
         expect(page1[1].label, equals('Biceps'));
 
         // Get next 2
-        final page2 = await muscleGroupDao.getAllMuscleGroupsPaginated(
+        final page2 = await muscleGroupDao.getAllMuscleGroupsPaginatedSorted(
           limit: 2,
           offset: 2,
         );

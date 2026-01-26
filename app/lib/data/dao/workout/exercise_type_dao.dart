@@ -13,7 +13,7 @@ class ExerciseTypeDao extends ModelDao<ExerciseTypeModel> {
         fromMap: ExerciseTypeModel.fromMap,
       );
 
-  Future<List<ExerciseTypeModel>> getAllPaginated({
+  Future<List<ExerciseTypeModel>> getAllExerciseTypesPaginatedSorted({
     int? limit,
     int? offset,
     Transaction? txn,
