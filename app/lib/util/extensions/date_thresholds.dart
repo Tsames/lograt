@@ -8,7 +8,6 @@ extension DateThresholds on DateTime {
       0,
       0,
       0,
-      0,
     ).subtract(Duration(days: weekday - 1));
   }
 
@@ -24,7 +23,10 @@ extension DateThresholds on DateTime {
   }
 
   bool weekInNewMonth() {
-    return beginningOfTheWeek.month < endOfTheWeek.month;
+    final start = beginningOfTheWeek;
+    final end = endOfTheWeek;
+
+    return start.month < endOfTheWeek.month || start.year < end.year;
   }
 
   bool weekInNewYear() {
