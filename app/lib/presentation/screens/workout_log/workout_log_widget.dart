@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/presentation/screens/workout_log/child_widgets/exercise_table/exercise_table_widget.dart';
 import 'package:lograt/presentation/screens/workout_log/child_widgets/exercise_type_text_button.dart';
-import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier.dart';
+import 'package:lograt/presentation/screens/workout_log/workout_log_notifier.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 
 class WorkoutLogWidget extends ConsumerWidget {

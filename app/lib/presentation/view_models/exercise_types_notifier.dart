@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/data/providers.dart';
-import 'package:lograt/data/usecases/exercise_types/get_paginated_exercise_types_usecase.dart';
-import 'package:lograt/presentation/screens/workout_log/view_model/exercise_types_notifier_state.dart';
+import 'package:lograt/data/usecases/exercise_types/get_paginated_sorted_exercise_types_usecase.dart';
+import 'package:lograt/presentation/view_models/exercise_types_notifier_state.dart';
 
 class ExerciseTypesNotifier extends StateNotifier<ExerciseTypesNotifierState> {
-  final GetPaginatedExerciseTypesUsecase _getExerciseTypesUsecase;
+  final GetPaginatedSortedExerciseTypesUsecase _getExerciseTypesUsecase;
 
   ExerciseTypesNotifier(this._getExerciseTypesUsecase)
     : super(ExerciseTypesNotifierState()) {
@@ -18,7 +18,7 @@ class ExerciseTypesNotifier extends StateNotifier<ExerciseTypesNotifierState> {
       final paginatedResults = await _getExerciseTypesUsecase(state.offset);
       state = state.copyWith(
         isLoading: false,
-        exerciseTypes: paginatedResults.results,
+        exerciseTypes: state.exerciseTypes + paginatedResults.results,
         offset: paginatedResults.nextOffset,
         hasMore: paginatedResults.hasMore,
       );
@@ -32,6 +32,8 @@ final exerciseTypesProvider =
     StateNotifierProvider<ExerciseTypesNotifier, ExerciseTypesNotifierState>((
       ref,
     ) {
-      final getExerciseTypesUsecase = ref.read(getExerciseTypesUsecaseProvider);
+      final getExerciseTypesUsecase = ref.read(
+        getPaginatedSortedExerciseTypesUsecaseProvider,
+      );
       return ExerciseTypesNotifier(getExerciseTypesUsecase);
     });

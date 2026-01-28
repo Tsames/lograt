@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/data/providers.dart';
 import 'package:lograt/data/usecases/workouts/delete_workout_usecase.dart';
 import 'package:lograt/data/usecases/workouts/get_paginated_sorted_workouts_usecase.dart';
-import 'package:lograt/presentation/screens/workout_history/view_model/workout_history_notifier_state.dart';
+import 'package:lograt/presentation/screens/workout_history/workout_history_notifier_state.dart';
 
 class WorkoutHistoryNotifier
     extends StateNotifier<WorkoutHistoryNotifierState> {
