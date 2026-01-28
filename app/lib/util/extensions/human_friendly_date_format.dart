@@ -1,6 +1,6 @@
 import 'package:lograt/util/extensions/date_thresholds.dart';
 
-extension HumanFriendlyDateFormat on DateTime {
+extension DateFormats on DateTime {
   static const _days = [
     'Monday',
     'Tuesday',
@@ -25,7 +25,11 @@ extension HumanFriendlyDateFormat on DateTime {
     'December',
   ];
 
-  String toDayFriendlyFormat() {
+  String get weekdayName => _days[weekday - 1];
+
+  String get monthName => _months[month - 1];
+
+  String toDayOfTheMonth() {
     String suffix;
     if (day >= 11 && day <= 13) {
       suffix = 'th';
@@ -40,21 +44,17 @@ extension HumanFriendlyDateFormat on DateTime {
     return '$day$suffix';
   }
 
-  String toMonthFriendlyFormat() {
-    return _months[month - 1];
-  }
-
   String toDayAndMonthFriendlyFormat() {
-    return '${_months[month - 1]} ${toDayFriendlyFormat()}';
+    return '$monthName ${toDayOfTheMonth()}';
   }
 
   String toLongFriendlyFormat() {
-    return '${_days[weekday - 1]}, ${_months[month - 1]} ${toDayFriendlyFormat()}, $year';
+    return '$weekdayName, $monthName ${toDayOfTheMonth()}, $year';
   }
 
   String toWeekRangeFormat() {
     final start = beginningOfTheWeek;
     final end = endOfTheWeek;
-    return 'Week of ${start.toDayAndMonthFriendlyFormat()} to ${weekInNewMonth() ? '${toMonthFriendlyFormat()} ' : ''}${end.toDayFriendlyFormat()}${weekInNewYear() ? ' $year' : ''}';
+    return 'Week of ${start.toDayAndMonthFriendlyFormat()} to ${weekInNewMonth() ? '${end.monthName} ' : ''}${end.toDayOfTheMonth()}${weekInNewYear() ? ' ${end.year}' : ''}';
   }
 }
