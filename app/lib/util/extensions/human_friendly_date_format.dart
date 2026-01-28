@@ -29,6 +29,13 @@ extension DateFormats on DateTime {
 
   String get monthName => _months[month - 1];
 
+  String get timeOfDay => switch (hour) {
+    >= 5 && < 12 => 'Morning',
+    >= 12 && < 18 => 'Afternoon',
+    >= 18 && < 23 => 'Evening',
+    _ => 'Night',
+  };
+
   String toDayOfTheMonth() {
     String suffix;
     if (day >= 11 && day <= 13) {
