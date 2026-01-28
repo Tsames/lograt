@@ -2,11 +2,11 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lograt/data/entities/workouts/exercise_set.dart';
 import 'package:lograt/data/entities/set_type.dart';
 import 'package:lograt/data/entities/units.dart';
+import 'package:lograt/data/entities/workouts/exercise_set.dart';
 import 'package:lograt/presentation/screens/workout_log/child_widgets/exercise_table/exercise_table_widget.dart';
-import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier.dart';
+import 'package:lograt/presentation/screens/workout_log/workout_log_notifier.dart';
 
 class ExerciseTableState extends ConsumerState<ExerciseTableWidget>
     with TickerProviderStateMixin {

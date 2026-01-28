@@ -11,7 +11,7 @@ import 'package:lograt/data/usecases/exercise_sets/update_exercise_set_usecase.d
 import 'package:lograt/data/usecases/exercises/update_exercise_usecase.dart';
 import 'package:lograt/data/usecases/workouts/create_workout_usecase.dart';
 import 'package:lograt/data/usecases/workouts/get_full_workout_data_by_id_usecase.dart';
-import 'package:lograt/presentation/screens/workout_log/view_model/workout_log_notifier_state.dart';
+import 'package:lograt/presentation/screens/workout_log/workout_log_notifier_state.dart';
 
 class WorkoutLogNotifier extends StateNotifier<WorkoutLogNotifierState> {
   final GetFullWorkoutDataByIdUsecase _getFullWorkoutDataByIdUsecase;
