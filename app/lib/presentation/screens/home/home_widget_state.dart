@@ -20,7 +20,16 @@ class HomeWidgetState extends State<HomeWidget> {
       appBar: AppBar(title: Text(_pages[_selectedIndex].appBarTitle)),
       floatingActionButton: switch (_pages[_selectedIndex]) {
         WorkoutHistoryDrawerPage _ => FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            setState(() {
+              final indexOfCreateWorkout = _pages.indexWhere(
+                (page) => page is CreateWorkoutDrawerPage,
+              );
+              if (indexOfCreateWorkout != -1) {
+                _selectedIndex = indexOfCreateWorkout;
+              }
+            });
+          },
           child: Icon(Icons.create),
         ),
         _ => null,
