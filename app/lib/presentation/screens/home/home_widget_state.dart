@@ -17,7 +17,16 @@ class HomeWidgetState extends State<HomeWidget> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(_pages[_selectedIndex].appBarTitle)),
+      appBar: AppBar(
+        leading: switch (_pages[_selectedIndex]) {
+          WorkoutHistoryDrawerPage _ => null,
+          _ => IconButton(
+            onPressed: _setSelectedPage<WorkoutHistoryDrawerPage>,
+            icon: Icon(Icons.arrow_back_ios),
+          ),
+        },
+        title: Text(_pages[_selectedIndex].appBarTitle),
+      ),
       floatingActionButton: switch (_pages[_selectedIndex]) {
         WorkoutHistoryDrawerPage _ => FloatingActionButton(
           onPressed: _setSelectedPage<CreateWorkoutDrawerPage>,
