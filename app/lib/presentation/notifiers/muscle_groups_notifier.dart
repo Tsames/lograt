@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/data/providers.dart';
 import 'package:lograt/data/usecases/muscle_groups/get_paginated_sorted_muscle_groups_usecase.dart';
-import 'package:lograt/presentation/view_models/muscle_groups_notifier_state.dart';
+import 'package:lograt/presentation/notifiers/muscle_groups_notifier_state.dart';
 
 class MuscleGroupsNotifier extends StateNotifier<MuscleGroupNotifierState> {
   final GetPaginatedSortedMuscleGroupsUsecase _getMuscleGroupsUsecase;

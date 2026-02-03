@@ -1,15 +1,15 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:lograt/presentation/screens/create_workout/create_workout_drawer_page.dart';
 import 'package:lograt/presentation/screens/home/app_drawer_page.dart';
 import 'package:lograt/presentation/screens/home/home_widget.dart';
+import 'package:lograt/presentation/screens/new_workout/new_workout_drawer_page.dart';
 import 'package:lograt/presentation/screens/workout_history/workout_history_drawer_page.dart';
 
 class HomeWidgetState extends State<HomeWidget> {
   int _selectedIndex = 1;
   late final List<AppDrawerPage> _pages = [
-    CreateWorkoutDrawerPage(onCreateWorkout: _setSelectedPage),
+    NewWorkoutDrawerPage(onCreateWorkout: _setSelectedPage),
     WorkoutHistoryDrawerPage(),
   ];
 
@@ -25,11 +25,14 @@ class HomeWidgetState extends State<HomeWidget> {
             icon: Icon(Icons.arrow_back_ios),
           ),
         },
-        title: Text(_pages[_selectedIndex].appBarTitle),
+        title: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: Text(_pages[_selectedIndex].appBarTitle),
+        ),
       ),
       floatingActionButton: switch (_pages[_selectedIndex]) {
         WorkoutHistoryDrawerPage _ => FloatingActionButton(
-          onPressed: _setSelectedPage<CreateWorkoutDrawerPage>,
+          onPressed: _setSelectedPage<NewWorkoutDrawerPage>,
           child: Icon(Icons.create),
         ),
         _ => null,
@@ -72,7 +75,12 @@ class HomeWidgetState extends State<HomeWidget> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          child: Center(child: _pages[_selectedIndex].page),
+          child: Center(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              child: _pages[_selectedIndex].page,
+            ),
+          ),
         ),
       ),
     );
@@ -82,7 +90,7 @@ class HomeWidgetState extends State<HomeWidget> {
     final indexOfPageOfType = _pages.indexWhere((page) => page is T);
     if (indexOfPageOfType == -1) {
       throw Exception(
-        'Error when trying to set home page state to a page of type T. No page of type $T exists.',
+        'Error when trying to set home page state to a page of type $T. No page of type $T exists.',
       );
     }
     setState(() {
