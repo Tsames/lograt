@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lograt/presentation/screens/create_workout/create_workout_widget.dart';
 import 'package:lograt/presentation/screens/home/app_drawer_page.dart';
+import 'package:lograt/presentation/screens/new_workout/new_workout_widget.dart';
 
-class CreateWorkoutDrawerPage extends AppDrawerPage {
+class NewWorkoutDrawerPage extends AppDrawerPage {
   void Function<T>() onCreateWorkout;
 
-  CreateWorkoutDrawerPage({required this.onCreateWorkout});
+  NewWorkoutDrawerPage({required this.onCreateWorkout});
 
   @override
   final appBarTitle = 'Create Workout';
@@ -17,5 +17,5 @@ class CreateWorkoutDrawerPage extends AppDrawerPage {
   final icon = Icons.create;
 
   @override
-  Widget get page => CreateWorkoutWidget(onCreateWorkout);
+  Widget get page => NewWorkoutWidget(onCreateWorkout);
 }

@@ -3,14 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lograt/data/entities/muscle_group.dart';
 import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/data/providers.dart';
-import 'package:lograt/presentation/screens/create_workout/create_workout_widget.dart';
+import 'package:lograt/presentation/notifiers/muscle_groups_notifier.dart';
+import 'package:lograt/presentation/screens/new_workout/new_workout_widget.dart';
 import 'package:lograt/presentation/screens/workout_history/workout_history_drawer_page.dart';
 import 'package:lograt/presentation/screens/workout_log/workout_log_widget.dart';
-import 'package:lograt/presentation/view_models/muscle_groups_notifier.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 import 'package:lograt/util/extensions/muscle_groups_colors_theme_extension.dart';
 
-class CreateWorkoutWidgetState extends ConsumerState<CreateWorkoutWidget> {
+class NewWorkoutWidgetState extends ConsumerState<NewWorkoutWidget> {
   final _titleTextController = TextEditingController();
   final _notesController = TextEditingController();
 
