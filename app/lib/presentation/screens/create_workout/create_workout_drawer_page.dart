@@ -3,6 +3,10 @@ import 'package:lograt/presentation/screens/create_workout/create_workout_widget
 import 'package:lograt/presentation/screens/home/app_drawer_page.dart';
 
 class CreateWorkoutDrawerPage extends AppDrawerPage {
+  void Function<T>() onCreateWorkout;
+
+  CreateWorkoutDrawerPage({required this.onCreateWorkout});
+
   @override
   final appBarTitle = 'Create Workout';
 
@@ -13,5 +17,5 @@ class CreateWorkoutDrawerPage extends AppDrawerPage {
   final icon = Icons.create;
 
   @override
-  Widget get page => CreateWorkoutWidget();
+  Widget get page => CreateWorkoutWidget(onCreateWorkout);
 }
