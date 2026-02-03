@@ -9,7 +9,7 @@ import 'package:lograt/presentation/screens/workout_history/workout_history_draw
 class HomeWidgetState extends State<HomeWidget> {
   int _selectedIndex = 1;
   late final List<AppDrawerPage> _pages = [
-    CreateWorkoutDrawerPage(),
+    CreateWorkoutDrawerPage(onCreateWorkout: _setSelectedPage),
     WorkoutHistoryDrawerPage(),
   ];
 
@@ -20,16 +20,7 @@ class HomeWidgetState extends State<HomeWidget> {
       appBar: AppBar(title: Text(_pages[_selectedIndex].appBarTitle)),
       floatingActionButton: switch (_pages[_selectedIndex]) {
         WorkoutHistoryDrawerPage _ => FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              final indexOfCreateWorkout = _pages.indexWhere(
-                (page) => page is CreateWorkoutDrawerPage,
-              );
-              if (indexOfCreateWorkout != -1) {
-                _selectedIndex = indexOfCreateWorkout;
-              }
-            });
-          },
+          onPressed: _setSelectedPage<CreateWorkoutDrawerPage>,
           child: Icon(Icons.create),
         ),
         _ => null,
@@ -59,10 +50,7 @@ class HomeWidgetState extends State<HomeWidget> {
                     title: Text(drawerPage.drawerTitle),
                     selected: _selectedIndex == index,
                     onTap: () {
-                      if (index >= _pages.length) return;
-                      setState(() {
-                        _selectedIndex = index;
-                      });
+                      _setSelectedIndex(index);
                       Navigator.pop(context);
                     },
                   );
@@ -79,5 +67,28 @@ class HomeWidgetState extends State<HomeWidget> {
         ),
       ),
     );
+  }
+
+  void _setSelectedPage<T>() {
+    final indexOfPageOfType = _pages.indexWhere((page) => page is T);
+    if (indexOfPageOfType == -1) {
+      throw Exception(
+        'Error when trying to set home page state to a page of type T. No page of type $T exists.',
+      );
+    }
+    setState(() {
+      _selectedIndex = indexOfPageOfType;
+    });
+  }
+
+  void _setSelectedIndex(int newIndex) {
+    if (newIndex < 0 || newIndex >= _pages.length) {
+      throw Exception(
+        'New selected index, $newIndex, is out of bounds. Pages has length ${_pages.length}.',
+      );
+    }
+    setState(() {
+      _selectedIndex = newIndex;
+    });
   }
 }
