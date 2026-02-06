@@ -21,18 +21,6 @@ class MuscleGroupToWorkoutTemplateModel
   @override
   String get rightId => workoutTemplateId;
 
-  @override
-  String get nameOfTable => tableName;
-
-  @override
-  String get idField => idFieldName;
-
-  @override
-  String get leftModelIdField => muscleGroupIdFieldName;
-
-  @override
-  String get rightModelIdField => workoutTemplateIdFieldName;
-
   const MuscleGroupToWorkoutTemplateModel._({
     required this.id,
     required this.muscleGroupId,

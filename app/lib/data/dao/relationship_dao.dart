@@ -3,17 +3,26 @@ import 'package:lograt/data/models/relationship.dart';
 import 'package:lograt/util/uuidv7.dart';
 import 'package:sqflite/sqflite.dart';
 
-abstract class ManyToManyRelationshipDao<T extends Relationship> {
+abstract class RelationshipDao<T extends Relationship> {
   final AppDatabase db;
+  final String tableName;
+  final String relationshipIdFieldName;
+  final String leftModelIdFieldName;
+  final String rightModelIdFieldName;
 
-  ManyToManyRelationshipDao({required this.db});
+  RelationshipDao({
+    required this.db,
+    required this.tableName,
+    required this.relationshipIdFieldName,
+    required this.leftModelIdFieldName,
+    required this.rightModelIdFieldName,
+  });
 
   Future<bool> relationshipExists(T relationship, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await db.database;
     final maps = await executor.query(
-      relationship.nameOfTable,
-      where:
-          '${relationship.leftModelIdField} = ? AND ${relationship.rightModelIdField} = ?',
+      tableName,
+      where: '$leftModelIdFieldName = ? AND $rightModelIdFieldName = ?',
       whereArgs: [relationship.leftId, relationship.rightId],
       limit: 1,
     );
@@ -22,10 +31,10 @@ abstract class ManyToManyRelationshipDao<T extends Relationship> {
 
   Future<void> insertRelationship(T relationship, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await db.database;
-    await executor.insert(relationship.nameOfTable, {
-      relationship.idField: uuidV7(),
-      relationship.leftModelIdField: relationship.leftId,
-      relationship.rightModelIdField: relationship.rightId,
+    await executor.insert(tableName, {
+      relationshipIdFieldName: uuidV7(),
+      leftModelIdFieldName: relationship.leftId,
+      rightModelIdFieldName: relationship.rightId,
     }, conflictAlgorithm: ConflictAlgorithm.fail);
   }
 
@@ -39,10 +48,10 @@ abstract class ManyToManyRelationshipDao<T extends Relationship> {
     final batch = executor.batch();
 
     for (final rel in relationships) {
-      batch.insert(rel.nameOfTable, {
-        rel.idField: uuidV7(),
-        rel.leftModelIdField: rel.leftId,
-        rel.rightModelIdField: rel.rightId,
+      batch.insert(tableName, {
+        relationshipIdFieldName: uuidV7(),
+        leftModelIdFieldName: rel.leftId,
+        rightModelIdFieldName: rel.rightId,
       }, conflictAlgorithm: ConflictAlgorithm.fail);
     }
 
@@ -52,15 +61,14 @@ abstract class ManyToManyRelationshipDao<T extends Relationship> {
   Future<void> delete(T relationship, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await db.database;
     final rowsDeleted = await executor.delete(
-      relationship.nameOfTable,
-      where:
-          '${relationship.leftModelIdField} = ? AND ${relationship.rightModelIdField} = ?',
+      tableName,
+      where: '$leftModelIdFieldName = ? AND $rightModelIdFieldName = ?',
       whereArgs: [relationship.leftId, relationship.rightId],
     );
 
     if (rowsDeleted == 0) {
       throw Exception(
-        'Cannot delete relationship of type $T (${relationship.leftModelIdField}: $relationship.leftId, ${relationship.rightModelIdField}: $relationship.rightId): does not exist',
+        'Cannot delete relationship of type $T ($leftModelIdFieldName: ${relationship.leftId}, $rightModelIdFieldName: ${relationship.rightId}): does not exist',
       );
     }
   }

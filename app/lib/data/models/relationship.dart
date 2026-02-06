@@ -7,13 +7,5 @@ abstract interface class Relationship<L extends Model, R extends Model> {
 
   String get rightId;
 
-  String get nameOfTable;
-
-  String get idField;
-
-  String get leftModelIdField;
-
-  String get rightModelIdField;
-
   Map<String, dynamic> toMap();
 }

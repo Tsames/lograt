@@ -1,13 +1,18 @@
-import 'package:lograt/data/dao/many_to_many_relationship_dao.dart';
+import 'package:lograt/data/dao/relationship_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/models/muscle_group/muscle_group_to_workout_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class MuscleGroupToWorkoutDao
-    extends ManyToManyRelationshipDao<MuscleGroupToWorkoutModel> {
-  late final _tableName = MuscleGroupToWorkoutModel.tableName;
-
-  MuscleGroupToWorkoutDao(AppDatabase db) : super(db: db);
+    extends RelationshipDao<MuscleGroupToWorkoutModel> {
+  MuscleGroupToWorkoutDao(AppDatabase db)
+    : super(
+        db: db,
+        tableName: MuscleGroupToWorkoutModel.tableName,
+        relationshipIdFieldName: MuscleGroupToWorkoutModel.idFieldName,
+        leftModelIdFieldName: MuscleGroupToWorkoutModel.muscleGroupIdFieldName,
+        rightModelIdFieldName: MuscleGroupToWorkoutModel.workoutIdFieldName,
+      );
 
   Future<List<MuscleGroupToWorkoutModel>> getRelationshipsByWorkoutIds(
     List<String> workoutIds, [
@@ -22,7 +27,7 @@ class MuscleGroupToWorkoutDao
 
     final placeholders = List.filled(workoutIds.length, '?').join(', ');
     final records = await executor.query(
-      _tableName,
+      tableName,
       where:
           '${MuscleGroupToWorkoutModel.workoutIdFieldName} IN ($placeholders)',
       whereArgs: [...workoutIds],
