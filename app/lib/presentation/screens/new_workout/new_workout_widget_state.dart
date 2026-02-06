@@ -52,8 +52,6 @@ class NewWorkoutWidgetState extends ConsumerState<NewWorkoutWidget> {
         muscleGroups: _selectedMuscleGroups.toList(),
       );
 
-      await ref.read(createWorkoutUsecaseProvider).call(workout);
-
       if (mounted) {
         Navigator.push(
           context,
@@ -61,6 +59,8 @@ class NewWorkoutWidgetState extends ConsumerState<NewWorkoutWidget> {
         );
         widget.onCreateWorkout<WorkoutHistoryDrawerPage>();
       }
+
+      await ref.read(createWorkoutUsecaseProvider).call(workout);
     } catch (e) {
       if (mounted) {
         setState(() {

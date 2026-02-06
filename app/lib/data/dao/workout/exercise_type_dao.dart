@@ -8,8 +8,8 @@ class ExerciseTypeDao extends ModelDao<ExerciseTypeModel> {
     : super(
         db: db,
         modelName: 'exercise type',
-        tableName: exerciseTypesTable,
-        modelIdFieldName: ExerciseTypeFields.id,
+        tableName: ExerciseTypeModel.tableName,
+        modelIdFieldName: ExerciseTypeModel.idFieldName,
         fromMap: ExerciseTypeModel.fromMap,
       );
 
@@ -22,7 +22,7 @@ class ExerciseTypeDao extends ModelDao<ExerciseTypeModel> {
 
     final maps = await executor.query(
       tableName,
-      orderBy: '${ExerciseTypeFields.name} ASC',
+      orderBy: '${ExerciseTypeModel.nameFieldName} ASC',
       limit: limit,
       offset: offset,
     );
@@ -35,7 +35,7 @@ class ExerciseTypeDao extends ModelDao<ExerciseTypeModel> {
 
     final maps = await executor.query(
       tableName,
-      where: '${ExerciseTypeFields.name} = ?',
+      where: '${ExerciseTypeModel.nameFieldName} = ?',
       whereArgs: [name],
     );
 

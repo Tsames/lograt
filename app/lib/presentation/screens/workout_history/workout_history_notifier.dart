@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lograt/data/entities/workouts/workout.dart';
 import 'package:lograt/data/providers.dart';
 import 'package:lograt/data/usecases/workouts/delete_workout_usecase.dart';
 import 'package:lograt/data/usecases/workouts/get_paginated_sorted_workouts_usecase.dart';
@@ -15,7 +16,7 @@ class WorkoutHistoryNotifier
     this._deleteWorkoutUsecase,
   ) : super(const WorkoutHistoryNotifierState());
 
-  Future<void> loadPaginatedWorkouts() async {
+  Future<void> loadPaginatedWorkouts({List<Workout>? addTo}) async {
     if (!state.hasMore) return;
     state = state.copyWith(isLoading: true, error: null);
 
@@ -35,7 +36,7 @@ class WorkoutHistoryNotifier
       }
 
       state = state.copyWith(
-        workouts: state.workouts + paginatedResults.results,
+        workouts: (addTo ?? state.workouts) + paginatedResults.results,
         isLoading: false,
         hasMore: paginatedResults.hasMore,
         offset: paginatedResults.nextOffset,
