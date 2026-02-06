@@ -4,24 +4,6 @@ import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/data/models/model.dart';
 import 'package:lograt/util/uuidv7.dart';
 
-const exercisesTable = 'exercises';
-
-class ExerciseFields {
-  static final List<String> values = [
-    id,
-    order,
-    workoutId,
-    exerciseTypeId,
-    notes,
-  ];
-
-  static final String id = 'id';
-  static final String order = 'exercise_order';
-  static final String workoutId = 'workout_id';
-  static final String exerciseTypeId = 'exercise_type_id';
-  static final String notes = 'notes';
-}
-
 class ExerciseModel implements Model {
   @override
   final String id;
@@ -29,6 +11,13 @@ class ExerciseModel implements Model {
   final String workoutId; // Foreign key to workouts table
   final String? exerciseTypeId; // Foreign key to exercise_types table
   final String? notes;
+
+  static final tableName = 'exercises';
+  static final idFieldName = 'id';
+  static final orderFieldName = 'exercise_order';
+  static final workoutIdFieldName = 'workout_id';
+  static final exerciseTypeIdFieldName = 'exercise_type_id';
+  static final notesFieldName = 'notes';
 
   const ExerciseModel({
     required this.id,
@@ -74,15 +63,15 @@ class ExerciseModel implements Model {
   }
 
   static ExerciseModel? fromMap(Map<String, dynamic> map) {
-    final id = map[ExerciseFields.id];
+    final id = map[idFieldName];
     if (id == null || id is! String) return null;
-    final order = map[ExerciseFields.order];
+    final order = map[orderFieldName];
     if (order == null || order is! int) return null;
-    final workoutId = map[ExerciseFields.workoutId];
+    final workoutId = map[workoutIdFieldName];
     if (workoutId == null || workoutId is! String) return null;
-    final exerciseTypeId = map[ExerciseFields.exerciseTypeId];
+    final exerciseTypeId = map[exerciseTypeIdFieldName];
     if (exerciseTypeId != null && exerciseTypeId is! String) return null;
-    final notes = map[ExerciseFields.notes];
+    final notes = map[notesFieldName];
     if (notes != null && notes is! String) return null;
     return ExerciseModel(
       id: id,
@@ -96,11 +85,11 @@ class ExerciseModel implements Model {
   @override
   Map<String, dynamic> toMap() {
     return {
-      ExerciseFields.id: id,
-      ExerciseFields.order: order,
-      ExerciseFields.workoutId: workoutId,
-      ExerciseFields.exerciseTypeId: exerciseTypeId,
-      ExerciseFields.notes: notes,
+      idFieldName: id,
+      orderFieldName: order,
+      workoutIdFieldName: workoutId,
+      exerciseTypeIdFieldName: exerciseTypeId,
+      notesFieldName: notes,
     };
   }
 

@@ -138,14 +138,14 @@ class AppDatabase {
 
   String _createExercisesTableSQL() {
     return '''
-    CREATE TABLE $exercisesTable(
-      ${ExerciseFields.id} TEXT PRIMARY KEY,
-      ${ExerciseFields.order} INTEGER NOT NULL,
-      ${ExerciseFields.workoutId} TEXT NOT NULL,
-      ${ExerciseFields.exerciseTypeId} TEXT,
-      ${ExerciseFields.notes} TEXT,
-      FOREIGN KEY (${ExerciseFields.workoutId}) REFERENCES ${WorkoutModel.tableName}(${WorkoutModel.idFieldName}) ON DELETE CASCADE,
-      FOREIGN KEY (${ExerciseFields.exerciseTypeId}) REFERENCES $exerciseTypesTable(${ExerciseTypeFields.id}) ON DELETE CASCADE
+    CREATE TABLE ${ExerciseModel.tableName}(
+      ${ExerciseModel.idFieldName} TEXT PRIMARY KEY,
+      ${ExerciseModel.orderFieldName} INTEGER NOT NULL,
+      ${ExerciseModel.workoutIdFieldName} TEXT NOT NULL,
+      ${ExerciseModel.exerciseTypeIdFieldName} TEXT,
+      ${ExerciseModel.notesFieldName} TEXT,
+      FOREIGN KEY (${ExerciseModel.workoutIdFieldName}) REFERENCES ${WorkoutModel.tableName}(${WorkoutModel.idFieldName}) ON DELETE CASCADE,
+      FOREIGN KEY (${ExerciseModel.exerciseTypeIdFieldName}) REFERENCES $exerciseTypesTable(${ExerciseTypeFields.id}) ON DELETE CASCADE
     )
   ''';
   }
@@ -174,7 +174,7 @@ class AppDatabase {
       ${ExerciseSetFields.units} TEXT,
       ${ExerciseSetFields.reps} INTEGER,
       ${ExerciseSetFields.restTimeSeconds} INTEGER,
-      FOREIGN KEY (${ExerciseSetFields.exerciseId}) REFERENCES $exercisesTable(${ExerciseFields.id}) ON DELETE CASCADE
+      FOREIGN KEY (${ExerciseSetFields.exerciseId}) REFERENCES ${ExerciseModel.tableName}(${ExerciseModel.idFieldName}) ON DELETE CASCADE
     )
     ''';
   }
