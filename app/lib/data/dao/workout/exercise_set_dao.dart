@@ -8,8 +8,8 @@ class ExerciseSetDao extends ModelDao<ExerciseSetModel> {
     : super(
         db: db,
         modelName: 'set',
-        tableName: setsTable,
-        modelIdFieldName: ExerciseSetFields.id,
+        tableName: ExerciseSetModel.tableName,
+        modelIdFieldName: ExerciseSetModel.idFieldName,
         fromMap: ExerciseSetModel.fromMap,
       );
 
@@ -20,9 +20,9 @@ class ExerciseSetDao extends ModelDao<ExerciseSetModel> {
     final DatabaseExecutor executor = txn ?? await db.database;
     final maps = await executor.query(
       tableName,
-      where: '${ExerciseSetFields.exerciseId} = ?',
+      where: '${ExerciseSetModel.exerciseIdFieldName} = ?',
       whereArgs: [exerciseId],
-      orderBy: '${ExerciseSetFields.order} ASC',
+      orderBy: '${ExerciseSetModel.orderFieldName} ASC',
     );
 
     return maps.map((map) => ExerciseSetModel.fromMap(map)).nonNulls.toList();

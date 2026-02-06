@@ -165,16 +165,16 @@ class AppDatabase {
 
   String _createSetsTableSQL() {
     return '''
-    CREATE TABLE $setsTable(
-      ${ExerciseSetFields.id} TEXT PRIMARY KEY,
-      ${ExerciseSetFields.order} INTEGER NOT NULL,
-      ${ExerciseSetFields.exerciseId} TEXT NOT NULL,
-      ${ExerciseSetFields.setType} TEXT,
-      ${ExerciseSetFields.weight} REAL,
-      ${ExerciseSetFields.units} TEXT,
-      ${ExerciseSetFields.reps} INTEGER,
-      ${ExerciseSetFields.restTimeSeconds} INTEGER,
-      FOREIGN KEY (${ExerciseSetFields.exerciseId}) REFERENCES ${ExerciseModel.tableName}(${ExerciseModel.idFieldName}) ON DELETE CASCADE
+    CREATE TABLE ${ExerciseSetModel.tableName}(
+      ${ExerciseSetModel.idFieldName} TEXT PRIMARY KEY,
+      ${ExerciseSetModel.orderFieldName} INTEGER NOT NULL,
+      ${ExerciseSetModel.exerciseIdFieldName} TEXT NOT NULL,
+      ${ExerciseSetModel.setTypeFieldName} TEXT,
+      ${ExerciseSetModel.weightFieldName} REAL,
+      ${ExerciseSetModel.unitsFieldName} TEXT,
+      ${ExerciseSetModel.repsFieldName} INTEGER,
+      ${ExerciseSetModel.restTimeSecondsFieldName} INTEGER,
+      FOREIGN KEY (${ExerciseSetModel.exerciseIdFieldName}) REFERENCES ${ExerciseModel.tableName}(${ExerciseModel.idFieldName}) ON DELETE CASCADE
     )
     ''';
   }

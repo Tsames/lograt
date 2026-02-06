@@ -1,32 +1,8 @@
-import 'package:lograt/data/entities/workouts/exercise_set.dart';
 import 'package:lograt/data/entities/set_type.dart';
 import 'package:lograt/data/entities/units.dart';
+import 'package:lograt/data/entities/workouts/exercise_set.dart';
 import 'package:lograt/data/models/model.dart';
 import 'package:lograt/util/uuidv7.dart';
-
-const setsTable = 'sets';
-
-class ExerciseSetFields {
-  static final List<String> values = [
-    id,
-    order,
-    exerciseId,
-    setType,
-    weight,
-    units,
-    reps,
-    restTimeSeconds,
-  ];
-
-  static final String id = 'id';
-  static final String order = 'set_order';
-  static final String exerciseId = 'exercise_id';
-  static final String setType = 'set_type';
-  static final String weight = 'weight';
-  static final String units = 'units';
-  static final String reps = 'reps';
-  static final String restTimeSeconds = 'rest_time_seconds';
-}
 
 class ExerciseSetModel implements Model {
   @override
@@ -38,6 +14,16 @@ class ExerciseSetModel implements Model {
   final String? units;
   final int? reps;
   final int? restTimeSeconds;
+
+  static final tableName = 'sets';
+  static final idFieldName = 'id';
+  static final orderFieldName = 'set_order';
+  static final exerciseIdFieldName = 'exercise_id';
+  static final setTypeFieldName = 'set_type';
+  static final weightFieldName = 'weight';
+  static final unitsFieldName = 'units';
+  static final repsFieldName = 'reps';
+  static final restTimeSecondsFieldName = 'rest_time_seconds';
 
   ExerciseSetModel({
     required this.id,
@@ -98,21 +84,21 @@ class ExerciseSetModel implements Model {
   }
 
   static ExerciseSetModel? fromMap(Map<String, dynamic> map) {
-    final id = map[ExerciseSetFields.id];
+    final id = map[idFieldName];
     if (id == null || id is! String) return null;
-    final order = map[ExerciseSetFields.order];
+    final order = map[orderFieldName];
     if (order == null || order is! int) return null;
-    final exerciseId = map[ExerciseSetFields.exerciseId];
+    final exerciseId = map[exerciseIdFieldName];
     if (exerciseId == null || exerciseId is! String) return null;
-    final setType = map[ExerciseSetFields.setType];
+    final setType = map[setTypeFieldName];
     if (setType != null && setType is! String) return null;
-    final weight = map[ExerciseSetFields.weight];
+    final weight = map[weightFieldName];
     if (weight != null && weight is! double) return null;
-    final units = map[ExerciseSetFields.units];
+    final units = map[unitsFieldName];
     if (units != null && units is! String) return null;
-    final reps = map[ExerciseSetFields.reps];
+    final reps = map[repsFieldName];
     if (reps != null && reps is! int) return null;
-    final restTimeSeconds = map[ExerciseSetFields.restTimeSeconds];
+    final restTimeSeconds = map[restTimeSecondsFieldName];
     if (restTimeSeconds != null && restTimeSeconds is! int) return null;
     return ExerciseSetModel(
       id: id,
@@ -129,14 +115,14 @@ class ExerciseSetModel implements Model {
   @override
   Map<String, dynamic> toMap() {
     return {
-      ExerciseSetFields.id: id,
-      ExerciseSetFields.order: order,
-      ExerciseSetFields.exerciseId: exerciseId,
-      ExerciseSetFields.setType: setType,
-      ExerciseSetFields.weight: weight,
-      ExerciseSetFields.units: units,
-      ExerciseSetFields.reps: reps,
-      ExerciseSetFields.restTimeSeconds: restTimeSeconds,
+      idFieldName: id,
+      orderFieldName: order,
+      exerciseIdFieldName: exerciseId,
+      setTypeFieldName: setType,
+      weightFieldName: weight,
+      unitsFieldName: units,
+      repsFieldName: reps,
+      restTimeSecondsFieldName: restTimeSeconds,
     };
   }
 
