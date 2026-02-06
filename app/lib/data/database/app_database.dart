@@ -181,13 +181,13 @@ class AppDatabase {
 
   String _createSetTemplatesTableSQL() {
     return '''
-    CREATE TABLE $setTemplateTable(
-      ${ExerciseSetTemplateFields.id} TEXT PRIMARY KEY,
-      ${ExerciseSetTemplateFields.order} INTEGER NOT NULL,
-      ${ExerciseSetTemplateFields.exerciseTemplateId} TEXT NOT NULL,
-      ${ExerciseSetTemplateFields.units} TEXT,
-      ${ExerciseSetTemplateFields.setType} TEXT,
-      FOREIGN KEY (${ExerciseSetTemplateFields.exerciseTemplateId}) REFERENCES $exerciseTemplatesTable(${ExerciseTemplateFields.id}) ON DELETE CASCADE
+    CREATE TABLE ${ExerciseSetTemplateModel.tableName}(
+      ${ExerciseSetTemplateModel.idFieldName} TEXT PRIMARY KEY,
+      ${ExerciseSetTemplateModel.orderFieldName} INTEGER NOT NULL,
+      ${ExerciseSetTemplateModel.exerciseTemplateIdFieldName} TEXT NOT NULL,
+      ${ExerciseSetTemplateModel.unitsFieldName} TEXT,
+      ${ExerciseSetTemplateModel.setTypeFieldName} TEXT,
+      FOREIGN KEY (${ExerciseSetTemplateModel.exerciseTemplateIdFieldName}) REFERENCES $exerciseTemplatesTable(${ExerciseTemplateFields.id}) ON DELETE CASCADE
     )
   ''';
   }

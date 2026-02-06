@@ -4,24 +4,6 @@ import 'package:lograt/data/entities/units.dart';
 import 'package:lograt/data/models/model.dart';
 import 'package:lograt/util/uuidv7.dart';
 
-const setTemplateTable = 'set_templates';
-
-class ExerciseSetTemplateFields {
-  static final List<String> values = [
-    id,
-    order,
-    exerciseTemplateId,
-    setType,
-    units,
-  ];
-
-  static final String id = 'id';
-  static final String order = 'set_template_order';
-  static final String exerciseTemplateId = 'exercise_template_id';
-  static final String setType = 'set_type';
-  static final String units = 'units';
-}
-
 class ExerciseSetTemplateModel implements Model {
   @override
   final String id;
@@ -29,6 +11,13 @@ class ExerciseSetTemplateModel implements Model {
   final String exerciseTemplateId; // Foreign key to workout_exercises table
   final String? setType;
   final String? units;
+
+  static final tableName = 'set_templates';
+  static final idFieldName = 'id';
+  static final orderFieldName = 'set_template_order';
+  static final exerciseTemplateIdFieldName = 'exercise_template_id';
+  static final setTypeFieldName = 'set_type';
+  static final unitsFieldName = 'units';
 
   ExerciseSetTemplateModel({
     required this.id,
@@ -72,18 +61,17 @@ class ExerciseSetTemplateModel implements Model {
   }
 
   static ExerciseSetTemplateModel? fromMap(Map<String, dynamic> map) {
-    final id = map[ExerciseSetTemplateFields.id];
+    final id = map[idFieldName];
     if (id == null || id is! String) return null;
-    final order = map[ExerciseSetTemplateFields.order];
+    final order = map[orderFieldName];
     if (order == null || order is! int) return null;
-    final exerciseTemplateId =
-        map[ExerciseSetTemplateFields.exerciseTemplateId];
+    final exerciseTemplateId = map[exerciseTemplateIdFieldName];
     if (exerciseTemplateId == null || exerciseTemplateId is! String) {
       return null;
     }
-    final setType = map[ExerciseSetTemplateFields.setType];
+    final setType = map[setTypeFieldName];
     if (setType != null && setType is! String) return null;
-    final units = map[ExerciseSetTemplateFields.units];
+    final units = map[unitsFieldName];
     if (units != null && units is! String) return null;
     return ExerciseSetTemplateModel(
       id: id,
@@ -97,11 +85,11 @@ class ExerciseSetTemplateModel implements Model {
   @override
   Map<String, dynamic> toMap() {
     return {
-      ExerciseSetTemplateFields.id: id,
-      ExerciseSetTemplateFields.order: order,
-      ExerciseSetTemplateFields.exerciseTemplateId: exerciseTemplateId,
-      ExerciseSetTemplateFields.setType: setType,
-      ExerciseSetTemplateFields.units: units,
+      idFieldName: id,
+      orderFieldName: order,
+      exerciseTemplateIdFieldName: exerciseTemplateId,
+      setTypeFieldName: setType,
+      unitsFieldName: units,
     };
   }
 
