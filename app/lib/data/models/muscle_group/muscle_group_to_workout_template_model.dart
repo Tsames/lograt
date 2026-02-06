@@ -1,21 +1,37 @@
-import 'package:lograt/data/models/model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_model.dart';
+import 'package:lograt/data/models/relationship.dart';
+import 'package:lograt/data/models/templates/workout_template_model.dart';
 import 'package:lograt/util/uuidv7.dart';
 
-const muscleGroupToWorkoutTemplateTable = 'muscle_group_to_workout_template';
-
-class MuscleGroupToWorkoutTemplateFields {
-  static final List<String> values = [id, muscleGroupId, workoutTemplateId];
-
-  static final String id = 'id';
-  static final String muscleGroupId = 'muscle_group_id';
-  static final String workoutTemplateId = 'workout_template_id';
-}
-
-class MuscleGroupToWorkoutTemplateModel implements Model {
+class MuscleGroupToWorkoutTemplateModel
+    implements Relationship<MuscleGroupModel, WorkoutTemplateModel> {
   @override
   final String id;
   final String muscleGroupId;
   final String workoutTemplateId;
+
+  static final tableName = 'muscle_group_to_workout_template';
+  static final String idFieldName = 'id';
+  static final String muscleGroupIdFieldName = 'muscle_group_id';
+  static final String workoutTemplateIdFieldName = 'workout_template_id';
+
+  @override
+  String get leftId => muscleGroupId;
+
+  @override
+  String get rightId => workoutTemplateId;
+
+  @override
+  String get nameOfTable => tableName;
+
+  @override
+  String get idField => idFieldName;
+
+  @override
+  String get leftModelIdField => muscleGroupIdFieldName;
+
+  @override
+  String get rightModelIdField => workoutTemplateIdFieldName;
 
   const MuscleGroupToWorkoutTemplateModel._({
     required this.id,
@@ -33,12 +49,11 @@ class MuscleGroupToWorkoutTemplateModel implements Model {
        );
 
   static MuscleGroupToWorkoutTemplateModel? fromMap(Map<String, dynamic> map) {
-    final id = map[MuscleGroupToWorkoutTemplateFields.id];
+    final id = map[idFieldName];
     if (id == null || id is! String) return null;
-    final muscleGroupId = map[MuscleGroupToWorkoutTemplateFields.muscleGroupId];
+    final muscleGroupId = map[muscleGroupIdFieldName];
     if (muscleGroupId == null || muscleGroupId is! String) return null;
-    final workoutTemplateId =
-        map[MuscleGroupToWorkoutTemplateFields.workoutTemplateId];
+    final workoutTemplateId = map[workoutTemplateIdFieldName];
     if (workoutTemplateId != null && workoutTemplateId is! String) return null;
     return MuscleGroupToWorkoutTemplateModel._(
       id: id,
@@ -50,9 +65,9 @@ class MuscleGroupToWorkoutTemplateModel implements Model {
   @override
   Map<String, dynamic> toMap() {
     return {
-      MuscleGroupToWorkoutTemplateFields.id: id,
-      MuscleGroupToWorkoutTemplateFields.muscleGroupId: muscleGroupId,
-      MuscleGroupToWorkoutTemplateFields.workoutTemplateId: workoutTemplateId,
+      idFieldName: id,
+      muscleGroupIdFieldName: muscleGroupId,
+      workoutTemplateIdFieldName: workoutTemplateId,
     };
   }
 
