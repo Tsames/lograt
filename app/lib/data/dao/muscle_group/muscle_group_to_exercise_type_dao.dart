@@ -1,10 +1,19 @@
-import 'package:lograt/data/dao/many_to_many_relationship_dao.dart';
+import 'package:lograt/data/dao/relationship_dao.dart';
 import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/models/muscle_group/muscle_group_to_exercise_type_model.dart';
 
 class MuscleGroupToExerciseTypeDao
-    extends ManyToManyRelationshipDao<MuscleGroupToExerciseTypeModel> {
-  MuscleGroupToExerciseTypeDao(AppDatabase db) : super(db: db);
+    extends RelationshipDao<MuscleGroupToExerciseTypeModel> {
+  MuscleGroupToExerciseTypeDao(AppDatabase db)
+    : super(
+        db: db,
+        tableName: MuscleGroupToExerciseTypeModel.tableName,
+        relationshipIdFieldName: MuscleGroupToExerciseTypeModel.idFieldName,
+        leftModelIdFieldName:
+            MuscleGroupToExerciseTypeModel.muscleGroupIdFieldName,
+        rightModelIdFieldName:
+            MuscleGroupToExerciseTypeModel.exerciseTypeIdFieldName,
+      );
 
   /// Deletes muscle group relationships for a exercise type.
   ///
