@@ -204,13 +204,13 @@ class AppDatabase {
 
   String _createMuscleGroupsToWorkoutsTableSQL() {
     return '''
-    CREATE TABLE $muscleGroupToWorkoutTable(
-      ${MuscleGroupToWorkoutFields.id} TEXT PRIMARY KEY,
-      ${MuscleGroupToWorkoutFields.muscleGroupId} TEXT NOT NULL,
-      ${MuscleGroupToWorkoutFields.workoutId} TEXT NOT NULL,
-      FOREIGN KEY (${MuscleGroupToWorkoutFields.workoutId}) REFERENCES $workoutsTable(${WorkoutFields.id}) ON DELETE CASCADE,
-      FOREIGN KEY (${MuscleGroupToWorkoutFields.muscleGroupId}) REFERENCES $muscleGroupsTable(${MuscleGroupFields.id}) ON DELETE CASCADE,
-      UNIQUE(${MuscleGroupToWorkoutFields.workoutId}, ${MuscleGroupToWorkoutFields.muscleGroupId})
+    CREATE TABLE $MuscleGroupToWorkoutModel(
+      ${MuscleGroupToWorkoutModel.idFieldName} TEXT PRIMARY KEY,
+      ${MuscleGroupToWorkoutModel.muscleGroupIdFieldName} TEXT NOT NULL,
+      ${MuscleGroupToWorkoutModel.workoutIdFieldName} TEXT NOT NULL,
+      FOREIGN KEY (${MuscleGroupToWorkoutModel.workoutIdFieldName}) REFERENCES $workoutsTable(${WorkoutFields.id}) ON DELETE CASCADE,
+      FOREIGN KEY (${MuscleGroupToWorkoutModel.muscleGroupIdFieldName}) REFERENCES $muscleGroupsTable(${MuscleGroupFields.id}) ON DELETE CASCADE,
+      UNIQUE(${MuscleGroupToWorkoutModel.workoutIdFieldName}, ${MuscleGroupToWorkoutModel.muscleGroupIdFieldName})
     )
   ''';
   }
