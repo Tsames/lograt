@@ -171,7 +171,7 @@ void main() {
         muscleGroupToWorkoutTemplateTable,
       );
       final muscleGroupToExerciseTypeCount = await repository.count(
-        muscleGroupToExerciseTypeTable,
+        MuscleGroupToExerciseTypeModel.tableName,
       );
 
       expect(workoutCount, equals(expectedWorkoutCount));

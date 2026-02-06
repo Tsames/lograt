@@ -1,21 +1,37 @@
-import 'package:lograt/data/models/model.dart';
+import 'package:lograt/data/models/muscle_group/muscle_group_model.dart';
+import 'package:lograt/data/models/relationship.dart';
+import 'package:lograt/data/models/workouts/exercise_type_model.dart';
 import 'package:lograt/util/uuidv7.dart';
 
-const muscleGroupToExerciseTypeTable = 'muscle_group_to_exercise_type';
-
-class MuscleGroupToExerciseTypeFields {
-  static final List<String> values = [id, muscleGroupId, exerciseTypeId];
-
-  static final String id = 'id';
-  static final String muscleGroupId = 'muscle_group_id';
-  static final String exerciseTypeId = 'exercise_type_id';
-}
-
-class MuscleGroupToExerciseTypeModel implements Model {
+class MuscleGroupToExerciseTypeModel
+    implements Relationship<MuscleGroupModel, ExerciseTypeModel> {
   @override
   final String id;
   final String muscleGroupId;
   final String exerciseTypeId;
+
+  static const String tableName = 'muscle_group_to_exercise_type';
+  static final String idFieldName = 'id';
+  static final String muscleGroupIdFieldName = 'muscle_group_id';
+  static final String exerciseTypeIdFieldName = 'exercise_type_id';
+
+  @override
+  String get leftId => muscleGroupId;
+
+  @override
+  String get rightId => exerciseTypeId;
+
+  @override
+  String get nameOfTable => tableName;
+
+  @override
+  String get idField => idFieldName;
+
+  @override
+  String get leftModelIdField => muscleGroupIdFieldName;
+
+  @override
+  String get rightModelIdField => exerciseTypeIdFieldName;
 
   const MuscleGroupToExerciseTypeModel._({
     required this.id,
@@ -33,11 +49,11 @@ class MuscleGroupToExerciseTypeModel implements Model {
        );
 
   static MuscleGroupToExerciseTypeModel? fromMap(Map<String, dynamic> map) {
-    final id = map[MuscleGroupToExerciseTypeFields.id];
+    final id = map[idFieldName];
     if (id == null || id is! String) return null;
-    final muscleGroupId = map[MuscleGroupToExerciseTypeFields.muscleGroupId];
+    final muscleGroupId = map[muscleGroupIdFieldName];
     if (muscleGroupId == null || muscleGroupId is! String) return null;
-    final exerciseTypeId = map[MuscleGroupToExerciseTypeFields.exerciseTypeId];
+    final exerciseTypeId = map[exerciseTypeIdFieldName];
     if (exerciseTypeId != null && exerciseTypeId is! String) return null;
     return MuscleGroupToExerciseTypeModel._(
       id: id,
@@ -49,9 +65,9 @@ class MuscleGroupToExerciseTypeModel implements Model {
   @override
   Map<String, dynamic> toMap() {
     return {
-      MuscleGroupToExerciseTypeFields.id: id,
-      MuscleGroupToExerciseTypeFields.muscleGroupId: muscleGroupId,
-      MuscleGroupToExerciseTypeFields.exerciseTypeId: exerciseTypeId,
+      idFieldName: id,
+      muscleGroupIdFieldName: muscleGroupId,
+      exerciseTypeIdFieldName: exerciseTypeId,
     };
   }
 

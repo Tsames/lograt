@@ -230,13 +230,13 @@ class AppDatabase {
 
   String _createMuscleGroupsToExerciseTypeTableSQL() {
     return '''
-    CREATE TABLE $muscleGroupToExerciseTypeTable(
-      ${MuscleGroupToExerciseTypeFields.id} TEXT PRIMARY KEY,
-      ${MuscleGroupToExerciseTypeFields.muscleGroupId} TEXT NOT NULL,
-      ${MuscleGroupToExerciseTypeFields.exerciseTypeId} TEXT NOT NULL,
-      FOREIGN KEY (${MuscleGroupToExerciseTypeFields.muscleGroupId}) REFERENCES $muscleGroupsTable(${MuscleGroupFields.id}) ON DELETE CASCADE,
-      FOREIGN KEY (${MuscleGroupToExerciseTypeFields.exerciseTypeId}) REFERENCES $exerciseTypesTable(${ExerciseTypeFields.id}) ON DELETE CASCADE,
-      UNIQUE(${MuscleGroupToExerciseTypeFields.muscleGroupId}, ${MuscleGroupToExerciseTypeFields.exerciseTypeId})
+    CREATE TABLE ${MuscleGroupToExerciseTypeModel.tableName}(
+      ${MuscleGroupToExerciseTypeModel.idFieldName} TEXT PRIMARY KEY,
+      ${MuscleGroupToExerciseTypeModel.muscleGroupIdFieldName} TEXT NOT NULL,
+      ${MuscleGroupToExerciseTypeModel.exerciseTypeIdFieldName} TEXT NOT NULL,
+      FOREIGN KEY (${MuscleGroupToExerciseTypeModel.muscleGroupIdFieldName}) REFERENCES $muscleGroupsTable(${MuscleGroupFields.id}) ON DELETE CASCADE,
+      FOREIGN KEY (${MuscleGroupToExerciseTypeModel.exerciseTypeIdFieldName}) REFERENCES $exerciseTypesTable(${ExerciseTypeFields.id}) ON DELETE CASCADE,
+      UNIQUE(${MuscleGroupToExerciseTypeModel.muscleGroupIdFieldName}, ${MuscleGroupToExerciseTypeModel.exerciseTypeIdFieldName})
     )
   ''';
   }
