@@ -10,10 +10,10 @@ class MuscleGroupToExerciseTypeModel
   final String muscleGroupId;
   final String exerciseTypeId;
 
-  static const String tableName = 'muscle_group_to_exercise_type';
-  static final String idFieldName = 'id';
-  static final String muscleGroupIdFieldName = 'muscle_group_id';
-  static final String exerciseTypeIdFieldName = 'exercise_type_id';
+  static const tableName = 'muscle_group_to_exercise_type';
+  static final idFieldName = 'id';
+  static final muscleGroupIdFieldName = 'muscle_group_id';
+  static final exerciseTypeIdFieldName = 'exercise_type_id';
 
   @override
   String get leftId => muscleGroupId;
