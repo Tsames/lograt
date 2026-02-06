@@ -9,8 +9,8 @@ class ExerciseDao extends ModelDao<ExerciseModel> {
     : super(
         db: db,
         modelName: 'exercise',
-        tableName: exercisesTable,
-        modelIdFieldName: ExerciseFields.id,
+        tableName: ExerciseModel.tableName,
+        modelIdFieldName: ExerciseModel.idFieldName,
         fromMap: ExerciseModel.fromMap,
       );
 
@@ -21,7 +21,7 @@ class ExerciseDao extends ModelDao<ExerciseModel> {
     final DatabaseExecutor executor = txn ?? await db.database;
     final maps = await executor.query(
       tableName,
-      where: '${ExerciseFields.workoutId} = ?',
+      where: '${ExerciseModel.workoutIdFieldName} = ?',
       whereArgs: [workoutId],
     );
 
@@ -38,9 +38,9 @@ class ExerciseDao extends ModelDao<ExerciseModel> {
       '''
     SELECT e.*
     FROM $tableName e
-    INNER JOIN ${WorkoutModel.tableName} w ON e.${ExerciseFields.workoutId} = w.${WorkoutModel.idFieldName}
-    WHERE e.${ExerciseFields.exerciseTypeId} = ?
-    ORDER BY w.${WorkoutModel.dateFieldName} DESC, e.${ExerciseFields.order} DESC
+    INNER JOIN ${WorkoutModel.tableName} w ON e.${ExerciseModel.workoutIdFieldName} = w.${WorkoutModel.idFieldName}
+    WHERE e.${ExerciseModel.exerciseTypeIdFieldName} = ?
+    ORDER BY w.${WorkoutModel.dateFieldName} DESC, e.${ExerciseModel.orderFieldName} DESC
     LIMIT 1
     ''',
       [exerciseTypeId],
