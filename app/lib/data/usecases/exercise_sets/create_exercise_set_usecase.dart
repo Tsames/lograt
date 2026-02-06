@@ -7,7 +7,7 @@ class CreateExerciseSetUsecase {
 
   CreateExerciseSetUsecase(this._repository);
 
-  Future<void> call(ExerciseSet set, String exerciseId) async {
+  Future<int> call(ExerciseSet set, String exerciseId) async {
     return await _repository.insertModel<ExerciseSetModel>(
       ExerciseSetModel.fromEntity(entity: set, exerciseId: exerciseId),
     );

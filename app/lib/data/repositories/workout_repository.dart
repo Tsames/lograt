@@ -94,8 +94,8 @@ class WorkoutRepository {
     return await _getDaoForModelType<T>().getById(id) as T?;
   }
 
-  Future<void> insertModel<T extends Model>(T model) async {
-    await _getDaoForModelType<T>().insert(model);
+  Future<int> insertModel<T extends Model>(T model) async {
+    return await _getDaoForModelType<T>().insert(model);
   }
 
   Future<void> batchInsertModels<T extends Model>(List<T> models) async {

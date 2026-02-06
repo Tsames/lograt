@@ -33,6 +33,10 @@ class WorkoutLogWidget extends ConsumerWidget {
         ),
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz))],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.create),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
