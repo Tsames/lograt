@@ -104,13 +104,13 @@ class AppDatabase {
 
   String _createWorkoutsTableSQL() {
     return '''
-      CREATE TABLE $workoutsTable(
-        ${WorkoutFields.id} TEXT PRIMARY KEY,
-        ${WorkoutFields.date} INTEGER NOT NULL,
-        ${WorkoutFields.title} TEXT,
-        ${WorkoutFields.templateId} TEXT,
-        ${WorkoutFields.notes} TEXT,
-        FOREIGN KEY (${WorkoutFields.templateId}) REFERENCES $workoutTemplatesTable(${WorkoutTemplateFields.id}) ON DELETE SET NULL
+      CREATE TABLE ${WorkoutModel.tableName}(
+        ${WorkoutModel.idFieldName} TEXT PRIMARY KEY,
+        ${WorkoutModel.dateFieldName} INTEGER NOT NULL,
+        ${WorkoutModel.titleFieldName} TEXT,
+        ${WorkoutModel.templateIdFieldName} TEXT,
+        ${WorkoutModel.notesFieldName} TEXT,
+        FOREIGN KEY (${WorkoutModel.templateIdFieldName}) REFERENCES $workoutTemplatesTable(${WorkoutTemplateFields.id}) ON DELETE SET NULL
       )
     ''';
   }
@@ -144,7 +144,7 @@ class AppDatabase {
       ${ExerciseFields.workoutId} TEXT NOT NULL,
       ${ExerciseFields.exerciseTypeId} TEXT,
       ${ExerciseFields.notes} TEXT,
-      FOREIGN KEY (${ExerciseFields.workoutId}) REFERENCES $workoutsTable(${WorkoutFields.id}) ON DELETE CASCADE,
+      FOREIGN KEY (${ExerciseFields.workoutId}) REFERENCES ${WorkoutModel.tableName}(${WorkoutModel.idFieldName}) ON DELETE CASCADE,
       FOREIGN KEY (${ExerciseFields.exerciseTypeId}) REFERENCES $exerciseTypesTable(${ExerciseTypeFields.id}) ON DELETE CASCADE
     )
   ''';
@@ -208,7 +208,7 @@ class AppDatabase {
       ${MuscleGroupToWorkoutModel.idFieldName} TEXT PRIMARY KEY,
       ${MuscleGroupToWorkoutModel.muscleGroupIdFieldName} TEXT NOT NULL,
       ${MuscleGroupToWorkoutModel.workoutIdFieldName} TEXT NOT NULL,
-      FOREIGN KEY (${MuscleGroupToWorkoutModel.workoutIdFieldName}) REFERENCES $workoutsTable(${WorkoutFields.id}) ON DELETE CASCADE,
+      FOREIGN KEY (${MuscleGroupToWorkoutModel.workoutIdFieldName}) REFERENCES ${WorkoutModel.tableName}(${WorkoutModel.idFieldName}) ON DELETE CASCADE,
       FOREIGN KEY (${MuscleGroupToWorkoutModel.muscleGroupIdFieldName}) REFERENCES $muscleGroupsTable(${MuscleGroupFields.id}) ON DELETE CASCADE,
       UNIQUE(${MuscleGroupToWorkoutModel.workoutIdFieldName}, ${MuscleGroupToWorkoutModel.muscleGroupIdFieldName})
     )

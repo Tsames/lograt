@@ -8,8 +8,8 @@ class WorkoutDao extends ModelDao<WorkoutModel> {
     : super(
         db: db,
         modelName: 'workout',
-        tableName: workoutsTable,
-        modelIdFieldName: WorkoutFields.id,
+        tableName: WorkoutModel.tableName,
+        modelIdFieldName: WorkoutModel.idFieldName,
         fromMap: WorkoutModel.fromMap,
       );
 
@@ -24,7 +24,7 @@ class WorkoutDao extends ModelDao<WorkoutModel> {
 
     final maps = await executor.query(
       tableName,
-      orderBy: '${WorkoutFields.date} DESC',
+      orderBy: '${WorkoutModel.dateFieldName} DESC',
       limit: limit,
       offset: offset,
     );

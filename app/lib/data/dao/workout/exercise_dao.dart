@@ -38,9 +38,9 @@ class ExerciseDao extends ModelDao<ExerciseModel> {
       '''
     SELECT e.*
     FROM $tableName e
-    INNER JOIN $workoutsTable w ON e.${ExerciseFields.workoutId} = w.${WorkoutFields.id}
+    INNER JOIN ${WorkoutModel.tableName} w ON e.${ExerciseFields.workoutId} = w.${WorkoutModel.idFieldName}
     WHERE e.${ExerciseFields.exerciseTypeId} = ?
-    ORDER BY w.${WorkoutFields.date} DESC, e.${ExerciseFields.order} DESC
+    ORDER BY w.${WorkoutModel.dateFieldName} DESC, e.${ExerciseFields.order} DESC
     LIMIT 1
     ''',
       [exerciseTypeId],
