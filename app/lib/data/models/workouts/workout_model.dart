@@ -6,18 +6,6 @@ import 'package:lograt/data/models/model.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 import 'package:lograt/util/uuidv7.dart';
 
-const workoutsTable = 'workouts';
-
-class WorkoutFields {
-  static final List<String> values = [id, date, title, templateId, notes];
-
-  static final String id = 'id';
-  static final String date = 'date';
-  static final String title = 'title';
-  static final String templateId = 'template_id';
-  static final String notes = 'notes';
-}
-
 class WorkoutModel implements Model {
   @override
   final String id;
@@ -25,6 +13,13 @@ class WorkoutModel implements Model {
   final String? title;
   final String? templateId;
   final String? notes;
+
+  static final tableName = 'workouts';
+  static final idFieldName = 'id';
+  static final dateFieldName = 'date';
+  static final titleFieldName = 'title';
+  static final templateIdFieldName = 'template_id';
+  static final notesFieldName = 'notes';
 
   const WorkoutModel({
     required this.id,
@@ -75,15 +70,15 @@ class WorkoutModel implements Model {
   }
 
   static WorkoutModel? fromMap(Map<String, dynamic> map) {
-    final id = map[WorkoutFields.id];
+    final id = map[idFieldName];
     if (id == null || id is! String) return null;
-    final date = map[WorkoutFields.date];
+    final date = map[dateFieldName];
     if (date == null || date is! int) return null;
-    final title = map[WorkoutFields.title];
+    final title = map[titleFieldName];
     if (title != null && title is! String) return null;
-    final templateId = map[WorkoutFields.templateId];
+    final templateId = map[templateIdFieldName];
     if (templateId != null && templateId is! String) return null;
-    final notes = map[WorkoutFields.notes];
+    final notes = map[notesFieldName];
     if (notes != null && notes is! String) return null;
     return WorkoutModel(
       id: id,
@@ -97,11 +92,11 @@ class WorkoutModel implements Model {
   @override
   Map<String, dynamic> toMap() {
     return {
-      WorkoutFields.id: id,
-      WorkoutFields.date: date.millisecondsSinceEpoch,
-      WorkoutFields.title: title,
-      WorkoutFields.templateId: templateId,
-      WorkoutFields.notes: notes,
+      idFieldName: id,
+      dateFieldName: date.millisecondsSinceEpoch,
+      titleFieldName: title,
+      templateIdFieldName: templateId,
+      notesFieldName: notes,
     };
   }
 
