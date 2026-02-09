@@ -4,23 +4,18 @@ import 'package:lograt/data/models/model.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
 import 'package:lograt/util/uuidv7.dart';
 
-const workoutTemplatesTable = 'workout_templates';
-
-class WorkoutTemplateFields {
-  static final List<String> values = [id, date, title, description];
-
-  static final String id = 'id';
-  static final String date = 'date';
-  static final String title = 'title';
-  static final String description = 'description';
-}
-
 class WorkoutTemplateModel implements Model {
   @override
   final String id;
   final DateTime date;
   final String? title;
   final String? description;
+
+  static final tableName = 'workout_templates';
+  static final idFieldName = 'id';
+  static final dateFieldName = 'date';
+  static final titleFieldName = 'title';
+  static final descriptionFieldName = 'description';
 
   const WorkoutTemplateModel({
     required this.id,
@@ -63,13 +58,13 @@ class WorkoutTemplateModel implements Model {
   }
 
   static WorkoutTemplateModel? fromMap(Map<String, dynamic> map) {
-    final id = map[WorkoutTemplateFields.id];
+    final id = map[idFieldName];
     if (id == null || id is! String) return null;
-    final date = map[WorkoutTemplateFields.date];
+    final date = map[dateFieldName];
     if (date == null || date is! int) return null;
-    final title = map[WorkoutTemplateFields.title];
+    final title = map[titleFieldName];
     if (title != null && title is! String) return null;
-    final description = map[WorkoutTemplateFields.description];
+    final description = map[descriptionFieldName];
     if (description != null && description is! String) return null;
     return WorkoutTemplateModel(
       id: id,
@@ -82,10 +77,10 @@ class WorkoutTemplateModel implements Model {
   @override
   Map<String, dynamic> toMap() {
     return {
-      WorkoutTemplateFields.id: id,
-      WorkoutTemplateFields.date: date.millisecondsSinceEpoch,
-      WorkoutTemplateFields.title: title,
-      WorkoutTemplateFields.description: description,
+      idFieldName: id,
+      dateFieldName: date.millisecondsSinceEpoch,
+      titleFieldName: title,
+      descriptionFieldName: description,
     };
   }
 

@@ -8,8 +8,8 @@ class ExerciseTemplateDao extends ModelDao<ExerciseTemplateModel> {
     : super(
         db: db,
         modelName: 'exercise template',
-        tableName: exerciseTemplatesTable,
-        modelIdFieldName: ExerciseTemplateFields.id,
+        tableName: ExerciseTemplateModel.tableName,
+        modelIdFieldName: ExerciseTemplateModel.idFieldName,
         fromMap: ExerciseTemplateModel.fromMap,
       );
 
@@ -21,7 +21,7 @@ class ExerciseTemplateDao extends ModelDao<ExerciseTemplateModel> {
     final DatabaseExecutor executor = txn ?? await db.database;
     final maps = await executor.query(
       tableName,
-      where: '${ExerciseTemplateFields.workoutTemplateId} = ?',
+      where: '${ExerciseTemplateModel.workoutTemplateIdFieldName} = ?',
       whereArgs: [workoutTemplateId],
     );
 
