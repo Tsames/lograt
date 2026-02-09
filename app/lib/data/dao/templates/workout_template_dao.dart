@@ -8,8 +8,8 @@ class WorkoutTemplateDao extends ModelDao<WorkoutTemplateModel> {
     : super(
         db: db,
         modelName: 'workout template',
-        tableName: workoutTemplatesTable,
-        modelIdFieldName: WorkoutTemplateFields.id,
+        tableName: WorkoutTemplateModel.tableName,
+        modelIdFieldName: WorkoutTemplateModel.idFieldName,
         fromMap: WorkoutTemplateModel.fromMap,
       );
 
@@ -27,7 +27,7 @@ class WorkoutTemplateDao extends ModelDao<WorkoutTemplateModel> {
     final placeholders = List.filled(templateIds.length, '?').join(', ');
     final records = await executor.query(
       tableName,
-      where: '${WorkoutTemplateFields.id} IN ($placeholders)',
+      where: '${WorkoutTemplateModel.idFieldName} IN ($placeholders)',
       whereArgs: [...templateIds],
     );
 
@@ -47,7 +47,7 @@ class WorkoutTemplateDao extends ModelDao<WorkoutTemplateModel> {
 
     final maps = await executor.query(
       tableName,
-      orderBy: '${WorkoutTemplateFields.date} DESC',
+      orderBy: '${WorkoutTemplateModel.dateFieldName} DESC',
       limit: limit,
       offset: offset,
     );

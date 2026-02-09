@@ -1,24 +1,8 @@
-import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/data/entities/templates/exercise_set_template.dart';
 import 'package:lograt/data/entities/templates/exercise_template.dart';
+import 'package:lograt/data/entities/workouts/exercise_type.dart';
 import 'package:lograt/data/models/model.dart';
 import 'package:lograt/util/uuidv7.dart';
-
-const exerciseTemplatesTable = 'exercise_templates';
-
-class ExerciseTemplateFields {
-  static final List<String> values = [
-    id,
-    order,
-    workoutTemplateId,
-    exerciseTypeId,
-  ];
-
-  static final String id = 'id';
-  static final String order = 'exercise_order';
-  static final String workoutTemplateId = 'workout_id';
-  static final String exerciseTypeId = 'exercise_type_id';
-}
 
 class ExerciseTemplateModel implements Model {
   @override
@@ -26,6 +10,12 @@ class ExerciseTemplateModel implements Model {
   final int order;
   final String workoutTemplateId; // Foreign key to workout_templates table
   final String? exerciseTypeId; // Foreign key to exercise_types table
+
+  static final tableName = 'exercise_templates';
+  static final idFieldName = 'id';
+  static final orderFieldName = 'exercise_order';
+  static final workoutTemplateIdFieldName = 'workout_id';
+  static final exerciseTypeIdFieldName = 'exercise_type_id';
 
   const ExerciseTemplateModel({
     required this.id,
@@ -68,13 +58,13 @@ class ExerciseTemplateModel implements Model {
   }
 
   static ExerciseTemplateModel? fromMap(Map<String, dynamic> map) {
-    final id = map[ExerciseTemplateFields.id];
+    final id = map[idFieldName];
     if (id == null || id is! String) return null;
-    final order = map[ExerciseTemplateFields.order];
+    final order = map[orderFieldName];
     if (order == null || order is! int) return null;
-    final workoutTemplateId = map[ExerciseTemplateFields.workoutTemplateId];
+    final workoutTemplateId = map[workoutTemplateIdFieldName];
     if (workoutTemplateId == null || workoutTemplateId is! String) return null;
-    final exerciseTypeId = map[ExerciseTemplateFields.exerciseTypeId];
+    final exerciseTypeId = map[exerciseTypeIdFieldName];
     if (exerciseTypeId != null && exerciseTypeId is! String) return null;
     return ExerciseTemplateModel(
       id: id,
@@ -87,10 +77,10 @@ class ExerciseTemplateModel implements Model {
   @override
   Map<String, dynamic> toMap() {
     return {
-      ExerciseTemplateFields.id: id,
-      ExerciseTemplateFields.order: order,
-      ExerciseTemplateFields.workoutTemplateId: workoutTemplateId,
-      ExerciseTemplateFields.exerciseTypeId: exerciseTypeId,
+      idFieldName: id,
+      orderFieldName: order,
+      workoutTemplateIdFieldName: workoutTemplateId,
+      exerciseTypeIdFieldName: exerciseTypeId,
     };
   }
 
