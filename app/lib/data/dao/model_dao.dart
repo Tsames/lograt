@@ -2,7 +2,7 @@ import 'package:lograt/data/database/app_database.dart';
 import 'package:lograt/data/models/model.dart';
 import 'package:sqflite/sqflite.dart';
 
-abstract class ModelDao<T extends Model> {
+class ModelDao<T extends Model> {
   final AppDatabase db;
   final String modelName;
   final String tableName;

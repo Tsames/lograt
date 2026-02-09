@@ -3,7 +3,7 @@ import 'package:lograt/data/models/relationship.dart';
 import 'package:lograt/util/uuidv7.dart';
 import 'package:sqflite/sqflite.dart';
 
-abstract class RelationshipDao<T extends Relationship> {
+class RelationshipDao<T extends Relationship> {
   final AppDatabase db;
   final String tableName;
   final String relationshipIdFieldName;
