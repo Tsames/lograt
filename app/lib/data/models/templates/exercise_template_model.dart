@@ -14,7 +14,7 @@ class ExerciseTemplateModel implements Model {
   static final tableName = 'exercise_templates';
   static final idFieldName = 'id';
   static final orderFieldName = 'exercise_order';
-  static final workoutTemplateIdFieldName = 'workout_id';
+  static final workoutTemplateIdFieldName = 'workout_template_id';
   static final exerciseTypeIdFieldName = 'exercise_type_id';
 
   const ExerciseTemplateModel({

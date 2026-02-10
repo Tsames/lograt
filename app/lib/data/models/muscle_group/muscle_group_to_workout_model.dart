@@ -10,7 +10,7 @@ class MuscleGroupToWorkoutModel
   final String muscleGroupId;
   final String workoutId;
 
-  static final tableName = 'muscle_group_to_exercise_type';
+  static final tableName = 'muscle_group_to_workout';
   static final idFieldName = 'id';
   static final muscleGroupIdFieldName = 'muscle_group_id';
   static final workoutIdFieldName = 'workout_id';
