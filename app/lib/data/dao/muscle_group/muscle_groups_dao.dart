@@ -8,8 +8,8 @@ class MuscleGroupDao extends ModelDao<MuscleGroupModel> {
     : super(
         db: db,
         modelName: 'muscle group',
-        tableName: muscleGroupsTable,
-        modelIdFieldName: MuscleGroupFields.id,
+        tableName: MuscleGroupModel.tableName,
+        modelIdFieldName: MuscleGroupModel.idFieldName,
         fromMap: MuscleGroupModel.fromMap,
       );
 
@@ -18,7 +18,7 @@ class MuscleGroupDao extends ModelDao<MuscleGroupModel> {
 
     final maps = await executor.query(
       tableName,
-      where: '${MuscleGroupFields.label} = ?',
+      where: '${MuscleGroupModel.labelFieldName} = ?',
       whereArgs: [label],
     );
 
@@ -40,7 +40,7 @@ class MuscleGroupDao extends ModelDao<MuscleGroupModel> {
     final placeholders = List.filled(workoutIds.length, '?').join(', ');
     final records = await executor.query(
       tableName,
-      where: '${MuscleGroupFields.id} IN ($placeholders)',
+      where: '${MuscleGroupModel.idFieldName} IN ($placeholders)',
       whereArgs: [...workoutIds],
     );
 
@@ -59,7 +59,7 @@ class MuscleGroupDao extends ModelDao<MuscleGroupModel> {
 
     final maps = await executor.query(
       tableName,
-      orderBy: '${MuscleGroupFields.label} ASC',
+      orderBy: '${MuscleGroupModel.labelFieldName} ASC',
       limit: limit,
       offset: offset,
     );
