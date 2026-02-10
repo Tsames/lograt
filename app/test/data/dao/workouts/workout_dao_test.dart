@@ -15,37 +15,30 @@ void main() {
   void expectWorkoutsEqual(WorkoutModel? actual, WorkoutModel expected) {
     expect(actual, isNotNull, reason: 'Expected workout to exist but got null');
 
-    final actualMap = actual!.toMap();
-    final expectedMap = expected.toMap();
-
     expect(
-      actualMap[WorkoutModel.idFieldName],
-      equals(expectedMap[WorkoutModel.idFieldName]),
-      reason: 'Field "${WorkoutModel.idFieldName}" does not match',
+      actual!.id,
+      equals(expected.id),
+      reason: 'Field "id" does not match',
     );
-
     expect(
-      actualMap[WorkoutModel.dateFieldName],
-      equals(expectedMap[WorkoutModel.dateFieldName]),
-      reason: 'Field "${WorkoutModel.dateFieldName}" does not match',
+      actual.date,
+      equals(expected.date),
+      reason: 'Field "date" does not match',
     );
-
     expect(
-      actualMap[WorkoutModel.titleFieldName],
-      equals(expectedMap[WorkoutModel.titleFieldName]),
-      reason: 'Field "${WorkoutModel.titleFieldName}" does not match',
+      actual.title,
+      equals(expected.title),
+      reason: 'Field "title" does not match',
     );
-
     expect(
-      actualMap[WorkoutModel.templateIdFieldName],
-      equals(expectedMap[WorkoutModel.templateIdFieldName]),
-      reason: 'Field "${WorkoutModel.templateIdFieldName}" does not match',
+      actual.templateId,
+      equals(expected.templateId),
+      reason: 'Field "templateId" does not match',
     );
-
     expect(
-      actualMap[WorkoutModel.notesFieldName],
-      equals(expectedMap[WorkoutModel.notesFieldName]),
-      reason: 'Field "${WorkoutModel.notesFieldName}" does not match',
+      actual.notes,
+      equals(expected.notes),
+      reason: 'Field "notes" does not match',
     );
   }
 
