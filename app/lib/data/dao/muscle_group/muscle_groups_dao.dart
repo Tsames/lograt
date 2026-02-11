@@ -13,7 +13,7 @@ class MuscleGroupDao extends ModelDao<MuscleGroupModel> {
         fromMap: MuscleGroupModel.fromMap,
       );
 
-  Future<MuscleGroupModel?> getByName(String label, [Transaction? txn]) async {
+  Future<MuscleGroupModel?> getByLabel(String label, [Transaction? txn]) async {
     final DatabaseExecutor executor = txn ?? await db.database;
 
     final maps = await executor.query(
@@ -27,21 +27,21 @@ class MuscleGroupDao extends ModelDao<MuscleGroupModel> {
   }
 
   Future<List<MuscleGroupModel>> getMuscleGroupsByIds(
-    List<String> workoutIds, [
+    List<String> muscleGroupIds, [
     Transaction? txn,
   ]) async {
-    if (workoutIds.isEmpty) {
+    if (muscleGroupIds.isEmpty) {
       throw Exception(
         'Cannot retrieve muscle groups by ids if no ids are given.',
       );
     }
     final DatabaseExecutor executor = txn ?? await db.database;
 
-    final placeholders = List.filled(workoutIds.length, '?').join(', ');
+    final placeholders = List.filled(muscleGroupIds.length, '?').join(', ');
     final records = await executor.query(
       tableName,
       where: '${MuscleGroupModel.idFieldName} IN ($placeholders)',
-      whereArgs: [...workoutIds],
+      whereArgs: [...muscleGroupIds],
     );
 
     return records
