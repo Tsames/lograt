@@ -1,8 +1,8 @@
 import 'package:lograt/database/app_database.dart';
 import 'package:lograt/database/models/exercise_instance.dart';
 import 'package:lograt/database/models/workout_template.dart';
+import 'package:lograt/services/uuid.dart';
 import 'package:lograt/util/extensions/human_friendly_date_format.dart';
-import 'package:lograt/util/uuid.dart';
 
 class Workout {
   final String id;

@@ -1,6 +1,6 @@
 import 'package:lograt/database/app_database.dart';
 import 'package:lograt/database/models/exercise.dart';
-import 'package:lograt/util/uuid.dart';
+import 'package:lograt/services/uuid.dart';
 
 class ExerciseInstance {
   final String id;
@@ -9,10 +9,15 @@ class ExerciseInstance {
   final Exercise? exerciseType;
   final String? notes;
 
-  ExerciseInstance({String? id, int? order, List<SetRow>? sets, this.exerciseType, this.notes})
-    : id = id ?? uuid.v7(),
-      order = order ?? 0,
-      sets = sets ?? const <SetRow>[];
+  ExerciseInstance({
+    String? id,
+    int? order,
+    List<SetRow>? sets,
+    this.exerciseType,
+    this.notes,
+  }) : id = id ?? uuid.v7(),
+       order = order ?? 0,
+       sets = sets ?? const <SetRow>[];
 
   ExerciseInstance copyWith({
     String Function()? id,

@@ -7,14 +7,32 @@ import 'package:lograt/database/models/exercise_instance.dart';
 import 'package:lograt/database/models/set_type.dart';
 import 'package:lograt/database/models/units.dart';
 import 'package:lograt/database/models/workout.dart';
-import 'package:lograt/util/uuid.dart';
+import 'package:lograt/services/uuid.dart';
 
-ExerciseInstance _exercise(Exercise type, int order, List<SetRow> Function(String id) sets, {String? notes}) {
+ExerciseInstance _exercise(
+  Exercise type,
+  int order,
+  List<SetRow> Function(String id) sets, {
+  String? notes,
+}) {
   final instanceId = uuid.v7();
-  return ExerciseInstance(id: instanceId, exerciseType: type, order: order, sets: sets(instanceId), notes: notes);
+  return ExerciseInstance(
+    id: instanceId,
+    exerciseType: type,
+    order: order,
+    sets: sets(instanceId),
+    notes: notes,
+  );
 }
 
-SetRow _set(String instanceId, int order, {int? reps, double? weight, Units? units, SetType? setType}) => SetRow(
+SetRow _set(
+  String instanceId,
+  int order, {
+  int? reps,
+  double? weight,
+  Units? units,
+  SetType? setType,
+}) => SetRow(
   id: uuid.v7(),
   setOrder: order,
   exerciseInstanceId: instanceId,
@@ -33,15 +51,40 @@ class MockWorkouts {
       title: 'Push Day - Heavy',
       notes: 'Feeling strong, increased weight on bench',
       template: MockWorkoutTemplates.pushDayTemplate,
-      muscleGroups: [MockMuscleGroups.chest, MockMuscleGroups.shoulders, MockMuscleGroups.arms],
+      muscleGroups: [
+        MockMuscleGroups.chest,
+        MockMuscleGroups.shoulders,
+        MockMuscleGroups.arms,
+      ],
       exercises: [
         _exercise(
           MockExercises.benchPress,
           1,
           (id) => [
-            _set(id, 1, reps: 12, weight: 135.0, units: Units.pounds, setType: SetType.warmup),
-            _set(id, 2, reps: 10, weight: 185.0, units: Units.pounds, setType: SetType.working),
-            _set(id, 3, reps: 8, weight: 205.0, units: Units.pounds, setType: SetType.working),
+            _set(
+              id,
+              1,
+              reps: 12,
+              weight: 135.0,
+              units: Units.pounds,
+              setType: SetType.warmup,
+            ),
+            _set(
+              id,
+              2,
+              reps: 10,
+              weight: 185.0,
+              units: Units.pounds,
+              setType: SetType.working,
+            ),
+            _set(
+              id,
+              3,
+              reps: 8,
+              weight: 205.0,
+              units: Units.pounds,
+              setType: SetType.working,
+            ),
           ],
           notes: 'New PR on third set!',
         ),
@@ -78,7 +121,11 @@ class MockWorkouts {
       template: MockWorkoutTemplates.pullDayTemplate,
       muscleGroups: [MockMuscleGroups.back, MockMuscleGroups.arms],
       exercises: [
-        _exercise(MockExercises.pullups, 1, (id) => [_set(id, 1, reps: 10), _set(id, 2, reps: 8)]),
+        _exercise(
+          MockExercises.pullups,
+          1,
+          (id) => [_set(id, 1, reps: 10), _set(id, 2, reps: 8)],
+        ),
         _exercise(
           MockExercises.bicepCurl,
           2,
@@ -119,7 +166,11 @@ class MockWorkouts {
       title: 'Core Work',
       muscleGroups: [MockMuscleGroups.core],
       exercises: [
-        _exercise(MockExercises.plank, 1, (id) => [_set(id, 1, reps: 60), _set(id, 2, reps: 45)]),
+        _exercise(
+          MockExercises.plank,
+          1,
+          (id) => [_set(id, 1, reps: 60), _set(id, 2, reps: 45)],
+        ),
       ],
     ),
 
@@ -128,7 +179,11 @@ class MockWorkouts {
       date: DateTime.now().subtract(const Duration(days: 8)),
       title: 'Upper Body Pump',
       template: MockWorkoutTemplates.upperBodyTemplate,
-      muscleGroups: [MockMuscleGroups.chest, MockMuscleGroups.back, MockMuscleGroups.shoulders],
+      muscleGroups: [
+        MockMuscleGroups.chest,
+        MockMuscleGroups.back,
+        MockMuscleGroups.shoulders,
+      ],
       exercises: [
         _exercise(
           MockExercises.benchPress,
@@ -186,7 +241,11 @@ class MockWorkouts {
             _set(id, 2, reps: 12, weight: 25.0, units: Units.pounds),
           ],
         ),
-        _exercise(MockExercises.bicepCurl, 3, (id) => [_set(id, 1, reps: 12, weight: 30.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.bicepCurl,
+          3,
+          (id) => [_set(id, 1, reps: 12, weight: 30.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -194,7 +253,11 @@ class MockWorkouts {
       date: DateTime.now().subtract(const Duration(days: 15)),
       title: 'Light Session',
       exercises: [
-        _exercise(MockExercises.pushups, 1, (id) => [_set(id, 1, reps: 25), _set(id, 2, reps: 20)]),
+        _exercise(
+          MockExercises.pushups,
+          1,
+          (id) => [_set(id, 1, reps: 25), _set(id, 2, reps: 20)],
+        ),
       ],
     ),
 
@@ -202,10 +265,22 @@ class MockWorkouts {
       date: DateTime.now().subtract(const Duration(days: 18)),
       title: 'Push Day',
       template: MockWorkoutTemplates.pushDayTemplate,
-      muscleGroups: [MockMuscleGroups.chest, MockMuscleGroups.shoulders, MockMuscleGroups.arms],
+      muscleGroups: [
+        MockMuscleGroups.chest,
+        MockMuscleGroups.shoulders,
+        MockMuscleGroups.arms,
+      ],
       exercises: [
-        _exercise(MockExercises.benchPress, 1, (id) => [_set(id, 1, reps: 10, weight: 185.0, units: Units.pounds)]),
-        _exercise(MockExercises.overheadPress, 2, (id) => [_set(id, 1, reps: 10, weight: 85.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.benchPress,
+          1,
+          (id) => [_set(id, 1, reps: 10, weight: 185.0, units: Units.pounds)],
+        ),
+        _exercise(
+          MockExercises.overheadPress,
+          2,
+          (id) => [_set(id, 1, reps: 10, weight: 85.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -214,8 +289,16 @@ class MockWorkouts {
       title: 'Back Day',
       muscleGroups: [MockMuscleGroups.back],
       exercises: [
-        _exercise(MockExercises.pullups, 1, (id) => [_set(id, 1, reps: 12), _set(id, 2, reps: 10)]),
-        _exercise(MockExercises.dumbbellRow, 2, (id) => [_set(id, 1, reps: 10, weight: 65.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.pullups,
+          1,
+          (id) => [_set(id, 1, reps: 12), _set(id, 2, reps: 10)],
+        ),
+        _exercise(
+          MockExercises.dumbbellRow,
+          2,
+          (id) => [_set(id, 1, reps: 10, weight: 65.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -225,7 +308,11 @@ class MockWorkouts {
       template: MockWorkoutTemplates.legDayTemplate,
       muscleGroups: [MockMuscleGroups.legs],
       exercises: [
-        _exercise(MockExercises.squat, 1, (id) => [_set(id, 1, reps: 10, weight: 135.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.squat,
+          1,
+          (id) => [_set(id, 1, reps: 10, weight: 135.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -253,11 +340,19 @@ class MockWorkouts {
     Workout(
       date: DateTime.now().subtract(const Duration(days: 28)),
       title: 'Full Body Circuit',
-      muscleGroups: [MockMuscleGroups.chest, MockMuscleGroups.back, MockMuscleGroups.legs],
+      muscleGroups: [
+        MockMuscleGroups.chest,
+        MockMuscleGroups.back,
+        MockMuscleGroups.legs,
+      ],
       exercises: [
         _exercise(MockExercises.pushups, 1, (id) => [_set(id, 1, reps: 20)]),
         _exercise(MockExercises.pullups, 2, (id) => [_set(id, 1, reps: 8)]),
-        _exercise(MockExercises.squat, 3, (id) => [_set(id, 1, reps: 15, weight: 95.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.squat,
+          3,
+          (id) => [_set(id, 1, reps: 15, weight: 95.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -277,7 +372,11 @@ class MockWorkouts {
       title: 'Legs',
       muscleGroups: [MockMuscleGroups.legs],
       exercises: [
-        _exercise(MockExercises.squat, 1, (id) => [_set(id, 1, reps: 5, weight: 135.0, units: Units.kilograms)]),
+        _exercise(
+          MockExercises.squat,
+          1,
+          (id) => [_set(id, 1, reps: 5, weight: 135.0, units: Units.kilograms)],
+        ),
       ],
     ),
 
@@ -285,16 +384,28 @@ class MockWorkouts {
       date: DateTime.now().subtract(const Duration(days: 42)),
       title: 'Upper Body Power',
       exercises: [
-        _exercise(MockExercises.overheadPress, 1, (id) => [_set(id, 1, reps: 8, weight: 95.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.overheadPress,
+          1,
+          (id) => [_set(id, 1, reps: 8, weight: 95.0, units: Units.pounds)],
+        ),
       ],
     ),
 
     Workout(
       date: DateTime.now().subtract(const Duration(days: 45)),
       title: 'Full Body',
-      muscleGroups: [MockMuscleGroups.back, MockMuscleGroups.legs, MockMuscleGroups.core],
+      muscleGroups: [
+        MockMuscleGroups.back,
+        MockMuscleGroups.legs,
+        MockMuscleGroups.core,
+      ],
       exercises: [
-        _exercise(MockExercises.deadlift, 1, (id) => [_set(id, 1, reps: 5, weight: 225.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.deadlift,
+          1,
+          (id) => [_set(id, 1, reps: 5, weight: 225.0, units: Units.pounds)],
+        ),
         _exercise(MockExercises.plank, 2, (id) => [_set(id, 1, reps: 60)]),
       ],
     ),
@@ -303,9 +414,17 @@ class MockWorkouts {
       date: DateTime.now().subtract(const Duration(days: 50)),
       title: 'Push Day',
       template: MockWorkoutTemplates.pushDayTemplate,
-      muscleGroups: [MockMuscleGroups.chest, MockMuscleGroups.shoulders, MockMuscleGroups.arms],
+      muscleGroups: [
+        MockMuscleGroups.chest,
+        MockMuscleGroups.shoulders,
+        MockMuscleGroups.arms,
+      ],
       exercises: [
-        _exercise(MockExercises.benchPress, 1, (id) => [_set(id, 1, reps: 10, weight: 165.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.benchPress,
+          1,
+          (id) => [_set(id, 1, reps: 10, weight: 165.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -314,8 +433,16 @@ class MockWorkouts {
       title: 'Back and Biceps',
       muscleGroups: [MockMuscleGroups.back, MockMuscleGroups.arms],
       exercises: [
-        _exercise(MockExercises.chinups, 1, (id) => [_set(id, 1, reps: 10), _set(id, 2, reps: 8)]),
-        _exercise(MockExercises.bicepCurl, 2, (id) => [_set(id, 1, reps: 12, weight: 30.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.chinups,
+          1,
+          (id) => [_set(id, 1, reps: 10), _set(id, 2, reps: 8)],
+        ),
+        _exercise(
+          MockExercises.bicepCurl,
+          2,
+          (id) => [_set(id, 1, reps: 12, weight: 30.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -349,7 +476,11 @@ class MockWorkouts {
             _set(id, 2, reps: 6, weight: 195.0, units: Units.pounds),
           ],
         ),
-        _exercise(MockExercises.cableFly, 2, (id) => [_set(id, 1, reps: 12, weight: 40.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.cableFly,
+          2,
+          (id) => [_set(id, 1, reps: 12, weight: 40.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -366,8 +497,16 @@ class MockWorkouts {
       title: 'Shoulders',
       muscleGroups: [MockMuscleGroups.shoulders],
       exercises: [
-        _exercise(MockExercises.overheadPress, 1, (id) => [_set(id, 1, reps: 10, weight: 85.0, units: Units.pounds)]),
-        _exercise(MockExercises.facePull, 2, (id) => [_set(id, 1, reps: 15, weight: 50.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.overheadPress,
+          1,
+          (id) => [_set(id, 1, reps: 10, weight: 85.0, units: Units.pounds)],
+        ),
+        _exercise(
+          MockExercises.facePull,
+          2,
+          (id) => [_set(id, 1, reps: 15, weight: 50.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -376,8 +515,16 @@ class MockWorkouts {
       title: 'Lower Body Strength',
       muscleGroups: [MockMuscleGroups.legs],
       exercises: [
-        _exercise(MockExercises.squat, 1, (id) => [_set(id, 1, reps: 8, weight: 115.0, units: Units.kilograms)]),
-        _exercise(MockExercises.legCurl, 2, (id) => [_set(id, 1, reps: 12, weight: 80.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.squat,
+          1,
+          (id) => [_set(id, 1, reps: 8, weight: 115.0, units: Units.kilograms)],
+        ),
+        _exercise(
+          MockExercises.legCurl,
+          2,
+          (id) => [_set(id, 1, reps: 12, weight: 80.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -388,7 +535,11 @@ class MockWorkouts {
       muscleGroups: [MockMuscleGroups.back, MockMuscleGroups.arms],
       exercises: [
         _exercise(MockExercises.pullups, 1, (id) => [_set(id, 1, reps: 10)]),
-        _exercise(MockExercises.dumbbellRow, 2, (id) => [_set(id, 1, reps: 10, weight: 60.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.dumbbellRow,
+          2,
+          (id) => [_set(id, 1, reps: 10, weight: 60.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -398,7 +549,11 @@ class MockWorkouts {
       title: 'Deadlift Day',
       muscleGroups: [MockMuscleGroups.back, MockMuscleGroups.legs],
       exercises: [
-        _exercise(MockExercises.deadlift, 1, (id) => [_set(id, 1, reps: 5, weight: 250.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.deadlift,
+          1,
+          (id) => [_set(id, 1, reps: 5, weight: 250.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -407,7 +562,11 @@ class MockWorkouts {
       title: 'Chest Day',
       muscleGroups: [MockMuscleGroups.chest],
       exercises: [
-        _exercise(MockExercises.benchPress, 1, (id) => [_set(id, 1, reps: 10, weight: 135.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.benchPress,
+          1,
+          (id) => [_set(id, 1, reps: 10, weight: 135.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -415,9 +574,17 @@ class MockWorkouts {
       date: DateTime.now().subtract(const Duration(days: 110)),
       title: 'Upper Body',
       template: MockWorkoutTemplates.upperBodyTemplate,
-      muscleGroups: [MockMuscleGroups.chest, MockMuscleGroups.back, MockMuscleGroups.shoulders],
+      muscleGroups: [
+        MockMuscleGroups.chest,
+        MockMuscleGroups.back,
+        MockMuscleGroups.shoulders,
+      ],
       exercises: [
-        _exercise(MockExercises.benchPress, 1, (id) => [_set(id, 1, reps: 10, weight: 155.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.benchPress,
+          1,
+          (id) => [_set(id, 1, reps: 10, weight: 155.0, units: Units.pounds)],
+        ),
       ],
     ),
 
@@ -426,7 +593,11 @@ class MockWorkouts {
       title: 'Arms',
       muscleGroups: [MockMuscleGroups.arms],
       exercises: [
-        _exercise(MockExercises.bicepCurl, 1, (id) => [_set(id, 1, reps: 12, weight: 25.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.bicepCurl,
+          1,
+          (id) => [_set(id, 1, reps: 12, weight: 25.0, units: Units.pounds)],
+        ),
         _exercise(
           MockExercises.tricepsExtension,
           2,
@@ -440,7 +611,13 @@ class MockWorkouts {
       title: 'Leg Focus',
       muscleGroups: [MockMuscleGroups.legs],
       exercises: [
-        _exercise(MockExercises.squat, 1, (id) => [_set(id, 1, reps: 10, weight: 100.0, units: Units.kilograms)]),
+        _exercise(
+          MockExercises.squat,
+          1,
+          (id) => [
+            _set(id, 1, reps: 10, weight: 100.0, units: Units.kilograms),
+          ],
+        ),
       ],
     ),
 
@@ -457,19 +634,39 @@ class MockWorkouts {
       date: DateTime.now().subtract(const Duration(days: 150)),
       title: 'Push Session',
       template: MockWorkoutTemplates.pushDayTemplate,
-      muscleGroups: [MockMuscleGroups.chest, MockMuscleGroups.shoulders, MockMuscleGroups.arms],
+      muscleGroups: [
+        MockMuscleGroups.chest,
+        MockMuscleGroups.shoulders,
+        MockMuscleGroups.arms,
+      ],
       exercises: [
-        _exercise(MockExercises.benchPress, 1, (id) => [_set(id, 1, reps: 10, weight: 145.0, units: Units.pounds)]),
+        _exercise(
+          MockExercises.benchPress,
+          1,
+          (id) => [_set(id, 1, reps: 10, weight: 145.0, units: Units.pounds)],
+        ),
       ],
     ),
 
     Workout(
       date: DateTime.now().subtract(const Duration(days: 160)),
       title: 'Full Body Basics',
-      muscleGroups: [MockMuscleGroups.chest, MockMuscleGroups.back, MockMuscleGroups.legs],
+      muscleGroups: [
+        MockMuscleGroups.chest,
+        MockMuscleGroups.back,
+        MockMuscleGroups.legs,
+      ],
       exercises: [
-        _exercise(MockExercises.benchPress, 1, (id) => [_set(id, 1, reps: 10, weight: 135.0, units: Units.pounds)]),
-        _exercise(MockExercises.squat, 2, (id) => [_set(id, 1, reps: 10, weight: 95.0, units: Units.kilograms)]),
+        _exercise(
+          MockExercises.benchPress,
+          1,
+          (id) => [_set(id, 1, reps: 10, weight: 135.0, units: Units.pounds)],
+        ),
+        _exercise(
+          MockExercises.squat,
+          2,
+          (id) => [_set(id, 1, reps: 10, weight: 95.0, units: Units.kilograms)],
+        ),
       ],
     ),
 
@@ -486,7 +683,11 @@ class MockWorkouts {
       title: 'Ancient Session',
       muscleGroups: [MockMuscleGroups.legs, MockMuscleGroups.core],
       exercises: [
-        _exercise(MockExercises.squat, 1, (id) => [_set(id, 1, reps: 10, weight: 80.0, units: Units.kilograms)]),
+        _exercise(
+          MockExercises.squat,
+          1,
+          (id) => [_set(id, 1, reps: 10, weight: 80.0, units: Units.kilograms)],
+        ),
       ],
     ),
   ];

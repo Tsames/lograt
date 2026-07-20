@@ -3,6 +3,9 @@ include: package:flutter_lints/flutter.yaml
 linter:
   rules:
     always_use_package_imports: true
+    sort_pub_dependencies: true
+    unawaited_futures: true
+    avoid_void_async: true
     camel_case_types: true
     require_trailing_commas: true
     prefer_single_quotes: true
