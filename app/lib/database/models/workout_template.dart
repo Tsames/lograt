@@ -1,7 +1,7 @@
 import 'package:lograt/database/app_database.dart';
 import 'package:lograt/database/models/exercise_instance.dart';
 import 'package:lograt/database/models/workout.dart';
-import 'package:lograt/util/uuid.dart';
+import 'package:lograt/services/uuid.dart';
 
 class WorkoutTemplate {
   final String id;
@@ -9,9 +9,13 @@ class WorkoutTemplate {
   final String? title;
   final String? description;
 
-  WorkoutTemplate({String? id, List<WorkoutTemplateSetRow>? sets, this.title, this.description})
-    : id = id ?? uuid.v7(),
-      sets = sets ?? const <WorkoutTemplateSetRow>[];
+  WorkoutTemplate({
+    String? id,
+    List<WorkoutTemplateSetRow>? sets,
+    this.title,
+    this.description,
+  }) : id = id ?? uuid.v7(),
+       sets = sets ?? const <WorkoutTemplateSetRow>[];
 
   WorkoutTemplate copyWith({
     String Function()? id,
@@ -39,7 +43,8 @@ class WorkoutTemplate {
 
     final exercises = exerciseGroups.entries.map((entry) {
       final instanceId = uuid.v7();
-      final templateSets = entry.value..sort((a, b) => a.setOrder.compareTo(b.setOrder));
+      final templateSets = entry.value
+        ..sort((a, b) => a.setOrder.compareTo(b.setOrder));
       return ExerciseInstance(
         id: instanceId,
         order: entry.key,
@@ -73,5 +78,6 @@ class WorkoutTemplate {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => 'WorkoutTemplate(id: $id, sets: $sets, title: $title, description: $description)';
+  String toString() =>
+      'WorkoutTemplate(id: $id, sets: $sets, title: $title, description: $description)';
 }

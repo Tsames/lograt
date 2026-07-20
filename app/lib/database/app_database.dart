@@ -3,7 +3,7 @@ import 'package:drift_flutter/drift_flutter.dart';
 import 'package:lograt/database/models/set_type.dart';
 import 'package:lograt/database/models/units.dart';
 import 'package:lograt/database/type_converters.dart';
-import 'package:lograt/util/uuid.dart';
+import 'package:lograt/services/uuid.dart';
 import 'package:path_provider/path_provider.dart';
 
 part 'generated/app_database.g.dart';
@@ -37,7 +37,9 @@ class AppDatabase extends _$AppDatabase {
   static QueryExecutor _openConnection() {
     return driftDatabase(
       name: 'lograt_database',
-      native: const DriftNativeOptions(databaseDirectory: getApplicationSupportDirectory),
+      native: const DriftNativeOptions(
+        databaseDirectory: getApplicationSupportDirectory,
+      ),
     );
   }
 }

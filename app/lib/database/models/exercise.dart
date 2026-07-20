@@ -1,5 +1,5 @@
 import 'package:lograt/database/app_database.dart';
-import 'package:lograt/util/uuid.dart';
+import 'package:lograt/services/uuid.dart';
 
 class Exercise {
   final String id;
