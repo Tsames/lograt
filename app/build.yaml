@@ -1,0 +1,11 @@
+targets:
+  $default:
+    builders:
+      source_gen|combining_builder:
+        # Limit this rule to only look at your database definition files
+        generate_for:
+          - lib/database/**.dart
+        options:
+          # Captures the filename and places it into a nested "generated" folder
+          build_extensions:
+            '^lib/database/{{}}.dart': 'lib/database/generated/{{}}.g.dart'

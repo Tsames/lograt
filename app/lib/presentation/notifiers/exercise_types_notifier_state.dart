@@ -1,7 +1,7 @@
-import 'package:lograt/data/entities/workouts/exercise_type.dart';
+import 'package:lograt/data/entities/exercise.dart';
 
 class ExerciseTypesNotifierState {
-  final List<ExerciseType> exerciseTypes;
+  final List<Exercise> exerciseTypes;
   final bool isLoading;
   final String? error;
   final int offset;
@@ -16,7 +16,7 @@ class ExerciseTypesNotifierState {
   });
 
   ExerciseTypesNotifierState copyWith({
-    List<ExerciseType>? exerciseTypes,
+    List<Exercise>? exerciseTypes,
     bool? isLoading,
     String? error,
     int? offset,

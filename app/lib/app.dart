@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lograt/presentation/screens/home/home_widget.dart';
-import 'package:lograt/presentation/screens/workout_history/workout_history_widget.dart';
 import 'package:lograt/util/extensions/muscle_groups_colors_theme_extension.dart';
 
 class App extends StatelessWidget {
@@ -12,7 +10,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Lograt',
-      routes: {workoutHistory: (context) => WorkoutHistoryWidget()},
+      routes: {workoutHistory: (context) => Placeholder()},
       theme: ThemeData(
         brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow.shade700),
@@ -21,14 +19,11 @@ class App extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.yellow.shade700,
-          brightness: Brightness.dark,
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow.shade700, brightness: Brightness.dark),
         useMaterial3: true,
         extensions: [MuscleGroupColorsThemeExtension.dark()],
       ),
-      home: HomeWidget(),
+      home: Placeholder(),
     );
   }
 }
